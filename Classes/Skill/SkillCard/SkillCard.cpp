@@ -63,6 +63,7 @@ p_pCoolDownLabel(nullptr)
 SkillCard::~SkillCard()
 {
     PRESET_FULL_VARIABLE(CC_SAFE_RELEASE);
+    CCLOG("SKILL CARD DESTRUCOT");
 }
 
 // Static

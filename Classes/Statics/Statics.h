@@ -3,12 +3,12 @@
 #include "Extension.h"
 #include "../ZyUwU/ZyUwU.h"
 
-BEGIN_CREATE_REFCLASS(Statics, cocos2d::Ref)
+BEGIN_CREATE_CLASS(Statics)
 public:
     static Statics* createWithProperties(float fAttackDmg = 0, float fMagicDmg = 0, float fArmor = 0,
                                          int nLife = 0, float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
-                                         PercentStatics cMagicLifeSteal = 0, RegenStatics cHP = 0, RegenStatics cMana = 0,
-                                         RegenStatics cSkillPoint = 0);
+                                         PercentStatics cMagicLifeSteal = 0, RegenStatics cHP = RegenStatics(10, 1), RegenStatics cMana = RegenStatics(10, 1),
+                                         RegenStatics cSkillPoint = RegenStatics(10, 1));
 
     static Statics* clone(Statics *pClone);
 public:
@@ -57,7 +57,7 @@ protected:
     PercentStatics m_cLifeSteal, m_cMagicLifeSteal;
     RegenStatics m_cHP, m_cMana, m_cSkillPoint;
 
-END_CREATE_REFCLASS
+END_CREATE_CLASS
 
 
 
@@ -78,7 +78,10 @@ END_CREATE_REFCLASS
 
 
 //
-BEGIN_CREATE_REFCLASS(IngameStatics, cocos2d::Ref)
+BEGIN_CREATE_CLASS(IngameStatics)
+
+public:
+    static IngameStatics* createWithStatics(Statics* pStatics, bool bIsClone = true, bool bIsClean = false);
 
 public:
     CREATE_CLONE_SET_FUNC(setStatics, Statics, m_pStatics);
@@ -86,6 +89,9 @@ public:
     void setCurrentHp(float fHp) {this->m_fCurrentHp = fHp;}
     void setCurrentMana(float fMana) {this->m_fCurrentMana = fMana;}
     void setCurrentSp(float fSp) {this->m_fCurrentSp = fSp;}
+
+    void fillStatics(float percent);
+
     IngameStatics* clone();
 
 public:
@@ -93,6 +99,10 @@ public:
     inline float getCurrentHp() {return this->m_fCurrentHp;}
     inline float getCurrentMana() {return this->m_fCurrentMana;}
     inline float getCurrentSp() {return this->m_fCurrentSp;}
+
+    CREATE_GET_FUNC(getCurrentHpInPercent, float, m_fCurrentHp/m_pStatics->getMaxHp());
+    CREATE_GET_FUNC(getCurrentMnInPercent, float, m_fCurrentMana/m_pStatics->getMaxMana());
+    CREATE_GET_FUNC(getCurrentSpInPercent, float, m_fCurrentSp/m_pStatics->getMaxSkillPoint());
 
 protected:
     Statics *m_pStatics;

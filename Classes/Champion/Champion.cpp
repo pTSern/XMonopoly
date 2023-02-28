@@ -3,7 +3,7 @@
 ////Constructor
 
 Champion::Champion() :
-m_pStatics(Statics::create()),
+m_pStatics(nullptr),
 m_pChampionStatics(ChampionStatics::create()),
 m_pIcon(ZYSprite::create(m_pProperties->getDeputizeTexture().c_str()))
 {
@@ -47,8 +47,14 @@ void Champion::setIconPosition(Point pos)
 
 bool Champion::init()
 {
-    this->addChild(m_pIcon, m_pProperties->getLocalZOrder());
+
+    //this->addChild(m_pIcon, m_pProperties->getLocalZOrder());
     return true;
+}
+
+void Champion::config()
+{
+    this->addChild(m_pIcon);
 }
 
 void Champion::log()

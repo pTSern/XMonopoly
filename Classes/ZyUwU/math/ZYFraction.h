@@ -125,8 +125,6 @@ public:
     bool operator>(float f);
     bool operator<=(float f);
     bool operator>=(float f);
-public:
-    typedef Fraction Frac;
 protected:
     int m_nNumerator, m_nDenominator;
 private:
@@ -137,4 +135,7 @@ private:
 private:
     int p_nNumeratorMem, p_nDenominatorMem;
 };
+
+typedef Fraction Frac;
+
 NS_ZY_END

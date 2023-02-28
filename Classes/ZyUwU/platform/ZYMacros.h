@@ -200,6 +200,29 @@ private:                                                                        
 
 #define END_CREATE_INSTANCE_REFCLASS };
 
+#define BEGIN_CREATE_CLASS(__NAME__)  					\
+class __NAME__                        					\
+{                                                   	\
+public:                               					\
+    static __NAME__* create()         					\
+	{                                    				\
+    	auto ret = new (std::nothrow) __NAME__();       \
+    	if(ret && ret->init())           				\
+		{                                   			\
+        	return ret;                              	\
+		}                                   			\
+    	CC_SAFE_DELETE(ret);             				\
+    	return nullptr;                                 \
+	}													\
+    virtual bool init();                               	\
+    virtual std::string toString(int nTab = 2);        	\
+    virtual void log();                                 \
+    __NAME__();                                         \
+private:                                               	\
+	std::string p_sClassName = #__NAME__;               \
+
+#define END_CREATE_CLASS };
+
 /**
  * 	@des Easy write down the log() function
  * 	@warning This class must have (p_sClassName) variable to execute

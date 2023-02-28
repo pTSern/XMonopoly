@@ -45,6 +45,8 @@ public:
     void drawRect();
     void revokeRect();
 
+    bool isContainPoint(Point point);
+
 public:
     virtual void update(float dt);
     virtual void onLand(ChampionInGame *pChamp);

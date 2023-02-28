@@ -72,7 +72,7 @@ bool ZYSupport::isOdd(int nNum)
     return (nNum%2==1);
 }
 
-void ZYSupport::fitStringInSize(zy::ZYLabel* pLabel, std::string text, const cocos2d::Size borderSize, int nMinFontSize)
+void ZYSupport::fitStringInSize(zy::ZYLabel* pLabel, std::string text, cocos2d::Size borderSize, int nMinFontSize)
 {
     pLabel->setMaxLineWidth(borderSize.width - 2);
     pLabel->setString(text);
@@ -101,8 +101,6 @@ void ZYSupport::fitStringInSize(zy::ZYLabel* pLabel, std::string text, const coc
         else isBreak = true;
     }
     if(isRerun) fitStringInSize(pLabel, str, borderSize, nMinFontSize);
-    else CCLOG( "%s - %f",pLabel->getString().c_str(), pLabel->getTTFConfig().fontSize);
-
 }
 //Virtual
 

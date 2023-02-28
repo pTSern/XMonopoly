@@ -40,4 +40,12 @@ int SmartAlgorithm::findLCMWithVector(std::vector<int> vList)
     return ans;
 }
 
+bool SmartAlgorithm::checkPointOnLine(Point A, Point B, Point M)
+{
+    if(A == B) return false;
+    auto a = (A.y - B.y) / (A.x - B.x);
+    auto b = B.y - B.x * a;
+
+    return M.y == (M.x * a + b);
+}
 NS_ZY_END

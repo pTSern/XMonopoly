@@ -94,3 +94,13 @@ void Player::pay(Player* player, float money)
 {
 }
 
+void Player::addChampion(ChampionInGame* pChamp)
+{
+    if(pChamp)
+    {
+        m_vChampions.push_back(pChamp);
+        m_vChampions.back()->setOwner(this, true);
+        this->addChild(pChamp);
+    }
+}
+

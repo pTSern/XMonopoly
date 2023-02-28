@@ -10,6 +10,8 @@
 #include "Arena/Arena.h"
 #include "LogManager/LogManager.h"
 #include "Player/Player.h"
+#include "Dice/Dice.h"
+#include "ChampionInGame/UI/ChampionUI.h"
 
 USING_NS_ALL;
 
@@ -175,13 +177,16 @@ bool HelloWorld::init()
     //px7->runAction(sq);
 
 
-    //charx = ZYSprite::create("champion/char-3.png");
-    //charx->setEffect(ZYOutlineV2::create());
+    vua = Node::create();
+    charx = ZYSprite::create("champion/char-3.png");
+    vua->addChild(charx);
+    this->addChild(vua, 1000);
+    charx->setEffect(ZYOutlineV2::create());
     //charx_clone = charx->clone();
     //this->addChild(charx_clone, 500);
     //Vec2 dir(225, 225);
     //auto jump = JumpBy::create(2.5, dir, 20, 5);
-    //charx->setPosition(1213, 450);
+    charx->setPosition(1213, 450);
     //this->addChild(charx,5);
     //charx->runAction(jump);
 
@@ -193,11 +198,6 @@ bool HelloWorld::init()
 
     pL->setRotation(- MAP_MNG_GI->getAngleHorizon());
     this->addChild(pL, 50);
-
-    auto ff = ZYSprite::create("ui/angle.png");
-    ff->setPosition(813,382);
-    ff->setRotation(MAP_MNG_GI->getAngleHorizon());
-    this->addChild(ff, 50);
 
     auto c1 = ChampionInGame::create();
     c1->setName("QUY");
@@ -221,16 +221,10 @@ bool HelloWorld::init()
     //a1->log();
     this->addChild(a1);
 
-    auto ig1 = IngameStatics::create();
-    auto st1 = Statics::create();
-    st1->setAttackDmg(10);
-    st1->setMagicDmg(2);
-    ig1->setStatics(st1 );
-    ig1->log();
 
-    //auto ig2 = IngameStatics::create();
-    //ig2->setStatics(Statics::createWithProperties(50, 20, 02), false);
-    //ig2->log();
+    auto ig2 = IngameStatics::create();
+    ig2->setStatics(Statics::createWithProperties(50, 20, 02), false);
+    ig2->log();
 
     sc1 = SkillCard::createDefault();
 
@@ -285,11 +279,24 @@ bool HelloWorld::init()
     //auto dn = DrawNode::create();
     //this->addChild(dn, 1000);
     MAP_MNG_GI->generateArenas();
-    player = Player::create();
-    this->addChild(player);
-
     ZYDR_GI->log();
 
+    dice = Dice::createWithProperties("dice/128.png");
+    auto champ = Champion::create();
+    champ->setStatics(Statics::createWithProperties());
+    champ->setIcon("champion/char-2.png");
+
+    ui = ChampionUI::createDefault();
+    //this->addChild(ui, 1000);
+    std::vector<SkillInGame*> vec;
+    cig = ChampionInGame::createWithProperties(champ, ui, dice, vec);
+    cig->getIcon()->setPosition(ZYDR_GVS/2);
+    cig->setStatics(ig2);
+    cig->getStatics()->log();
+    cig->config();
+    player = Player::create();
+    player->addChampion(cig);
+    this->addChild(player, 1000);
     return true;
 }
 
@@ -398,8 +405,11 @@ void HelloWorld::endS(Ref* pSender, ui::Widget::TouchEventType type)
             break;
         case ui::Widget::TouchEventType::ENDED:
             CCLOG("UNSELECT");
-            sc1->onUnselect();
-            sc1->log();
+            //sc1->onUnselect();
+            //sc1->log();
+            dice->rollDice();
+            //vua->removeFromParentAndCleanup(true);
+            ui->update(0);
             break;
         default:
             break;

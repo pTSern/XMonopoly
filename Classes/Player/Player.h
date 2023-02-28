@@ -27,6 +27,7 @@ public:
     void onLandArena(Arena* arena);
 //// Client Player
     bool yesOrNoSelector(std::string sMessage);
+    void addChampion(ChampionInGame* pChamp);
 
 protected:
     std::vector<ChampionInGame*> m_vChampions;
@@ -34,5 +35,7 @@ protected:
     ChampionInGame* m_pViewPointChampion;
     Economy m_pEconomy;
     EventListenerTouchOneByOne *m_pEventListener;
+
+    // Money Label
 
 END_CREATE_REFCLASS

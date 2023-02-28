@@ -188,4 +188,14 @@ void Arena::revokeRect()
     m_pRect->clear();
 }
 
+bool Arena::isContainPoint(Point point)
+{
+    if(SmartAlgorithm::checkPointOnLine(m_Left, m_Top, point)) return true;
+    if(SmartAlgorithm::checkPointOnLine(m_Top, m_Right, point)) return true;
+    if(SmartAlgorithm::checkPointOnLine(m_Right, m_Bottom, point)) return true;
+    if(SmartAlgorithm::checkPointOnLine(m_Bottom, m_Left, point)) return true;
+    return false;
+}
+
+
 //Virtual

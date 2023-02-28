@@ -22,7 +22,6 @@ m_pOwner(nullptr)
 
 bool Property::init()
 {
-    m_bIsBuyAble = true;
     return true;
 }
 
@@ -65,6 +64,9 @@ void Property::onLand(ChampionInGame *pChamp)
 void Property::config()
 {
     Arena::config();
+
+    m_bIsBuyAble = true;
+
     this->addChild(m_pPriceLabel);
     m_pPriceLabel->setRotation(m_pTitle->getRotation());
 
@@ -92,15 +94,13 @@ bool Property::initWithProperties(const std::string& sTitle, Coordinate &coord,
 Property* Property::createWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize,
                                       Point cLeft, float fPrice, float fSellMultiple, float fIncomeMultiple)
 {
-    auto ret = Property::create();
-    if(ret)
+    auto ret = new (std::nothrow) Property();
+    ret->setRectPoint(cLeft, rectSize);
+    if (ret->initWithProperties(sTitle, coord, fPrice, fSellMultiple, fIncomeMultiple))
     {
-        ret->setRectPoint(cLeft, rectSize);
-        if (ret->initWithProperties(sTitle, coord, fPrice, fSellMultiple, fIncomeMultiple))
-        {
-            return ret;
-        };
-    }
+        ret->autorelease();
+        return ret;
+    };
     CC_SAFE_DELETE(ret);
     return nullptr;
 }

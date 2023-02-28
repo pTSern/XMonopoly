@@ -39,7 +39,7 @@ public:
     std::string vec2ToString(cocos2d::Point vec2);
     std::string noNumberString(std::string sText);
     std::string tabString(int nTab = 2);
-    void fitStringInSize(zy::ZYLabel* pLabel, std::string str, const cocos2d::Size borderSize, int nMinFontSize = 14);
+    void fitStringInSize(zy::ZYLabel* pLabel, std::string str, cocos2d::Size borderSize, int nMinFontSize = 14);
 
 public:
     bool isInt(float fNum);

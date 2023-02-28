@@ -23,6 +23,7 @@ public:
 
 public:
     virtual void update(float dt);
+    virtual void config();
 
 protected:
     ZYSprite* m_pIcon;

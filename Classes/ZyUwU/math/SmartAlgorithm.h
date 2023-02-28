@@ -2,6 +2,8 @@
 
 #include "ZyUwU/platform/ZYMacros.h"
 #include <iostream>
+
+USING_NS_CC;
 NS_ZY_BEGIN
 
 class SmartAlgorithm
@@ -18,6 +20,7 @@ public:
      */
     static int findLCM(int nNum,...)  CC_REQUIRES_NULL_TERMINATION;
     static int findLCMWithVector(std::vector<int> vList);
+    static bool checkPointOnLine(Point A, Point B, Point M);
 public:
     typedef SmartAlgorithm SmartAl;
 };

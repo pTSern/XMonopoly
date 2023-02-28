@@ -11,6 +11,9 @@
 
 class TestLayer;
 class Player;
+class Dice;
+class ChampionUI;
+class ChampionInGame;
 class HelloWorld : public cocos2d::Layer
 {
 public:
@@ -50,6 +53,9 @@ protected:
     int i = 0;
     SkillCard *sc, *sc1;
     Statics *zd;
+    Dice* dice;
+    Node* vua;
+    ChampionUI* ui;
 
     float ya, yb,yc;
     struct Locations {
@@ -61,6 +67,7 @@ protected:
     };
 
     std::vector<Locations> timeUniforms;
+    ChampionInGame* cig;
 
     Player* player;
 };

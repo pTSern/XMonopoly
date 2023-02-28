@@ -176,7 +176,7 @@ std::string ChampionStatics::toString(int nTab)
 //IngameStatics
 
 IngameStatics::IngameStatics() :
-m_pStatics(Statics::create()),
+m_pStatics(nullptr),
 m_fCurrentHp(1),
 m_fCurrentSp(1),
 m_fCurrentMana(1)
@@ -184,6 +184,33 @@ m_fCurrentMana(1)
 
 }
 
+//// Static
+
+IngameStatics* IngameStatics::createWithStatics(Statics* pStatics, bool bIsClone, bool bIsClean)
+{
+    auto ret = new (std::nothrow) IngameStatics();
+    if(ret && ret->init() && pStatics)
+    {
+        //ret->autorelease();
+        ret->setStatics(pStatics, bIsClone, bIsClean);
+        ret->fillStatics(100);
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+//// public
+
+void IngameStatics::fillStatics(float percent)
+{
+    if(percent > 100) percent = 100;
+    if(percent < 0) percent = 0;
+    auto double_percent = percent/100;
+    m_fCurrentSp = m_pStatics->getMaxSkillPoint() * double_percent;
+    m_fCurrentHp = m_pStatics->getMaxHp() * double_percent;
+    m_fCurrentMana = m_pStatics->getMaxMana() * double_percent;
+}
 
 IngameStatics* IngameStatics::clone()
 {
@@ -208,6 +235,7 @@ IngameStatics* IngameStatics::clone()
 
 bool IngameStatics::init()
 {
+    m_pStatics = Statics::create();
     return true;
 }
 

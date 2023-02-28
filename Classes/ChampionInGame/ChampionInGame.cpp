@@ -1,16 +1,21 @@
 #include "ChampionInGame.h"
 #include "Arena/Arena.h"
+#include "Dice/Dice.h"
+#include "ChampionInGame/UI/ChampionUI.h"
+#include "Skill/SkillInGame/SkillInGame.h"
 
 ///Constructor
 
 ChampionInGame::ChampionInGame() :
 m_cCoordinate(Dir::NE, 0),
-m_pIngameStatics(IngameStatics::create()),
+m_pIngameStatics(nullptr),
 m_pLandingArena(nullptr),
 m_pParent(nullptr),
 m_eHead(HeadDir::FRONT),
 m_pOwner(nullptr),
-m_bIsRepresentPlayer(false)
+m_bIsRepresentPlayer(false),
+m_pChampionUI(nullptr),
+m_pDice(nullptr)
 {
 
 }
@@ -26,9 +31,10 @@ void ChampionInGame::setLandingArena(Arena *pArena)
 
 ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClone, bool bIsDeleteCloner)
 {
-    auto ret = ChampionInGame::create();
-    if(ret && pChamp)
+    auto ret = new (std::nothrow) ChampionInGame();
+    if(ret && ret->init() && pChamp)
     {
+        ret->autorelease();
         if(bIsClone)
         {
             auto cloner = pChamp->clone();
@@ -37,6 +43,7 @@ ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClo
                 ret->m_pIcon = cloner->getIcon();
                 ret->m_pStatics = cloner->getStatics();
                 ret->m_pChampionStatics = cloner->getChampionStatics();
+                //ret->m_pIngameStatics = IngameStatics::create(ret->m_pStatics, true, false);
                 if(bIsDeleteCloner) CC_SAFE_DELETE(pChamp);
                 return ret;
             }
@@ -47,12 +54,32 @@ ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClo
 
         ret->m_pIcon = pChamp->getIcon();
         ret->m_pStatics = pChamp->getStatics();
+        //ret->m_pIngameStatics = IngameStatics::create(ret->m_pStatics, true, false);
         ret->m_pChampionStatics = pChamp->getChampionStatics();
         return ret;
     }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp, ChampionUI *pUI, Dice* pDice, std::vector<SkillInGame*> vSkillDeck)
+{
+    auto ret = createWithChampion(pChamp, false);
+    if(ret && ret->initWithProperties(pUI, pDice, vSkillDeck))
+    {
+        ret->config();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
 }
 
 //Virtual
+
+void ChampionInGame::config()
+{
+    m_pChampionUI->setPosition(Point(this->getIcon()->getPosition().x, this->getIcon()->getContentPositionMiddleTop().y + m_pChampionUI->getContentSize().height));
+}
 
 bool ChampionInGame::init()
 {
@@ -65,6 +92,11 @@ void ChampionInGame::log()
     CCLOG("CALL %s: %s %s", ZY_SP_NO_NUMBER_STRING(p_sClassName).c_str(),
           this->toString().c_str(),
           getChildsString(2 + 1).c_str());
+}
+
+Point ChampionInGame::getPosition()
+{
+    return m_pIcon->getPosition();
 }
 
 std::string ChampionInGame::toString(int nTab)
@@ -83,10 +115,29 @@ void ChampionInGame::setPosition(Arena *pArena)
 
 void ChampionInGame::update(float dt)
 {
-
+    CCLOG("VUA");
 }
 
 //Public
+
+bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, std::vector<SkillInGame*> vSkillDeck)
+{
+    if(!pUI || !pDice) return false;
+
+    this->setDice(pDice);
+    this->setUI(pUI);
+    //this->setSkillDeck(vSkillDeck);
+
+    this->addChild(m_pDice);
+    m_pDice->disableDice();
+
+    this->addChild(m_pChampionUI);
+    m_pChampionUI->setOwner(this);
+
+    this->addChild(m_pIcon);
+
+    return true;
+}
 
 void ChampionInGame::addChampChild(ChampionInGame *pChild)
 {
@@ -94,7 +145,7 @@ void ChampionInGame::addChampChild(ChampionInGame *pChild)
     {
         m_vChilds.push_back(pChild);
         pChild->setParent(this);
-        this->addChild(pChild, pChild->getGlobalZOrder());
+        this->addChild(pChild );
     }
 }
 
@@ -143,4 +194,25 @@ void ChampionInGame::applyEffectToSelf(std::vector<GameEffect*> vEffects)
 void ChampionInGame::attack(std::vector<ChampionInGame*> vChampions)
 {
 
+}
+
+void ChampionInGame::preDicePhase()
+{
+
+}
+
+void ChampionInGame::doDice()
+{
+
+}
+
+void ChampionInGame::postDicePhase()
+{
+
+}
+
+void ChampionInGame::setOwner(Player *pOwner, bool bIsRepresent)
+{
+    this->m_pOwner = pOwner;
+    m_bIsRepresentPlayer = bIsRepresent;
 }
