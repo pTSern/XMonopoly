@@ -93,10 +93,13 @@ list(APPEND GAME_SOURCE
 
         Classes/Player/Player.cpp
 
+        Classes/SelectHelper/SelectHelper.cpp
+
         Classes/Champion/Champion.cpp
         Classes/Champion/Mage/Mage.cpp
 
         Classes/ChampionInGame/ChampionInGame.cpp
+        Classes/ChampionInGame/UI/ChampionUI.cpp
 
         Classes/Factory/ChampionFactory.cpp
         Classes/Factory/ChampionInGameFactory.cpp
@@ -110,6 +113,7 @@ list(APPEND GAME_SOURCE
         Classes/Skill/Skill.cpp
         Classes/Skill/SkillCard/SkillCard.cpp
         Classes/Skill/SkillStatics/SkillStatics.cpp
+        Classes/Skill/SkillInGame/SkillInGame.cpp
 
         Classes/GameEffect/Buff/Buff.cpp
         Classes/GameEffect/Debuff/Debuff.cpp
@@ -179,6 +183,7 @@ list(APPEND GAME_HEADER
 
         Classes/ChampionInGame/ChampionInGame.h
         Classes/ChampionInGame/Extension.h
+        Classes/ChampionInGame/UI/ChampionUI.h
 
         Classes/Factory/ChampionFactory.h
         Classes/Factory/ChampionInGameFactory.h
@@ -189,6 +194,8 @@ list(APPEND GAME_HEADER
         Classes/Statics/Statics.h
         Classes/Statics/Extension.h
 
+        Classes/SelectHelper/SelectHelper.h
+
         Classes/Skill/Skill.h
         Classes/Skill/Condition/Condition.h
         Classes/Skill/SkillType/SkillType.h
@@ -197,6 +204,7 @@ list(APPEND GAME_HEADER
         Classes/Skill/TriggerType/TriggerType.h
         Classes/Skill/SkillCard/SkillCard.h
         Classes/Skill/SkillStatics/SkillStatics.h
+        Classes/Skill/SkillInGame/SkillInGame.h
 
         Classes/GameEffect/Buff/Buff.h
         Classes/GameEffect/Debuff/Debuff.h
