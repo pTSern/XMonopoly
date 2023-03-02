@@ -20,6 +20,7 @@ public:
 public:
     CREATE_CLONE_SET_FUNC(setProperties, XProperties, m_pProperties);
     CREATE_CLONE_SET_FUNC(setStatics, SkillStatics, m_pSkillStatics);
+
     CREATE_GET_FUNC(getSkillCard, SkillCard*, m_pSkillCard);
     CREATE_GET_FUNC(getSkillStatics, SkillStatics*, m_pSkillStatics);
     CREATE_GET_FUNC(getXProperties, XProperties*, m_pProperties);
@@ -27,5 +28,6 @@ public:
 protected:
     SkillStatics *m_pSkillStatics;
     SkillCard *m_pSkillCard;
+
 
 END_CREATE_REFCLASS

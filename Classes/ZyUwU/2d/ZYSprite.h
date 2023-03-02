@@ -6,13 +6,14 @@
 #include "ZyUwU/platform/CCMacrosSupport.h"
 #include "ZyUwU/base/ZYDirector.h"
 #include "ZYShaderHelper.h"
+#include "ZYSupport2D.h"
 
 USING_NS_CC;
 
 NS_ZY_BEGIN
 
 class ZYEffect;
-class ZYSprite : public cocos2d::Sprite, public ZYShaderHelper
+class ZYSprite : public cocos2d::Sprite, public ZYShaderHelper, public ZYSupport2D
 {
 public:
 	static ZYSprite* create(const char* pFileName, bool bIsScale = true);
@@ -20,18 +21,6 @@ public:
 	static ZYSprite* create(cocos2d::Texture2D *p);
 
 public:
-	cocos2d::Point getContentPositionWithNewAnchorPoint(cocos2d::Point cNewAnchorPoint);
-
-	cocos2d::Point getContentPositionMiddleTop();
-	cocos2d::Point getContentPositionMiddleBottom();
-	cocos2d::Point getContentPositionTopLeft();
-	cocos2d::Point getContentPositionTopRight();
-	cocos2d::Point getContentPositionBottomRight();
-	cocos2d::Point getContentPositionBottomLeft();
-	cocos2d::Point getContentPositionMiddle();
-
-	cocos2d::Point getDifferentAnchorPoint(cocos2d::Point cNewAnchorPoint);
-
 	CREATE_GET_FUNC(getMemoryPosition, cocos2d::Point, m_cMemoryPosition);
 
 	virtual std::string toString(int nTab = 2);
@@ -39,6 +28,22 @@ public:
 	virtual void setPosition(const cocos2d::Vec2& pos) override;
 	virtual void setPosition(const float xx, const float yy) override;
 	virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
+	virtual const Vec2& getAnchorPoint() const
+	{
+		return Sprite::getAnchorPoint();
+	}
+	virtual float getPositionX() const
+	{
+		return Sprite::getPositionX();
+	}
+	virtual float getPositionY() const
+	{
+		return Sprite::getPositionY();
+	}
+	virtual const Size& getContentSize() const
+	{
+		return Sprite::getContentSize();
+	}
 
 	bool config();
 	void log();

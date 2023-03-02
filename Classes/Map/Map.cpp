@@ -12,7 +12,8 @@ MapManager* MapManager::sp_pInstance = nullptr;
 
 MapManager::MapManager() :
 p_pTileMap(nullptr),
-p_pArenaGroup(nullptr)
+p_pArenaGroup(nullptr),
+p_pClientPlayer(nullptr)
 {
     p_vArenas.reserve(2);
 }
@@ -21,6 +22,11 @@ p_pArenaGroup(nullptr)
 
 bool MapManager::init()
 {
+	if(!Node::init()) return false;
+	auto ls = EventListenerTouchOneByOne::create();
+	ls->onTouchBegan = CC_CALLBACK_2(MapManager::onTouch, this);
+	ls->onTouchEnded = CC_CALLBACK_2(MapManager::endTouch, this);
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, this);
 	this->scheduleUpdate();
 	return true;
 }
@@ -66,9 +72,12 @@ void MapManager::loadTileMap(std::string sMapName)
 
 	//Self config
 	this->config();
-
 	//Generate the map's arena
 	//this->generateArenas();
+	//_eventDispatcher->addEventListenerWithSceneGraphPriority(ls, this);
+	//auto button = ui::Button::create("NULL/null.png");
+	//button->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, button);
+	//this->addChild(button);
 }
 
 void MapManager::setScale(cocos2d::Point cScale)
@@ -173,7 +182,7 @@ Point MapManager::getTrueObjectPoint(const float& xx, const float &yy)
 	auto yyy = sin(p_fAngleHorizon) * (p_tWorld.width - s.width + s.height) + (p_pTileMap->getPositionY() - p_pTileMap->getContentSize().height/2);
 	auto xxx = cos(p_fAngleHorizon) * (s.height + s.width) + p_pTileMap->getPositionX() - p_pTileMap->getContentSize().width/2;
 	Point point(xxx, yyy);
-	CCLOG("MAP - %f", p_pTileMap->getPositionY() - p_pTileMap->getContentSize().height/2);
+	//CCLOG("MAP - %f", p_pTileMap->getPositionY() - p_pTileMap->getContentSize().height/2);
 	return point;
 }
 
@@ -215,4 +224,49 @@ void MapManager::generatePropertyArenas(ValueMap obj)
 
 void MapManager::generateSpecialArenas(ValueMap obj)
 {
+}
+bool MapManager::onTouch(Touch *touch, Event *event)
+{
+	return true;
+}
+
+bool MapManager::endTouch(Touch *touch, Event *event)
+{
+	auto anchorPoint = this->getTileMap()->getPosition();
+	auto touchPoint = touch->getLocation();
+	if(touchPoint.y < (anchorPoint.y - this->getMapPixelSize().height/2)) return true;
+	for(int i = 0; i < p_vArenas.size(); i++)
+	{
+		if(SmartAlgorithm::isPointInside4Point(p_vArenas[i]->getLeftPoint(),
+											   p_vArenas[i]->getTopPoint(),
+											   p_vArenas[i]->getRightPoint(),
+											   p_vArenas[i]->getBottomPoint(),
+											   touchPoint))
+		{
+			p_pClientPlayer->setSelectObject(p_vArenas[i]);
+			p_pClientPlayer->setSelectType(Player::SelectType::ARENA);
+			break;
+		}
+	}
+	//if(touchPoint.y < anchorPoint.y)
+	//{
+	//	if(touchPoint.x <= anchorPoint.x)
+	//	{
+	//		for(int i = 0; i <= p_vArenas.size()/4; i++)
+	//		{
+	//			if(SmartAlgorithm::isPointInside4Point(p_vArenas[i]->getLeftPoint(),
+	//												   p_vArenas[i]->getTopPoint(),
+	//												   p_vArenas[i]->getRightPoint(),
+	//												   p_vArenas[i]->getBottomPoint(),
+	//												   touchPoint))
+	//			{
+	//				p_pClientPlayer->setSelectObject(p_vArenas[i]);
+	//				p_pClientPlayer->setSelectType(Player::SelectType::ARENA);
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+
+	return true;
 }

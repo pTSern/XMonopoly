@@ -24,6 +24,7 @@
 
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
+#include "GameScene/BattleScene.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -114,11 +115,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = HelloWorld::createScene();
+    auto scene = BattleScene::createScene();
 
     // run
     director->runWithScene(scene);
-    CCLOG("FRAME SIZE: %f - %f", frameSize.width, frameSize.height);
     return true;
 }
 

@@ -59,6 +59,7 @@ bool Dice::init()
 std::string Dice::toString(int nTab)
 {
     std::string ts;
+    std::string tab = ZYSP_T(nTab);
     return ts;
 }
 

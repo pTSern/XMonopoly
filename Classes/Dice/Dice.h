@@ -14,10 +14,7 @@ public:
 
 public:
     virtual void config();
-    virtual void update(float dt)
-    {
-        CCLOG("VUA");
-    }
+    virtual void update(float dt) {};
 
 public:
     CREATE_GET_FUNC(getLastestDiceNum, int, m_vDiceMemory.back());

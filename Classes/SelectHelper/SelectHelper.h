@@ -12,6 +12,14 @@ public:
     void selectTarget(std::string type);
     void disable();
 
+    enum class TargetType
+    {
+        NONE,
+        Arena,
+        Champion,
+        Both
+    };
+
 protected:
     std::vector<GameObject*> m_vTargets;
     bool m_bFinish;

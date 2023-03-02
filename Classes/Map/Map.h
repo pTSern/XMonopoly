@@ -20,7 +20,8 @@ do {                                                                   \
 } while(0);	\
 
 class Arena;
-BEGIN_CREATE_INSTANCE_REFCLASS(MapManager, cocos2d::Node)                          \
+class Player;
+BEGIN_CREATE_INSTANCE_REFCLASS(MapManager, cocos2d::Node)
 
 public:
     void generateGameBoard();
@@ -46,6 +47,7 @@ public:
 	CREATE_GET_FUNC(getTrueObjectTileSize, Size, p_tObjectTile);
 	CREATE_GET_FUNC(getTrueWorldSize, Size, p_tWorld);
 	CREATE_GET_FUNC(getArenas, std::vector<Arena*>, p_vArenas);
+	CREATE_SET_FUNC(setClientPlayer, Player*, p_pClientPlayer);
 
 	/**
 	* Check if input position is contact to a collision object
@@ -63,6 +65,8 @@ public:
 	Size getTrueObjectSize(const float& width, const float &height);
 	Point getTrueObjectPoint(const Point& objectPoint);
 	Point getTrueObjectPoint(const float& xx, const float &yy);
+	bool onTouch(Touch *touch, Event *event);
+	bool endTouch(Touch *touch, Event *event);
 
 protected:
     void generatePropertyArenas(ValueMap obj);
@@ -77,6 +81,6 @@ private:
     Size p_tObjectTile, p_tWorld;
 	Size p_world, p_objectTileSize;
     std::vector<Arena*> p_vArenas;
-
+	Player* p_pClientPlayer;
 
 END_CREATE_INSTANCE_REFCLASS;

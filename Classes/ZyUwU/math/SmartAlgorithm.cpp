@@ -48,4 +48,38 @@ bool SmartAlgorithm::checkPointOnLine(Point A, Point B, Point M)
 
     return M.y == (M.x * a + b);
 }
+
+float SmartAlgorithm::triangleArena(Point A, Point B, Point C)
+{
+    return abs((A.x * (B.y - C.y) + B.x * (C.y - A.y) + C.x * (A.y - B.y)) / 2.0);
+}
+
+bool SmartAlgorithm::isPointInside4Point(Point A, Point B, Point C, Point D, Point M)
+{
+    float totalArena = SmartAlgorithm::triangleArena(A, B, C) + SmartAlgorithm::triangleArena(A, C, D);
+    float pointArena = SmartAlgorithm::triangleArena(A, B, M) + SmartAlgorithm::triangleArena(B, C, M)
+            + SmartAlgorithm::triangleArena(C, D, M) + SmartAlgorithm::triangleArena(D, A, M);
+    return (totalArena == pointArena);
+}
+
+bool SmartAlgorithm::isPointInsideMultiPoints(std::vector<Point>& vList, Point M)
+{
+    int num = vList.size();
+    int count = 0;
+    for (int i = 0; i < num; i++)
+    {
+        Point A = vList[i];
+        Point B = vList[(i + 1) % num];
+        if ((A.y <= M.y && M.y < B.y) || (B.y <= M.y && M.y < A.y))
+        {
+            double t = (M.y - A.y) * (B.x - A.x) - (B.y - A.y) * (M.x - A.x);
+            if (t < 0)
+            {
+                count++;
+            }
+        }
+    }
+    return (count % 2 == 1);
+}
+
 NS_ZY_END

@@ -3,6 +3,7 @@
 #include "Dice/Dice.h"
 #include "ChampionInGame/UI/ChampionUI.h"
 #include "Skill/SkillInGame/SkillInGame.h"
+#include "Player/Player.h"
 
 ///Constructor
 
@@ -113,6 +114,12 @@ void ChampionInGame::setPosition(Arena *pArena)
 {
 }
 
+void ChampionInGame::setPosition(cocos2d::Vec2 pos)
+{
+    this->m_pIcon->setPosition(pos);
+    this->m_pSelfButton->setPosition(pos);
+}
+
 void ChampionInGame::update(float dt)
 {
     CCLOG("VUA");
@@ -136,6 +143,14 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, std::vecto
 
     this->addChild(m_pIcon);
 
+    m_pSelfButton = ui::Button::create(m_pIcon->getResourceName());
+    this->addChild(m_pSelfButton, 1);
+
+    auto ls = EventListenerTouchOneByOne::create();
+    ls->onTouchBegan = CC_CALLBACK_2(ChampionInGame::onTouch, this);
+    ls->onTouchEnded = CC_CALLBACK_2(ChampionInGame::endTouch, this);
+    m_pSelfButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, m_pIcon);
+    m_pSelfButton->addTouchEventListener(CC_CALLBACK_2(ChampionInGame::run, this));
     return true;
 }
 
@@ -215,4 +230,24 @@ void ChampionInGame::setOwner(Player *pOwner, bool bIsRepresent)
 {
     this->m_pOwner = pOwner;
     m_bIsRepresentPlayer = bIsRepresent;
+}
+
+bool ChampionInGame::onTouch(Touch* touch, Event* event)
+{
+    return true;
+}
+
+bool ChampionInGame::endTouch(Touch* touch, Event* event)
+{
+    //CCLOG("TOUCH LOCATION: %f - %f", touch->getLocation().x, touch->getLocation().y);
+    return true;
+}
+
+void ChampionInGame::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+    if(type ==  ui::Widget::TouchEventType::ENDED)
+    {
+        m_pOwner->setSelectType(Player::SelectType::CHAMPION);
+        m_pOwner->setSelectObject(this);
+    }
 }

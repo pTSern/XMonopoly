@@ -104,35 +104,35 @@ bool HelloWorld::init()
     BlendFunc bf = {backend::BlendFactor::SRC_ALPHA, backend::BlendFactor::ONE_MINUS_SRC_ALPHA};
     //z->setBlendFunc(bf);
 
-    button = ui::Button::create("HelloWorld.png", "HelloWorld.png" );
-    button->setPosition(Point( (visibleSize.width + origin.x)/4, (visibleSize.height + origin.y)/4) );
-    button->setTitleText("SELECT");
+    //button = ui::Button::create("HelloWorld.png", "HelloWorld.png" );
+    //button->setPosition(Point( (visibleSize.width + origin.x)/4, (visibleSize.height + origin.y)/4) );
+    //button->setTitleText("SELECT");
 
-    auto p = DrawNode::create();
-    Point an(150, 150);
-    p->drawRect(an, Point(an.x + 80, an.y), Point(an.x + 80, an.y + 128), Point(an.x, an.y + 128), Color4F::RED);
-    this->addChild(p, 500);
+    //auto p = DrawNode::create();
+    //Point an(150, 150);
+    //p->drawRect(an, Point(an.x + 80, an.y), Point(an.x + 80, an.y + 128), Point(an.x, an.y + 128), Color4F::RED);
+    //this->addChild(p, 500);
 
-    auto listener = EventListenerTouchOneByOne::create();
-    listener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouch, this);
-    listener->onTouchEnded = CC_CALLBACK_2(HelloWorld::endTouch, this);
+    //auto listener = EventListenerTouchOneByOne::create();
+    //listener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouch, this);
+    //listener->onTouchEnded = CC_CALLBACK_2(HelloWorld::endTouch, this);
     //_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
-    button->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, button);
+    //button->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, button);
 
     //void (HelloWorld::*func)(Ref*, ui::Widget::TouchEventType);
     //func = &HelloWorld::run;
 
-    button->addTouchEventListener(CC_CALLBACK_2(HelloWorld::run, this));
+    //button->addTouchEventListener(CC_CALLBACK_2(HelloWorld::run, this));
 
-    sb = ui::Button::create("HelloWorld.png", "HelloWorld.png" );
-    sb->setPosition(Point( (visibleSize.width/1.5 + origin.x), (visibleSize.height + origin.y)/4) );
-    sb->setTitleText("UNSELECT");
+    //sb = ui::Button::create("HelloWorld.png", "HelloWorld.png" );
+    //sb->setPosition(Point( (visibleSize.width/1.5 + origin.x), (visibleSize.height + origin.y)/4) );
+    //sb->setTitleText("UNSELECT");
     //sb->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, sb);
-    sb->addTouchEventListener(CC_CALLBACK_2(HelloWorld::endS, this));
+    //sb->addTouchEventListener(CC_CALLBACK_2(HelloWorld::endS, this));
 
-    this->addChild(sb);
-    this->addChild(button);
+    //this->addChild(sb);
+    //this->addChild(button);
 
     this->scheduleUpdate();
 
@@ -278,25 +278,29 @@ bool HelloWorld::init()
 
     //auto dn = DrawNode::create();
     //this->addChild(dn, 1000);
+
     MAP_MNG_GI->generateArenas();
     ZYDR_GI->log();
 
     dice = Dice::createWithProperties("dice/128.png");
-    auto champ = Champion::create();
-    champ->setStatics(Statics::createWithProperties());
-    champ->setIcon("champion/char-2.png");
+    auto champ = Champion::createWithProperties("champion/char-2.png", Statics::createWithProperties(), ChampionStatics::create());
+    //auto champ = Champion::create();
+    //champ->setIcon("champion/char-2.png");
+    //champ->setStatics(Statics::createWithProperties());
+    //champ->setChampionStatics(ChampionStatics::create());
 
     ui = ChampionUI::createDefault();
-    //this->addChild(ui, 1000);
     std::vector<SkillInGame*> vec;
     cig = ChampionInGame::createWithProperties(champ, ui, dice, vec);
-    cig->getIcon()->setPosition(ZYDR_GVS/2);
+    cig->setPosition(ZYDR_GVS/1.5);
     cig->setStatics(ig2);
     cig->getStatics()->log();
     cig->config();
     player = Player::create();
     player->addChampion(cig);
     this->addChild(player, 1000);
+    MAP_MNG_GI->setClientPlayer(player);
+
     return true;
 }
 
@@ -338,6 +342,13 @@ void HelloWorld::update(float dt)
     //{
     //    loc.programState->setUniform(loc.location, &random, sizeof(random));
     //}
+    if(player && i == 0)
+    {
+        if(player->getSelectType() == Player::SelectType::ARENA) {
+            i++;
+            (player->getSelectObject())->log();
+        }
+    }
 }
 void HelloWorld::spawn(float dt)
 {
@@ -351,7 +362,7 @@ void HelloWorld::spawn(float dt)
 
    //auto p = Sprite::create("point.png");
    //p->setPosition(px7->getPosition());
-   //pl.push_back(p);
+   //pl.push_back(p)
    //this->addChild(pl[pl.size()-1], 7);
 
 }

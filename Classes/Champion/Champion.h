@@ -3,10 +3,14 @@
 #include "../GameObject/GameObject.h"
 #include "../ZyUwU/ZyUwU.h"
 #include "../Statics/Statics.h"
+#include "ui/CocosGUI.h"
 
 USING_NS_ALL;
 
 BEGIN_CREATE_REFCLASS(Champion, GameObject)
+
+public:
+    static Champion* createWithProperties(std::string path, Statics* pStatics, ChampionStatics* pChampStatics);
 
 public:
     Champion* clone();
@@ -20,6 +24,7 @@ public:
 
     void setIcon(std::string sTexture);
     void setIconPosition(Point pos);
+
 
 public:
     virtual void update(float dt);

@@ -5,6 +5,7 @@
 #include "../Skill.h"
 #include "../../Support/GameConstant.h"
 #include "../../Support/Macros.h"
+#include "ui/CocosGUI.h"
 
 BEGIN_CREATE_REFCLASS(SkillCardLabelProperties, cocos2d::Ref)
 
@@ -41,6 +42,7 @@ p_pManaCostSprite->__ACTION__;               \
 p_pSkillPointCostSprite->__ACTION__;         \
 p_pDescriptionSprite->__ACTION__;            \
 p_pCoolDownSprite->__ACTION__;               \
+p_pButton->__ACTION__;                       \
 
 
 #define SET_FULL_LABEL(__ACTION__)    \
@@ -55,7 +57,7 @@ p_pCoolDownLabel->__ACTION__;         \
 SET_FULL_SPRITE(__ACTION__)           \
 SET_FULL_LABEL(__ACTION__)            \
 
-#define PRESET_FULL_SPRITE(__ACTION__, ...) \
+#define PRESET_FULL_SPRITE(__ACTION__, ...)                 \
 __ACTION__(p_pShapeSprite, ##__VA_ARGS__);                  \
 __ACTION__(p_pNameSprite, ##__VA_ARGS__);                   \
 __ACTION__(p_pIconSprite, ##__VA_ARGS__);                   \
@@ -63,6 +65,7 @@ __ACTION__(p_pManaCostSprite, ##__VA_ARGS__);               \
 __ACTION__(p_pSkillPointCostSprite, ##__VA_ARGS__);         \
 __ACTION__(p_pDescriptionSprite, ##__VA_ARGS__);            \
 __ACTION__(p_pCoolDownSprite, ##__VA_ARGS__);               \
+__ACTION__(p_pButton, ##__VA_ARGS__);                        \
 
 
 #define PRESET_FULL_LABEL(__ACTION__, ...) \
@@ -72,7 +75,7 @@ __ACTION__(p_pManaCostLabel, ##__VA_ARGS__);         \
 __ACTION__(p_pSkillPointCostLabel, ##__VA_ARGS__);   \
 __ACTION__(p_pCoolDownLabel, ##__VA_ARGS__);         \
 
-#define PRESET_FULL_VARIABLE(__ACTION__, ...) \
+#define PRESET_FULL_VARIABLE(__ACTION__, ...)           \
 PRESET_FULL_SPRITE(__ACTION__, ##__VA_ARGS__)           \
 PRESET_FULL_LABEL(__ACTION__, ##__VA_ARGS__)            \
 
@@ -116,14 +119,9 @@ public:
     void onSelect();
     void onUnselect();
 
-    void setF(int x)
-    {
-        auto c = p_pDescriptionLabel->getTTFConfig();
-        auto size = x;
-        TTFConfig z(c);
-        z.fontSize = size;
-        p_pDescriptionLabel->setTTFConfig(z);
-    }
+    bool onTouch(cocos2d::Touch *touch, cocos2d::Event *event);
+    bool endTouch(cocos2d::Touch *touch, cocos2d::Event *event);
+    void run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
 
 protected:
     bool initWithProperties(std::string sIconSprite, std::string sShapeSprite, std::string sNameSprite,
@@ -140,6 +138,9 @@ private:
 
     zy::ZYLabel *p_pNameLabel, *p_pDescriptionLabel, *p_pManaCostLabel,
         *p_pSkillPointCostLabel, *p_pCoolDownLabel;
+
+    ui::Button *p_pButton;
+    bool p_bSelected;
 
 private:
     int const pc_nNameSize = 24, pc_nDescriptionSize = 12, pc_nManaCostSize = 14;

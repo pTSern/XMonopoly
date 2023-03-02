@@ -6,7 +6,8 @@
 //// Constructor
 
 Player::Player() :
-m_pEconomy(Economy::IngameCoin)
+m_pEconomy(Economy::IngameCoin),
+m_pSelectingObject(nullptr)
 {
 
 }
@@ -58,11 +59,6 @@ void Player::setControlChampion(ChampionInGame *pChampion)
 }
 
 void Player::setChampionViewPoint(ChampionInGame *pChampion)
-{
-
-}
-
-void Player::loadSkillDeck()
 {
 
 }

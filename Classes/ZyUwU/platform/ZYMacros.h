@@ -227,7 +227,16 @@ private:                                               	\
  * 	@des Easy write down the log() function
  * 	@warning This class must have (p_sClassName) variable to execute
  */
-#define ZY_EZ_LOG CCLOG("CALL %s: %s", p_sClassName.c_str(), this->toString().c_str())
+#define ZY_EZ_LOG \
+do{\
+CCLOG("CALL %s: %s", p_sClassName.c_str(), this->toString().c_str()); \
+} while(0);       \
+
+#define ZY_EZ_DE_LOG \
+do{\
+CCLOG("CALL %s: SELF DESTRUCT > ADDRESS: %p", p_sClassName.c_str(), this);                     \
+} while(0)\
+
 
 /** @def ZY_TO_STRING_HELPER_POINTER(__TO_STRING__, __TAB__, __TAB_NUMBER__, __LOG_STRING__, __VAR_POINTER__)
  * 	@des Help the toString(int nTab) function easier

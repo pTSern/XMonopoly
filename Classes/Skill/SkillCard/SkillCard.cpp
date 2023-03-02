@@ -55,7 +55,8 @@ p_pNameLabel(nullptr),
 p_pDescriptionLabel(nullptr),
 p_pManaCostLabel(nullptr),
 p_pSkillPointCostLabel(nullptr),
-p_pCoolDownLabel(nullptr)
+p_pCoolDownLabel(nullptr),
+p_bSelected(false)
 {
 
 }
@@ -185,6 +186,15 @@ bool SkillCard::initWithProperties(std::string sIconSprite, std::string sShapeSp
     this->addChild(p_pSkillPointCostLabel, 4);
     this->addChild(p_pCoolDownLabel, 4);
 
+    p_pButton = ui::Button::create(p_pShapeSprite->getResourceName());
+    p_pButton->setOpacity(0);
+    this->addChild(p_pButton, 5);
+
+    auto ls = EventListenerTouchOneByOne::create();
+    ls->onTouchBegan = CC_CALLBACK_2(SkillCard::onTouch, this);
+    ls->onTouchEnded = CC_CALLBACK_2(SkillCard::endTouch, this);
+    p_pButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, p_pButton);
+    p_pButton->addTouchEventListener(CC_CALLBACK_2(SkillCard::run, this));
     return true;
 }
 
@@ -254,6 +264,7 @@ void SkillCard::config()
 
     p_pDescriptionLabel->setPosition(Point(p_pDescriptionSprite->getPositionX(), p_pDescriptionSprite->getPositionY() + (p_pDescriptionSprite->getContentSize().height/2 - p_pDescriptionLabel->getContentSize().height/2) ));
     //Set Position follow NameSprite
+    p_pButton->setPosition(p_pShapeSprite->getPosition());
 
 }
 
@@ -342,4 +353,31 @@ Action* SkillCard::runAction(Action *action)
     CCASSERT( action != nullptr, "Argument must be non-nil");
     SET_FULL_VARIABLE(runAction(action->clone()));
     return action;
+}
+
+bool SkillCard::onTouch(cocos2d::Touch *touch, cocos2d::Event *event)
+{
+    return true;
+}
+
+bool SkillCard::endTouch(cocos2d::Touch *touch, cocos2d::Event *event)
+{
+    return true;
+}
+
+void SkillCard::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+    if(type == ui::Widget::TouchEventType::ENDED)
+    {
+        if(!p_bSelected)
+        {
+            onSelect();
+            p_bSelected = true;
+        }
+        else if(p_bSelected)
+        {
+            onUnselect();
+            p_bSelected = false;
+        }
+    }
 }

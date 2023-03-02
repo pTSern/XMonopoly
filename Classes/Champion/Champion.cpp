@@ -12,6 +12,24 @@ m_pIcon(ZYSprite::create(m_pProperties->getDeputizeTexture().c_str()))
 
 ////Static
 
+Champion* Champion::createWithProperties(std::string path, Statics* pStatics, ChampionStatics* pChampStatics)
+{
+    auto ret = new (std::nothrow) Champion();
+    if(ret && ret->init() && CC_FILEUTILS_GI->isFileExist(path) && pStatics && pChampStatics)
+    {
+        ret->setDeputizeTexture(path);
+        ret->autorelease();
+        ret->m_pIcon = ZYSprite::create(path.c_str());
+        ret->m_pChampionStatics = pChampStatics;
+        ret->m_pStatics = pStatics;
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return ret;
+}
+
+////Public+
+
 Champion* Champion::clone()
 {
     auto ret = Champion::create();
@@ -26,8 +44,6 @@ Champion* Champion::clone()
     CC_SAFE_DELETE(ret);
     return nullptr;
 }
-
-////Public+
 
 void Champion::setIcon(std::string sTexture)
 {

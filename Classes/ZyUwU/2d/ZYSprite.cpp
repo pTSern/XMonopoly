@@ -15,11 +15,7 @@ m_cMemoryPosition(0,0)
 
 ZYSprite::~ZYSprite()
 {
-	//for(auto &tuple: m_vEffects)
-	//{
-	//	std::get<1>(tuple)->release();
-	//}
-	//CC_SAFE_RELEASE(m_pEffect);
+	ZY_EZ_DE_LOG;
 }
 
 ZYSprite* ZYSprite::create(const char* pFileName, bool bIsScale)
@@ -59,19 +55,6 @@ ZYSprite* ZYSprite::create(cocos2d::Texture2D *p)
 	CC_SAFE_DELETE(p);
 	return nullptr;
 }
-
-//void ZYSprite::updateUniforms(backend::ProgramState *programState)
-//{
-//	float time = CCDR_GI->getTotalFrames() * CCDR_GI->getAnimationInterval();
-//
-//	Vec4 uTime(time / 10.0f, time, time * 2.0f, time * 4.0f);
-//	Vec4 sinTime(time / 8.0f, time / 4.0f, time / 2.0f, sinf(time));
-//	Vec4 cosTime(time / 8.0f, time / 4.0f, time / 2.0f, cosf(time));
-//
-//	SET_UNIFORM(programState, "u_Time", uTime);
-//	SET_UNIFORM(programState, "u_SinTime", sinTime);
-//	SET_UNIFORM(programState, "u_CosTime", cosTime);
-//}
 
 //// Public
 
@@ -265,57 +248,6 @@ void ZYSprite::loadPositionMemory()
 {
 	auto clone = m_cMemoryPosition;
 	this->setPosition(clone);
-}
-
-cocos2d::Point ZYSprite::getContentPositionWithNewAnchorPoint(cocos2d::Point cNewAnchorPoint)
-{
-	auto DPoint = this->getDifferentAnchorPoint(cNewAnchorPoint);
-
-	auto xx = this->getPositionX() + (this->getContentSize().width * DPoint.x);
-	auto yy = this->getPositionY() + (this->getContentSize().height * DPoint.y);
-	return cocos2d::Point(xx, yy);
-}
-
-cocos2d::Point ZYSprite::getDifferentAnchorPoint(cocos2d::Point cNewAnchorPoint)
-{
-	if(this->getAnchorPoint() == cNewAnchorPoint) return cocos2d::Point::ZERO;
-		cocos2d::Point rep(cNewAnchorPoint.x - this->getAnchorPoint().x, cNewAnchorPoint.y - this->getAnchorPoint().y);
-	return rep;
-}
-
-cocos2d::Point ZYSprite::getContentPositionMiddleTop()
-{
-	return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_MIDDLE_TOP);
-}
-
-cocos2d::Point ZYSprite::getContentPositionMiddleBottom()
-{
-	return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_MIDDLE_BOTTOM);
-}
-
-cocos2d::Point ZYSprite::getContentPositionTopLeft()
-{
-	return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_TOP_LEFT);
-}
-
-cocos2d::Point ZYSprite::getContentPositionTopRight()
-{
-	return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_TOP_RIGHT);
-}
-
-cocos2d::Point ZYSprite::getContentPositionBottomRight()
-{
-	return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_BOTTOM_RIGHT);
-}
-
-cocos2d::Point ZYSprite::getContentPositionBottomLeft()
-{
-	return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_BOTTOM_LEFT);
-}
-
-cocos2d::Point ZYSprite::getContentPositionMiddle()
-{
-	return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_MIDDLE);
 }
 
 ZYSprite* ZYSprite::clone()

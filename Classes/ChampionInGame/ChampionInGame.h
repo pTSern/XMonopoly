@@ -35,6 +35,7 @@ public:
         MOVED,
         ATTACKED
     };
+
 public:
     static ChampionInGame* createWithChampion(Champion *pChamp, bool bIsClone = true, bool bIsDeleteCloner = false);
     static ChampionInGame* createWithProperties(Champion *pChamp, ChampionUI *pUI, Dice* pDice, std::vector<SkillInGame*> vSkillDeck);
@@ -43,6 +44,7 @@ public:
     virtual void update(float dt);
     virtual void setPosition(Coordinate& coord);
     virtual void setPosition(Arena* pArena);
+    virtual void setPosition(cocos2d::Vec2 pos);
     virtual Point getPosition();
     virtual void config();
 
@@ -66,6 +68,7 @@ public:
     void updateAfterAttacking();
     void beginTurnUpdate();
     void endTurnUpdate();
+    bool isContainPoint();
 
 
 //    void move(Coordinate &coord, MoveType eMoveType);
@@ -82,6 +85,9 @@ public:
 
     void applyEffectToSelf(std::vector<GameEffect*> vEffects);
     void attack(std::vector<ChampionInGame*> vChampions);
+    bool onTouch(cocos2d::Touch *touch, cocos2d::Event *event);
+    bool endTouch(cocos2d::Touch *touch, cocos2d::Event *event);
+    void run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
 
 public:
     void preDicePhase();
@@ -108,6 +114,7 @@ protected:
     ChampionAction m_eAction;
     HeadDir m_eHead;
     Arena *m_pLandingArena;
+    ui::Button *m_pSelfButton;
 
     /// Auto declare, can be nullptr
     ChampionInGame* m_pParent;

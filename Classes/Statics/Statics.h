@@ -62,7 +62,7 @@ END_CREATE_CLASS
 
 
 //
-BEGIN_CREATE_REFCLASS(ChampionStatics, cocos2d::Ref)
+BEGIN_CREATE_CLASS(ChampionStatics)
 
 public:
     ChampionStatics* clone();
@@ -73,7 +73,7 @@ public:
 protected:
     int m_nId;
 
-END_CREATE_REFCLASS
+END_CREATE_CLASS
 
 
 
