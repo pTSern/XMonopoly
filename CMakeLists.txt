@@ -68,6 +68,7 @@ list(APPEND GAME_SOURCE
         Classes/ZyUwU/2d/ZYEffect.cpp
         Classes/ZyUwU/2d/ZYLabel.cpp
         Classes/ZyUwU/2d/ZYShaderHelper.cpp
+        Classes/ZyUwU/2d/ZYSupport2D.cpp
         Classes/ZyUwU/math/ZYFraction.cpp
         Classes/ZyUwU/math/SmartAlgorithm.cpp
         Classes/ZyUwU/gacha/ZYGacha.cpp
@@ -114,6 +115,13 @@ list(APPEND GAME_SOURCE
         Classes/Skill/SkillCard/SkillCard.cpp
         Classes/Skill/SkillStatics/SkillStatics.cpp
         Classes/Skill/SkillInGame/SkillInGame.cpp
+        Classes/Skill/SkillManager/SkillManager.cpp
+        Classes/Skill/SkillType/SkillType.cpp
+        Classes/Skill/TargetType/TargetType.cpp
+        Classes/Skill/TargetType/NoTarget/NoTarget.cpp
+        Classes/Skill/TargetType/NoTarget/Toggle/Toggle.cpp
+        Classes/Skill/TargetType/NoTarget/NormalCast/NormalCast.cpp
+        Classes/Skill/TargetType/Factory/TargetTypeFactory.cpp
 
         Classes/GameEffect/Buff/Buff.cpp
         Classes/GameEffect/Debuff/Debuff.cpp
@@ -154,6 +162,7 @@ list(APPEND GAME_HEADER
         Classes/ZyUwU/2d/ZYShaderHelper.h
         Classes/ZyUwU/2d/ZYEffect.h
         Classes/ZyUwU/2d/ZYLabel.h
+        Classes/ZyUwU/2d/ZYSupport2D.h
         Classes/ZyUwU/math/ZYFraction.h
         Classes/ZyUwU/math/SmartAlgorithm.h
         Classes/ZyUwU/gacha/ZYGacha.h
@@ -205,6 +214,11 @@ list(APPEND GAME_HEADER
         Classes/Skill/SkillCard/SkillCard.h
         Classes/Skill/SkillStatics/SkillStatics.h
         Classes/Skill/SkillInGame/SkillInGame.h
+        Classes/Skill/SkillManager/SkillManager.h
+        Classes/Skill/TargetType/NoTarget/NoTarget.h
+        Classes/Skill/TargetType/NoTarget/Toggle/Toggle.h
+        Classes/Skill/TargetType/NoTarget/NormalCast/NormalCast.h
+        Classes/Skill/TargetType/Factory/TargetTypeFactory.h
 
         Classes/GameEffect/Buff/Buff.h
         Classes/GameEffect/Debuff/Debuff.h
