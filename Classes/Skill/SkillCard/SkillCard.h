@@ -2,24 +2,11 @@
 
 #include "../../ZyUwU/ZyUwU.h"
 #include "../../GameObject/GameObject.h"
-#include "../Skill.h"
 #include "../../Support/GameConstant.h"
 #include "../../Support/Macros.h"
 #include "ui/CocosGUI.h"
 
-BEGIN_CREATE_REFCLASS(SkillCardLabelProperties, cocos2d::Ref)
-
-public:
-
-protected:
-    std::string m_sText;
-    int m_nFontSize;
-    std::string m_sDirection;
-
-END_CREATE_REFCLASS
-
-
-
+class SkillInGame;
 BEGIN_CREATE_REFCLASS(SkillCard, GameObject)
 
 #define SET_SPRITE_HELPER(__FUNC_NAME__, __SET_VAR__)                   \
@@ -65,7 +52,7 @@ __ACTION__(p_pManaCostSprite, ##__VA_ARGS__);               \
 __ACTION__(p_pSkillPointCostSprite, ##__VA_ARGS__);         \
 __ACTION__(p_pDescriptionSprite, ##__VA_ARGS__);            \
 __ACTION__(p_pCoolDownSprite, ##__VA_ARGS__);               \
-__ACTION__(p_pButton, ##__VA_ARGS__);                        \
+__ACTION__(p_pButton, ##__VA_ARGS__);                       \
 
 
 #define PRESET_FULL_LABEL(__ACTION__, ...) \
@@ -86,6 +73,7 @@ public:
                                            std::string sCoolDownSprite, std::string sNameLabel, std::string sManaCostLabel,
                                            std::string sSKillPointCostLabel, std::string sCoolDownLabel, std::string sDescriptionLabel);
     static SkillCard* createDefault();
+
 public:
     virtual void setOpacity(uint8_t opacity);
     virtual void setPosition(const cocos2d::Point &position);
@@ -108,6 +96,8 @@ public:
     SET_LABEL_HELPER(setSkillPointCostLabel, p_pSkillPointCostLabel);
     SET_LABEL_HELPER(setCoolDownLabel, p_pCoolDownLabel);
 
+    CREATE_SET_GET_FUNC(setOwner, getOwner, SkillInGame*, p_pOwner);
+
     void setDescriptionLabel(std::string sDescription);
 
     void config();
@@ -122,6 +112,11 @@ public:
     bool onTouch(cocos2d::Touch *touch, cocos2d::Event *event);
     bool endTouch(cocos2d::Touch *touch, cocos2d::Event *event);
     void run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
+
+    void disable();
+    void enable();
+    void unSelectable();
+    void selectable();
 
 protected:
     bool initWithProperties(std::string sIconSprite, std::string sShapeSprite, std::string sNameSprite,
@@ -140,7 +135,9 @@ private:
         *p_pSkillPointCostLabel, *p_pCoolDownLabel;
 
     ui::Button *p_pButton;
-    bool p_bSelected;
+    bool p_bSelected, p_bSelectable;
+
+    SkillInGame* p_pOwner;
 
 private:
     int const pc_nNameSize = 24, pc_nDescriptionSize = 12, pc_nManaCostSize = 14;

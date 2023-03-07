@@ -5,7 +5,11 @@
 
 Skill::Skill() :
 m_pSkillStatics(nullptr),
-m_pSkillCard(nullptr)
+m_pSkillCard(nullptr),
+//m_pTargets(nullptr),
+m_pCondition(nullptr),
+m_eType(SkillType::ACTIVE),
+m_eTarget(TargetType::NONE)
 {
 
 }
@@ -16,33 +20,26 @@ Skill::~Skill()
     CC_SAFE_RELEASE(m_pSkillCard);
 }
 
-//// Public
+//// Static
 
-//Static
-
-Skill* Skill::createWithProperties(XProperties *pProperties, SkillStatics *pStatics, bool bIsClone, bool bIsClean)
+Skill* Skill::createWithProperties(XProperties *pProperties, SkillStatics *pStatics, SkillCard *card, bool bIsClone, bool bIsClean)
 {
     auto ret = Skill::create();
-    if(ret)
+    if(ret && pProperties && pStatics && card)
     {
         ret->setProperties(pProperties, bIsClone, bIsClean);
         ret->setStatics(pStatics, bIsClone, bIsClean);
-
+        ret->setSkillCard(card);
         return ret;
     }
-    CC_SAFE_DELETE(pProperties);
-    CC_SAFE_DELETE(pStatics);
     CC_SAFE_DELETE(ret);
     return nullptr;
 }
 
-//Virtual
+//// Virtual
 
 bool Skill::init()
 {
-    m_pSkillStatics = SkillStatics::create();
-    m_pSkillCard = SkillCard::create();
-
     return true;
 }
 

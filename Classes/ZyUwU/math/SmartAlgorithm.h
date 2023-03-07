@@ -21,7 +21,7 @@ public:
     static int findLCM(int nNum,...)  CC_REQUIRES_NULL_TERMINATION;
     static int findLCMWithVector(std::vector<int> vList);
     static bool checkPointOnLine(Point A, Point B, Point M);
-    static float triangleArena(Point A, Point B, Point C);
+    static double triangleArena(Point A, Point B, Point C);
     static bool isPointInside4Point(Point A, Point B, Point C, Point D, Point M);
     static bool isPointInsideMultiPoints(std::vector<Point>& vList, Point M);
 public:

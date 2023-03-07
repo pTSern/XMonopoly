@@ -3,6 +3,7 @@
 #include "../ZyUwU/ZyUwU.h"
 #include "Support/GameConstant.h"
 #include "User/Helper.h"
+#include "Support/Coordinate.h"
 //#include "Arena/Factory/ArenaFactory.h"
 
 USING_NS_ALL;
@@ -47,7 +48,8 @@ public:
 	CREATE_GET_FUNC(getTrueObjectTileSize, Size, p_tObjectTile);
 	CREATE_GET_FUNC(getTrueWorldSize, Size, p_tWorld);
 	CREATE_GET_FUNC(getArenas, std::vector<Arena*>, p_vArenas);
-	CREATE_SET_FUNC(setClientPlayer, Player*, p_pClientPlayer);
+	CREATE_SET_GET_FUNC(setClientPlayer, getClientPlayer, Player*, p_pClientPlayer);
+	Arena* getArenaByCoord(Coordinate coord);
 
 	/**
 	* Check if input position is contact to a collision object

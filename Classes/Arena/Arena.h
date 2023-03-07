@@ -7,7 +7,6 @@
 #include "GameEffect/GameEffect.h"
 #include "Support/GameConstant.h"
 #include "Map/Map.h"
-#include "Factory/ArenaFactory.h"
 #include "Player/Player.h"
 
 USING_NS_ALL;
@@ -15,12 +14,22 @@ USING_NS_ALL;
 BEGIN_CREATE_REFCLASS(Arena, GameObject)
 
 public:
+    struct SortArena
+    {
+        inline bool operator() (Arena* l, Arena* r)
+        {
+            return l->getCoordinate().g_nIndex < r->getCoordinate().g_nIndex;
+        }
+    };
+public:
     void setCoordinate(Coordinate &coord);
     void autoSortChampion();
     void autoRotate();
     void autoSetPosition();
 
     Point getMoveAblePosition();
+
+    CREATE_GET_FUNC(getCoordinate, Coordinate, m_Coord);
     CREATE_GET_FUNC(getChampionInArena, std::vector<ChampionInGame*>, m_vChampions);
     CREATE_GET_FUNC(getEffectLayer, std::vector<GameEffect*>, m_vEffectLayer);
     CREATE_GET_FUNC(getNumberChampionInArena, int, m_vChampions.size());
@@ -29,9 +38,10 @@ public:
     CREATE_GET_FUNC(getRightPoint, Point, m_Right);
     CREATE_GET_FUNC(getTopPoint, Point, m_Top);
     CREATE_GET_FUNC(getBottomPoint, Point, m_Bottom);
-    CREATE_GET_FUNC(getRectColor, Color4F, m_cColor);
+    CREATE_SET_GET_FUNC(setRectColor, getRectColor, Color4F, m_cColor);
 
     void addChampion(ChampionInGame *pChamp);
+    void removeChampion(ChampionInGame *pChamp);
 
     void addIcon(ZYSprite *pSprite);
     void addIcon(std::string sSprite);
@@ -47,12 +57,14 @@ public:
 
     bool isContainPoint(Point point);
 
+    Point getMiddlePoint();
+
 public:
     virtual void update(float dt);
     virtual void onLand(ChampionInGame *pChamp);
     virtual ~Arena();
     virtual void config();
-    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord);
+    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize, Point left);
 
 protected:
     Point m_Left, m_Top, m_Right, m_Bottom;

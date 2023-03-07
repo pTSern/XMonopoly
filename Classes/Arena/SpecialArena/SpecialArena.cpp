@@ -1,7 +1,5 @@
 #include "SpecialArena.h"
 
-//// Factory Registry
-//static ArenaTypeRegister<SpecialArena> s_register("special");
 
 //// Constructor
 
@@ -20,8 +18,6 @@ SpecialArena::SpecialArena()
 
 bool SpecialArena::init()
 {
-    this->m_bIsBuyAble = true;
-
     return true;
 }
 
@@ -38,7 +34,16 @@ std::string SpecialArena::toString(int nTab)
 
 void SpecialArena::update(float dt)
 {
+    Arena::update(dt);
+}
 
+void SpecialArena::config()
+{
+    Arena::config();
+
+    m_bIsBuyAble = false;
+    this->m_pTitle->setPosition(m_Left.getMidpoint(m_Right));
+    this->scheduleUpdate();
 }
 
 void SpecialArena::onLand(ChampionInGame* pChamp)
@@ -46,7 +51,7 @@ void SpecialArena::onLand(ChampionInGame* pChamp)
 
 }
 
-void SpecialArena::config()
+void SpecialArena::onPass(ChampionInGame* pChamp)
 {
 
 }

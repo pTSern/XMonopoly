@@ -41,6 +41,7 @@ void GameObject::log()
 bool GameObject::init()
 {
 	setName("GAME-OBJECT");
+	if(!Node::init()) return false;
 	return true;
 }
 

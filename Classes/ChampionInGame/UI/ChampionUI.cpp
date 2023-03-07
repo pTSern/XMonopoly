@@ -72,7 +72,7 @@ ChampionUI* ChampionUI::createDefault()
 
 bool ChampionUI::init()
 {
-    //this->scheduleUpdate();
+    this->scheduleUpdate();
     return true;
 }
 
@@ -97,27 +97,12 @@ void ChampionUI::setPosition(Point position)
 
 void ChampionUI::update(float dt)
 {
-    if(!m_pOwner)
-    {
-        CCLOG("LMAO");
-        return;
-    }
-    else
-    {
-        CCLOG("BRUH");
-        if(m_pOwner->getStatics()) CCLOG("YES");
-        else CCLOG("NULL");
-        if(!m_pOwner->getStatics()->getStatics()->getMaxHp() <= 0) CCLOG("NULL HP");
-
-        return;
-    }
-    auto size = m_pManaBackground->getContentSize().height + m_pHpBackground->getContentSize().height;
-    Size fit(size, size);
+    //auto size = m_pManaBackground->getContentSize().height + m_pHpBackground->getContentSize().height;
+    //Size fit(size, size);
     //ZYSP_FSIS(m_pSkillPoint, ZY_SUPPORT_GI->shorterDecimal(m_pOwner->getStatics()->getCurrentSp(), 1), fit, 6);
-    m_pSkillPoint->setString(ZY_SUPPORT_GI->shorterDecimal(m_pOwner->getStatics()->getCurrentSp(), 1));
+    //m_pSkillPoint->setString(ZY_SUPPORT_GI->shorterDecimal(m_pOwner->getStatics()->getCurrentSp(), 1));
     m_pHpBar->setPercent(m_pOwner->getStatics()->getCurrentHpInPercent() * 100);
     m_pManaBar->setPercent(m_pOwner->getStatics()->getCurrentMnInPercent() * 100);
-        //CCLOG("VUA");
 }
 
 void ChampionUI::updateAfterMoving()

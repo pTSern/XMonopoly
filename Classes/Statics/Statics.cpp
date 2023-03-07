@@ -49,14 +49,14 @@ Statics* Statics::clone(Statics *pClone)
 }
 
 Statics* Statics::createWithProperties(float fAttackDmg, float fMagicDmg, float fArmor,
-                       int nLife, float fMagicRisis, PercentStatics cLifeSteal,
+                       int nLife, float speed,float fMagicRisis, PercentStatics cLifeSteal,
                        PercentStatics cMagicLifeSteal, RegenStatics cHP, RegenStatics cMana,
                        RegenStatics cSkillPoint)
 {
     auto pElement = Statics::create();
     if(pElement)
     {
-        pElement->setProperties(fAttackDmg, fMagicDmg, fArmor, nLife, fMagicRisis, cLifeSteal, cMagicLifeSteal, cHP, cMana, cSkillPoint);
+        pElement->setProperties(fAttackDmg, fMagicDmg, fArmor, nLife, speed, fMagicRisis, cLifeSteal, cMagicLifeSteal, cHP, cMana, cSkillPoint);
         return pElement;
     }
 
@@ -107,7 +107,7 @@ std::string Statics::toString(int nTab)
 }
 
 void Statics::setProperties(float fAttackDmg, float fMagicDmg, float fArmor,
-                   int nLife, float fMagicRisis, PercentStatics cLifeSteal,
+                   int nLife, float speed, float fMagicRisis, PercentStatics cLifeSteal,
                    PercentStatics cMagicLifeSteal, RegenStatics cHP, RegenStatics cMana,
                    RegenStatics cSkillPoint)
 {
@@ -117,6 +117,7 @@ void Statics::setProperties(float fAttackDmg, float fMagicDmg, float fArmor,
     this->m_fArmor = fArmor;
     this->m_nLife = nLife;
     this->m_fMagicResis = fMagicRisis;
+    this->m_fSpeed = speed;
 
     this->m_cMagicLifeSteal = cMagicLifeSteal;
     this->m_cLifeSteal = cLifeSteal;

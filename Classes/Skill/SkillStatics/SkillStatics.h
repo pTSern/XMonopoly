@@ -26,6 +26,7 @@ public:
     CREATE_GET_FUNC(getMagicPiercing, float, m_cMagicPie.getAmount());
 
     CREATE_SET_GET_FUNC(setCoolDown, getCoolDown, int, m_nCoolDown);
+    CREATE_SET_GET_FUNC(setCurrentCooldown, getCurrentCooldown, int, m_nCurrentCoolDown);
     CREATE_SET_GET_FUNC(setManaCost, getManaCost, float, m_fMnCost);
     CREATE_SET_GET_FUNC(setHpCost, getHpCost, float, m_fHpCost);
     CREATE_SET_GET_FUNC(setSpCost, getSpCost, float, m_fSpCost);
@@ -53,16 +54,19 @@ public:
         this->m_cMagicCrit.setDmgMultiple(fAmount);
     }
     inline void setMagicCritRate(float fAmount) { this->m_cMagicCrit.setRate(fAmount); }
+    bool isReady();
+    void castSkill();
 
 protected:
     SkillStatics();
     virtual bool init();
+    void autoCoolDown();
 
 protected:
     float m_fPhysicDmg, m_fMagicDmg;
     float m_fPureDmg;
     PercentStatics m_cPhysicPie, m_cMagicPie;
-    int m_nCoolDown;
+    int m_nCoolDown, m_nCurrentCoolDown;
     float m_fMnCost, m_fHpCost, m_fSpCost;
     CritStatics m_cPhysicCrit, m_cMagicCrit;
     std::string m_sDescription;

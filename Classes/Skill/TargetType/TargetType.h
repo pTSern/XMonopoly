@@ -8,8 +8,6 @@ USING_NS_ALL;
 class TargetType
 {
 public:
-
-public:
     TargetType();
 
 public:

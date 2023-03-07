@@ -8,7 +8,12 @@ m_nDiceNum(0)
 {
 }
 
-// Static
+Dice::~Dice()
+{
+    ZY_EZ_DE_LOG;
+}
+
+//// Static
 
 Dice* Dice::createWithProperties(const std::string& sPath)
 {
@@ -17,13 +22,15 @@ Dice* Dice::createWithProperties(const std::string& sPath)
     {
         p->autorelease();
         p->loadElement(sPath);
+        p->config();
+        p->enableDice();
         return p;
     }
     CC_SAFE_RELEASE(p);
     return nullptr;
 }
 
-// Public
+//// Public
 
 bool Dice::initWithProperties(const std::string& sPath)
 {
@@ -41,6 +48,19 @@ void Dice::loadElement(const std::string& sPath)
 
     diceSize = Size(m_pDice->getContentSize().width/6, m_pDice->getContentSize().height);
     m_centerRect = Rect(Point(0,0), diceSize);
+
+    m_pButton = ui::Button::create("dice/button/normal/default.png", "dice/button/clicked/default.png");
+    m_pButton->setPosition(Point(ZYDR_GVS.width/6*5, ZYDR_GVS.height/6));
+
+    auto ls = EventListenerTouchOneByOne::create();
+    ls->onTouchBegan = CC_CALLBACK_2(Dice::onTouch, this);
+    ls->onTouchEnded = CC_CALLBACK_2(Dice::endTouch, this);
+    m_pButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, m_pButton);
+    m_pButton->addTouchEventListener(CC_CALLBACK_2(Dice::run, this));
+
+    this->rollDice();
+
+    this->addChild(m_pButton);
     this->addChild(m_pDice);
 }
 
@@ -48,11 +68,11 @@ void Dice::loadElement(const std::string& sPath)
 
 void Dice::config()
 {
+    //this->scheduleUpdate();
 }
 
 bool Dice::init()
 {
-    //this->scheduleUpdate();
     return true;
 }
 
@@ -75,17 +95,45 @@ int Dice::rollDice()
 
     m_centerRect.origin.x = diceSize.width * (dice - 1);
     m_pDice->setTextureRect(m_centerRect);
-    this->enableDice();
-    CCLOG("%s", std::to_string(dice).c_str());
+    //CCLOG("DICE NUM: %d", dice);
+
+    //// Disable Roll button
+    this->m_pButton->setVisible(false);
+
     return m_vDiceMemory.back();
 }
 
 void Dice::enableDice()
 {
-    m_pDice->setVisible(true);
+    m_pButton->setVisible(true);
 }
 
 void Dice::disableDice()
 {
+    //m_pDice->setVisible(false);
+    m_pButton->setVisible(false);
+}
+
+void Dice::enable()
+{
+    m_pDice->setVisible(true);
+}
+void Dice::disable()
+{
     m_pDice->setVisible(false);
+}
+
+bool Dice::onTouch(cocos2d::Touch *touch, cocos2d::Event *event)
+{
+    return true;
+}
+
+bool Dice::endTouch(cocos2d::Touch *touch, cocos2d::Event *event)
+{
+    return true;
+}
+
+void Dice::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type)
+{
+    if(type == ui::Widget::TouchEventType::ENDED) this->rollDice();
 }

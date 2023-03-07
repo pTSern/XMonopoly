@@ -3,6 +3,8 @@
 #include "Arena/Property/Property.h"
 #include "Arena/SpecialArena/SpecialArena.h"
 
+#include "GameMaster/GameMaster.h"
+
 MapManager* MapManager::sp_pInstance = nullptr;
 //cocos2d::TMXTiledMap* MapManager::p_pTileMap = nullptr;
 
@@ -200,6 +202,9 @@ void MapManager::generateArenas()
 				else if(dict.at("type").asString() == obj_special ) this->generateSpecialArenas(dict);
 			}
 		}
+
+		//// Sort Arena
+		std::sort(p_vArenas.begin(), p_vArenas.end(), Arena::SortArena());
 	}
 }
 
@@ -207,7 +212,7 @@ void MapManager::generateArenas()
 void MapManager::generatePropertyArenas(ValueMap obj)
 {
 	std::string name = obj.at("name").asString();
-	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt(), obj.at("flip").asBool());
+	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
 	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
 	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
 	float price = obj.at("price").asFloat();
@@ -224,6 +229,17 @@ void MapManager::generatePropertyArenas(ValueMap obj)
 
 void MapManager::generateSpecialArenas(ValueMap obj)
 {
+	std::string name = obj.at("name").asString();
+	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
+	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
+	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
+
+	auto sa = SpecialArenaFactory::getInstance()->create(name, name, coord, size, point);
+	if(sa)
+	{
+		this->addChild(sa, 2);
+		p_vArenas.push_back(sa);
+	}
 }
 bool MapManager::onTouch(Touch *touch, Event *event)
 {
@@ -234,7 +250,6 @@ bool MapManager::endTouch(Touch *touch, Event *event)
 {
 	auto anchorPoint = this->getTileMap()->getPosition();
 	auto touchPoint = touch->getLocation();
-	if(touchPoint.y < (anchorPoint.y - this->getMapPixelSize().height/2)) return true;
 	for(int i = 0; i < p_vArenas.size(); i++)
 	{
 		if(SmartAlgorithm::isPointInside4Point(p_vArenas[i]->getLeftPoint(),
@@ -245,9 +260,13 @@ bool MapManager::endTouch(Touch *touch, Event *event)
 		{
 			p_pClientPlayer->setSelectObject(p_vArenas[i]);
 			p_pClientPlayer->setSelectType(Player::SelectType::ARENA);
-			break;
+			return true;
 		}
 	}
+
+	p_pClientPlayer->setSelectObject(nullptr);
+	p_pClientPlayer->setSelectType(Player::SelectType::NONE);
+
 	//if(touchPoint.y < anchorPoint.y)
 	//{
 	//	if(touchPoint.x <= anchorPoint.x)
@@ -269,4 +288,10 @@ bool MapManager::endTouch(Touch *touch, Event *event)
 	//}
 
 	return true;
+}
+
+Arena* MapManager::getArenaByCoord(Coordinate coord)
+{
+	p_vArenas[coord.g_nIndex]->log();
+	return p_vArenas[coord.g_nIndex];
 }

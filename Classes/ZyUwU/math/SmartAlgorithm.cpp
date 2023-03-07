@@ -49,15 +49,15 @@ bool SmartAlgorithm::checkPointOnLine(Point A, Point B, Point M)
     return M.y == (M.x * a + b);
 }
 
-float SmartAlgorithm::triangleArena(Point A, Point B, Point C)
+double SmartAlgorithm::triangleArena(Point A, Point B, Point C)
 {
-    return abs((A.x * (B.y - C.y) + B.x * (C.y - A.y) + C.x * (A.y - B.y)) / 2.0);
+    return 0.5*abs((B.x - A.x)*(C.y - A.y) - (C.x - A.x)*(B.y - A.y));
 }
 
 bool SmartAlgorithm::isPointInside4Point(Point A, Point B, Point C, Point D, Point M)
 {
-    float totalArena = SmartAlgorithm::triangleArena(A, B, C) + SmartAlgorithm::triangleArena(A, C, D);
-    float pointArena = SmartAlgorithm::triangleArena(A, B, M) + SmartAlgorithm::triangleArena(B, C, M)
+    double totalArena = SmartAlgorithm::triangleArena(A, B, C) + SmartAlgorithm::triangleArena(A, C, D);
+    double pointArena = SmartAlgorithm::triangleArena(A, B, M) + SmartAlgorithm::triangleArena(B, C, M)
             + SmartAlgorithm::triangleArena(C, D, M) + SmartAlgorithm::triangleArena(D, A, M);
     return (totalArena == pointArena);
 }

@@ -16,8 +16,10 @@ public:
 
 public:
     CREATE_GET_FUNC(getName, std::string, p_sName);
-
     CREATE_SET_GET_FUNC(setAmount, getAmount, float, p_fAmount);
+    void addMoney(float fAmount);
+    void reduceMoney(float fAmount);
+    bool payable(float fAmount);
 
 private:
     float p_fAmount;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../ZyUwU/ZyUwU.h"
-#include "cocos2d.h"
+#include "ui/CocosGUI.h"
 #include "Map/Map.h"
 #include "GameObject/GameObject.h"
 
@@ -15,17 +15,27 @@ public:
 public:
     virtual void config();
     virtual void update(float dt) {};
+    virtual ~Dice();
 
 public:
     CREATE_GET_FUNC(getLastestDiceNum, int, m_vDiceMemory.back());
+    CREATE_GET_FUNC(isRolled, bool, !this->m_pButton->isVisible());
+
     int rollDice();
     bool initWithProperties(const std::string& sPath );
     void loadElement(const std::string& path);
     void disableDice();
     void enableDice();
+    void disable();
+    void enable();
+
+    bool onTouch(cocos2d::Touch *touch, cocos2d::Event *event);
+    bool endTouch(cocos2d::Touch *touch, cocos2d::Event *event);
+    void run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
 
 protected:
     ZYSprite* m_pDice;
+    ui::Button* m_pButton;
     int m_nDiceNum;
     Rect m_centerRect;
     std::vector<int> m_vDiceMemory;

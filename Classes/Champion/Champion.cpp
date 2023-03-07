@@ -63,7 +63,7 @@ void Champion::setIconPosition(Point pos)
 
 bool Champion::init()
 {
-
+    if(!GameObject::init()) return false;
     //this->addChild(m_pIcon, m_pProperties->getLocalZOrder());
     return true;
 }

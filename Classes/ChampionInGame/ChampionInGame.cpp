@@ -2,21 +2,24 @@
 #include "Arena/Arena.h"
 #include "Dice/Dice.h"
 #include "ChampionInGame/UI/ChampionUI.h"
-#include "Skill/SkillInGame/SkillInGame.h"
+#include "Skill/SkillManager/SkillManager.h"
 #include "Player/Player.h"
+#include "GameMaster/GameMaster.h"
 
 ///Constructor
 
 ChampionInGame::ChampionInGame() :
 m_cCoordinate(Dir::NE, 0),
 m_pIngameStatics(nullptr),
-m_pLandingArena(nullptr),
+m_pLandingArena(nullptr), m_pMemArena(nullptr),
 m_pParent(nullptr),
 m_eHead(HeadDir::FRONT),
 m_pOwner(nullptr),
 m_bIsRepresentPlayer(false),
 m_pChampionUI(nullptr),
-m_pDice(nullptr)
+m_pDice(nullptr),
+m_eStatus(ChampionStatus::NORMAL),
+m_eAction(ChampionAction::IDLE)
 {
 
 }
@@ -63,7 +66,7 @@ ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClo
     return nullptr;
 }
 
-ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp, ChampionUI *pUI, Dice* pDice, std::vector<SkillInGame*> vSkillDeck)
+ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp, ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
 {
     auto ret = createWithChampion(pChamp, false);
     if(ret && ret->initWithProperties(pUI, pDice, vSkillDeck))
@@ -79,12 +82,12 @@ ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp, ChampionU
 
 void ChampionInGame::config()
 {
-    m_pChampionUI->setPosition(Point(this->getIcon()->getPosition().x, this->getIcon()->getContentPositionMiddleTop().y + m_pChampionUI->getContentSize().height));
+      m_pChampionUI->setPosition(Point(this->getIcon()->getPosition().x, this->getIcon()->getContentPositionMiddleTop().y + m_pChampionUI->getContentSize().height));
+      m_pSelfButton->setPosition(m_pIcon->getPosition());
 }
 
 bool ChampionInGame::init()
 {
-    if(!Champion::init()) return false;
     return true;
 }
 
@@ -107,33 +110,44 @@ std::string ChampionInGame::toString(int nTab)
 
 void ChampionInGame::setPosition(Coordinate &coord)
 {
-
+    this->setPosition(MAP_MNG_GI->getArenaByCoord(coord));
 }
 
 void ChampionInGame::setPosition(Arena *pArena)
 {
+    auto pos = pArena->getMoveAblePosition();
+    this->setPosition(Point(pos.x, pos.y + m_pIcon->getContentSize().height/2));
+    //this->m_pMemArena = m_pLandingArena;
+    //this->m_pLandingArena = pArena;
+    //this->endLand();
+    //this->onLand(false);
 }
 
 void ChampionInGame::setPosition(cocos2d::Vec2 pos)
 {
     this->m_pIcon->setPosition(pos);
-    this->m_pSelfButton->setPosition(pos);
+    //this->m_pSelfButton->setPosition(pos);
 }
 
 void ChampionInGame::update(float dt)
 {
-    CCLOG("VUA");
+    this->config();
+    this->lifeCheck();
+    this->autoFlip();
 }
 
 //Public
 
-bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, std::vector<SkillInGame*> vSkillDeck)
+bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
 {
-    if(!pUI || !pDice) return false;
+    if(!pUI || !pDice || !vSkillDeck || !Champion::init()) return false;
 
     this->setDice(pDice);
     this->setUI(pUI);
-    //this->setSkillDeck(vSkillDeck);
+    this->setPreDiceSkillDeck(vSkillDeck);
+
+    this->addChild(m_pPreDiceSkillDeck);
+    m_pPreDiceSkillDeck->setOwner(this);
 
     this->addChild(m_pDice);
     m_pDice->disableDice();
@@ -144,13 +158,16 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, std::vecto
     this->addChild(m_pIcon);
 
     m_pSelfButton = ui::Button::create(m_pIcon->getResourceName());
+
+
     this->addChild(m_pSelfButton, 1);
 
     auto ls = EventListenerTouchOneByOne::create();
     ls->onTouchBegan = CC_CALLBACK_2(ChampionInGame::onTouch, this);
     ls->onTouchEnded = CC_CALLBACK_2(ChampionInGame::endTouch, this);
-    m_pSelfButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, m_pIcon);
+    m_pSelfButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, m_pSelfButton);
     m_pSelfButton->addTouchEventListener(CC_CALLBACK_2(ChampionInGame::run, this));
+    this->scheduleUpdate();
     return true;
 }
 
@@ -199,6 +216,35 @@ void ChampionInGame::onLand(Arena *arena)
 {
     this->attack(arena->getChampionInArena());
     this->applyEffectToSelf(arena->getEffectLayer());
+    arena->addChampion(this);
+    this->m_cCoordinate = arena->getCoordinate();
+    if(m_bIsRepresentPlayer) this->m_pOwner->onLandArena(arena);
+    this->m_pLandingArena = arena;
+}
+
+void ChampionInGame::onLand(bool attack)
+{
+    if(attack)
+    {
+        this->attack(m_pLandingArena->getChampionInArena());
+    }
+    this->applyEffectToSelf(m_pLandingArena->getEffectLayer());
+    m_pLandingArena->addChampion(this);
+    this->m_cCoordinate = m_pLandingArena->getCoordinate();
+    if(m_bIsRepresentPlayer) this->m_pOwner->onLandArena(m_pLandingArena);
+}
+
+void ChampionInGame::endLand()
+{
+    //if(m_pLandingArena)
+    //{
+    //    CCLOG("END LAND");
+    //    m_pLandingArena->removeChampion(this);
+    //}
+    if(m_pMemArena)
+    {
+        m_pMemArena->removeChampion(this);
+    }
 }
 
 void ChampionInGame::applyEffectToSelf(std::vector<GameEffect*> vEffects)
@@ -211,17 +257,7 @@ void ChampionInGame::attack(std::vector<ChampionInGame*> vChampions)
 
 }
 
-void ChampionInGame::preDicePhase()
-{
-
-}
-
-void ChampionInGame::doDice()
-{
-
-}
-
-void ChampionInGame::postDicePhase()
+void ChampionInGame::beAttacked(ChampionInGame* attacker)
 {
 
 }
@@ -230,6 +266,12 @@ void ChampionInGame::setOwner(Player *pOwner, bool bIsRepresent)
 {
     this->m_pOwner = pOwner;
     m_bIsRepresentPlayer = bIsRepresent;
+
+    ///// Set champion out line corlor
+    auto outline = ZYOutlineV2::create();
+    auto c = m_pOwner->getTheColor();
+    outline->setColor(Vec4(c.r, c.g, c.b, c.a));
+    m_pIcon->setEffect(outline);
 }
 
 bool ChampionInGame::onTouch(Touch* touch, Event* event)
@@ -250,4 +292,125 @@ void ChampionInGame::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventT
         m_pOwner->setSelectType(Player::SelectType::CHAMPION);
         m_pOwner->setSelectObject(this);
     }
+}
+
+void ChampionInGame::startTurn()
+{
+    this->enable();
+    this->m_bIsTurn = true;
+    this->m_bIsEndTurn = false;
+    this->m_pOwner->setControllingChamp(this);
+}
+
+void ChampionInGame::endTurn()
+{
+    CCLOG("CALL END TURN");
+    this->m_bIsTurn = false;
+    this->m_bIsEndTurn = true;
+    this->m_eAction = ChampionAction::IDLE;
+    this->endLand();
+    this->onLand();
+}
+
+void ChampionInGame::enableDice()
+{
+    this->m_pDice->enableDice();
+}
+
+void ChampionInGame::lifeCheck()
+{
+     if(m_pIngameStatics->getCurrentHp() <= 0 ) {
+         this->onDying();
+
+         if (m_pIngameStatics->getStatics()->getLife() < 0)
+         {
+             this->onDeath();
+         }
+         else this->respawn();
+     }
+}
+
+void ChampionInGame::onDeath()
+{
+    /// replace sprite to death image
+    this->m_pIcon->replaceSprite("champion/death.png");
+    this->m_eStatus = ChampionStatus::DEATH;
+}
+
+void ChampionInGame::onDying()
+{
+    /// Do dying thing
+    this->m_eStatus = ChampionStatus::DYING;
+}
+
+void ChampionInGame::respawn()
+{
+    this->m_pIngameStatics->getStatics()->setLife(m_pIngameStatics->getStatics()->getLife() - 1);
+
+    /// Respawn champion
+    this->m_pIngameStatics->fillStatics(100);
+    this->m_eStatus = ChampionStatus::NORMAL;
+
+    /// Respawn at Hospital
+}
+
+void ChampionInGame::autoFlip()
+{
+    this->m_pIcon->setFlippedX(m_cCoordinate.g_bIsFlip);
+    this->m_pSelfButton->setFlippedX(m_cCoordinate.g_bIsFlip);
+}
+
+void ChampionInGame::jumpTo(int num)
+{
+    this->m_cCoordinate.g_nIndex += num;
+    this->jumpTo(m_cCoordinate);
+}
+
+void ChampionInGame::jumpTo(Point pos)
+{
+    m_eAction = ChampionAction::MOVING;
+    auto target = Point(pos.x, pos.y + m_pIcon->getContentSize().height/2);
+    auto distance = this->getPosition().distance(target);
+    auto jump = JumpTo::create(distance/200, target, this->m_pIcon->getContentSize().height/2, 1);
+    auto callback = CallFunc::create(CC_CALLBACK_0(ChampionInGame::endTurn, this));
+    auto seq = Sequence::create(jump, callback, nullptr);
+    this->m_pIcon->runAction(seq);
+    //this->m_pSelfButton->runAction(seq->clone());
+}
+
+void ChampionInGame::jumpTo(Coordinate coord)
+{
+    this->jumpTo(MAP_MNG_GI->getArenaByCoord(coord));
+}
+
+void ChampionInGame::jumpTo(Arena *arena)
+{
+    this->jumpTo(arena->getMoveAblePosition());
+    this->m_pMemArena = m_pLandingArena;
+    this->m_pLandingArena = arena;
+}
+
+void ChampionInGame::castingSkill()
+{
+    this->m_eAction = ChampionInGame::ChampionAction::CASTING_SKILL;
+
+    /// Reduce Static
+}
+
+void ChampionInGame::enable()
+{
+    this->m_pOwner->enable();
+    this->m_pDice->enable();
+    this->m_pPreDiceSkillDeck->enable();
+}
+
+void ChampionInGame::disable()
+{
+    this->m_pDice->disable();
+    this->m_pPreDiceSkillDeck->disable();
+}
+
+bool ChampionInGame::isValidTurn()
+{
+    return !m_bIsEndTurn;
 }

@@ -6,7 +6,7 @@
 BEGIN_CREATE_CLASS(Statics)
 public:
     static Statics* createWithProperties(float fAttackDmg = 0, float fMagicDmg = 0, float fArmor = 0,
-                                         int nLife = 0, float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
+                                         int nLife = 0, float speed = 1, float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
                                          PercentStatics cMagicLifeSteal = 0, RegenStatics cHP = RegenStatics(10, 1), RegenStatics cMana = RegenStatics(10, 1),
                                          RegenStatics cSkillPoint = RegenStatics(10, 1));
 
@@ -14,7 +14,7 @@ public:
 public:
     Statics* clone();
     void setProperties(float fAttackDmg = 0, float fMagicDmg = 0, float fArmor = 0,
-                       int nLife = 0, float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
+                       int nLife = 0, float speed = 1,float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
                        PercentStatics cMagicLifeSteal = 0, RegenStatics cHP = 0, RegenStatics cMana = 0,
                        RegenStatics cSkillPoint = 0);
 public:
@@ -30,6 +30,7 @@ public:
     CREATE_SET_GET_FUNC(setMaxHp, getTheHp, RegenStatics, m_cHP);
     CREATE_SET_GET_FUNC(setMaxMana, getTheMana, RegenStatics, m_cMana);
     CREATE_SET_GET_FUNC(setMaxSkillPoint, getTheSkillPoint, RegenStatics, m_cSkillPoint);
+    CREATE_SET_GET_FUNC(setSpeed, getSpeed, float, m_fSpeed);
 
     CREATE_GET_FUNC(getMaxHp, float, m_cHP.getAmount());
     CREATE_GET_FUNC(getMaxMana, float, m_cMana.getAmount());
@@ -56,6 +57,7 @@ protected:
     float m_fArmor, m_fMagicResis;
     PercentStatics m_cLifeSteal, m_cMagicLifeSteal;
     RegenStatics m_cHP, m_cMana, m_cSkillPoint;
+    float m_fSpeed;
 
 END_CREATE_CLASS
 

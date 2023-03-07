@@ -16,7 +16,7 @@ SkillStatics::SkillStatics() :
 m_fPhysicDmg(0), m_fMagicDmg(0),
 m_fPureDmg(0),
 m_cPhysicPie(0), m_cMagicPie(0),
-m_nCoolDown(0),
+m_nCoolDown(0), m_nCurrentCoolDown(0),
 m_fMnCost(0), m_fHpCost(0), m_fSpCost(0),
 m_cPhysicCrit(0), m_cMagicCrit(0),
 m_sDescription("")
@@ -89,4 +89,24 @@ SkillStatics* SkillStatics::clone()
 
     CC_SAFE_DELETE(pElement);
     return nullptr;
+}
+
+void SkillStatics::autoCoolDown()
+{
+    if(m_nCurrentCoolDown < m_nCoolDown)
+    {
+        m_nCurrentCoolDown++;
+    }
+}
+
+void SkillStatics::castSkill()
+{
+    this->m_nCurrentCoolDown = 0;
+}
+
+bool SkillStatics::isReady()
+{
+    if(m_nCoolDown == 0) return true;
+    if(m_nCurrentCoolDown == m_nCoolDown) return true;
+    return false;
 }

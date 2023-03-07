@@ -27,6 +27,9 @@ NS_ZY_BEGIN
 #define ZY_SP_FIT_STRING_IN_SIZE(__LABEL__, __STRING__, __BORDER_SIZE__, __MIN_FONT_SIZE__) zy::ZYSupport::getInstance()->fitStringInSize(__LABEL__, __STRING__, __BORDER_SIZE__, __MIN_FONT_SIZE__)
 #define ZYSP_FSIS(__LABEL__, __STRING__, __BORDER_SIZE__, __MIN_FONT_SIZE__) ZY_SP_FIT_STRING_IN_SIZE(__LABEL__, __STRING__, __BORDER_SIZE__, __MIN_FONT_SIZE__)
 
+#define ZY_SP_SHORTER_DECIMAL(__NUM__, __LENGTH__) zy::ZYSupport::getInstance()->shorterDecimal(__NUM__, __LENGTH__)
+#define ZYSP_SD(__NUM__, __LENGTH__) ZY_SP_SHORTER_DECIMAL(__NUM__, __LENGTH__)
+
 #define PI 3.14159265359
 
 class ZYLabel;

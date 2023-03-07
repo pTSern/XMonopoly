@@ -8,14 +8,6 @@ USING_NS_ALL;
 class NoTarget : public TargetType
 {
 public:
-    enum class Type
-    {
-        NONE = 0,
-        ARENA,
-        CHAMPION
-    };
-
-public:
     NoTarget();
 
 public:
@@ -24,6 +16,5 @@ public:
     virtual std::string toString(int nTab = 2);
 
 protected:
-    Type m_eType;
 
 };

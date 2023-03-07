@@ -136,6 +136,6 @@ private:
     int p_nNumeratorMem, p_nDenominatorMem;
 };
 
-typedef Fraction Frac;
+using Frac = Fraction;
 
 NS_ZY_END

@@ -1,49 +1,12 @@
 #include "SkillCard.h"
+#include "../SkillInGame/SkillInGame.h"
+#include "../SkillManager/SkillManager.h"
 
 USING_NS_ALL
 
-//**// SKILL-CARD PROPERTIES CLASS
-
-//Constructor
-
-SkillCardLabelProperties::SkillCardLabelProperties() :
-m_sText(""),
-m_nFontSize(0),
-m_sDirection(globalFont)
-{
-
-}
-
-//Public
-
-bool SkillCardLabelProperties::init()
-{
-    return true;
-}
-
-void SkillCardLabelProperties::log()
-{
-
-}
-
-std::string SkillCardLabelProperties::toString(int nTab)
-{
-    std::string ts;
-    return ts;
-}
-
-////**//// SKILL-CARD CLASS
-
-//Constructor
+//// Constructor
 
 SkillCard::SkillCard() :
-//p_pIconSprite(ZYSprite::create("skill_card/icon/default.png")),
-//p_pShapeSprite(ZYSprite::create("skill_card/shape/default.png")),
-//p_pNameSprite(ZYSprite::create("skill_card/name/default.png")),
-//p_pManaCostSprite(ZYSprite::create("skill_card/mana/default.png")),
-//p_pSkillPointCostSprite(ZYSprite::create("skill_card/sp/default.png")),
-//p_pDescriptionSprite(ZYSprite::create("skill_card/description/default.png")),
-//p_pCoolDownSprite(ZYSprite::create("skill_card/cd/default.png")),
 p_pIconSprite(nullptr),
 p_pShapeSprite(nullptr),
 p_pNameSprite(nullptr),
@@ -56,7 +19,8 @@ p_pDescriptionLabel(nullptr),
 p_pManaCostLabel(nullptr),
 p_pSkillPointCostLabel(nullptr),
 p_pCoolDownLabel(nullptr),
-p_bSelected(false)
+p_bSelected(false),
+p_bSelectable(false)
 {
 
 }
@@ -67,7 +31,7 @@ SkillCard::~SkillCard()
     CCLOG("SKILL CARD DESTRUCOT");
 }
 
-// Static
+//// Static
 
 SkillCard* SkillCard::createWithProperties(std::string sIconSprite, std::string sShapeSprite, std::string sNameSprite,
                                            std::string sManaCostSprite, std::string sSkillPointCostSprite, std::string sDescriptionSprite,
@@ -110,27 +74,34 @@ SkillCard* SkillCard::createDefault()
 
 }
 
-//Public
+//// Public
 
 void SkillCard::update(float dt)
 {
+    if(!p_pOwner || !p_pOwner->isSelectable())
+    {
+        this->unSelectable();
+    }
+    else
+    {
+        this->selectable();
+    }
 }
 
 bool SkillCard::init()
 {
-    //return this->initWithProperties("skill_card/icon/default.png",
-    //                         "skill_card/shape/default.png",
-    //                         "skill_card/name/default.png",
-    //                         "skill_card/mana/default.png",
-    //                         "skill_card/sp/default.png",
-    //                         "skill_card/description/default.png",
-    //                         "skill_card/cd/default.png",
-    //                         "",
-    //                         "",
-    //                         "",
-    //                         "",
-    //                         "");
-    return true;
+    return this->initWithProperties("skill_card/icon/default.png",
+                              "skill_card/shape/default.png",
+                              "skill_card/name/default.png",
+                              "skill_card/mana/default.png",
+                              "skill_card/sp/default.png",
+                              "skill_card/description/default.png",
+                              "skill_card/cd/default.png",
+                              "",
+                              "",
+                              "",
+                              "",
+                              "");
 }
 
 //Protected
@@ -195,6 +166,8 @@ bool SkillCard::initWithProperties(std::string sIconSprite, std::string sShapeSp
     ls->onTouchEnded = CC_CALLBACK_2(SkillCard::endTouch, this);
     p_pButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, p_pButton);
     p_pButton->addTouchEventListener(CC_CALLBACK_2(SkillCard::run, this));
+
+    this->scheduleUpdate();
     return true;
 }
 
@@ -204,7 +177,7 @@ void SkillCard::setDescriptionLabel(std::string sDescription)
 {
     ZYSP_FSIS(p_pDescriptionLabel, sDescription, p_pDescriptionSprite->getContentSize(), MIN_LABEL_SIZE);
     p_pDescriptionLabel->setPosition(Point(p_pDescriptionSprite->getPositionX(), p_pDescriptionSprite->getPositionY() + (p_pDescriptionSprite->getContentSize().height/2 - p_pDescriptionLabel->getContentSize().height/2) ));
-    CCLOG("LLLLLLLL %s - %f", p_pDescriptionLabel->getString().c_str(), p_pDescriptionLabel->getTTFConfig().fontSize);
+    //CCLOG("LLLLLLLL %s - %f", p_pDescriptionLabel->getString().c_str(), p_pDescriptionLabel->getTTFConfig().fontSize);
     //p_pDescriptionLabel->setString(sDescription);
 
     //this->setDescriptionLabelHelper();
@@ -303,20 +276,30 @@ void SkillCard::selfRepair()
 
 void SkillCard::onSelect()
 {
-    Vec2 targetPoint(0, p_pShapeSprite->getContentSize().height/2);
-    //this->setPosition(getShapePosition() + targetPoint);
-    auto mt = MoveBy::create(0.1, targetPoint);
-    runAction(mt);
+    if(p_bSelectable)
+    {
+        p_pOwner->onSelect();
+        Vec2 targetPoint(0, p_pShapeSprite->getContentSize().height / 2);
+        //this->setPosition(getShapePosition() + targetPoint);
+        auto mt = MoveBy::create(0.1, targetPoint);
+
+        runAction(mt);
+        p_bSelected = true;
+    }
+    else p_pOwner->conNotify();
 }
 
 void SkillCard::onUnselect()
 {
+    /// Hard fix, Update later
+    p_pOwner->getOwner()->setSelectingSkill(nullptr);
+
     Vec2 targetPoint(0, -p_pShapeSprite->getContentSize().height/2);
     //this->setPosition(getShapePosition() + targetPoint);
     auto mt = MoveBy::create(0.1, targetPoint);
-    //this->runAction(mt);
-    //this->config();
+
     this->runAction(mt);
+    p_bSelected = false;
 }
 
 //Action* SkillCard::runAction(Action* action)
@@ -372,12 +355,32 @@ void SkillCard::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType t
         if(!p_bSelected)
         {
             onSelect();
-            p_bSelected = true;
         }
         else if(p_bSelected)
         {
             onUnselect();
-            p_bSelected = false;
         }
     }
+}
+
+void SkillCard::unSelectable()
+{
+    p_bSelectable = false;
+    SET_FULL_VARIABLE(setColor(Color3B::GRAY));
+}
+
+void SkillCard::selectable()
+{
+    p_bSelectable = true;
+    SET_FULL_VARIABLE(setColor(Color3B::WHITE));
+}
+
+void SkillCard::disable()
+{
+    SET_FULL_VARIABLE(setVisible(false));
+}
+
+void SkillCard::enable()
+{
+    SET_FULL_VARIABLE(setVisible(true));
 }

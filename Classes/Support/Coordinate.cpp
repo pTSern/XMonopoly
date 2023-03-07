@@ -2,10 +2,11 @@
 
 //Constructor
 
-Coordinate::Coordinate(Dir eDir, int nIndex, bool bIsFlip) :
-g_bIsFlip(bIsFlip), g_nIndex(nIndex), g_eDir(eDir)
+Coordinate::Coordinate(Dir eDir, int nIndex) :
+g_nIndex(nIndex), g_eDir(eDir)
 {
-
+    g_bIsFlip = true;
+    if((int)g_eDir < 0) g_bIsFlip = false;
 }
 
 //Public
@@ -21,12 +22,13 @@ std::string Coordinate::toString(int nTab)
     std::string tab = ZY_SP_TAB(nTab);
     ts += (tab + " + Index: " + ZY_SP_NUMBER_TO_STRING(g_nIndex));
     ts += (tab + " + Dir: " + ZY_SP_NUMBER_TO_STRING((int)g_eDir));
+    ts += (tab + " + Flip: " + std::to_string(g_bIsFlip));
     return ts;
 }
 
-//Operator
-void Coordinate::operator=(Coordinate &c)
+void Coordinate::nextIndex()
 {
-    this->g_eDir = c.g_eDir;
-    this->g_nIndex = c.g_nIndex;
+    g_nIndex++;
 }
+
+//Operator

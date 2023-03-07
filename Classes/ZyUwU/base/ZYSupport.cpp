@@ -36,7 +36,7 @@ std::string ZYSupport::tabString(int nTab)
 
 std::string ZYSupport::numberToString(float fNum)
 {
-    if(this->isInt(fNum)) return this->shorterDecimal(fNum, 0);
+    if(this->isInt(fNum)) return this->shorterDecimal(fNum, 1);
     return this->shorterDecimal(fNum, sgc_nDefaultFloatLength);
 }
 

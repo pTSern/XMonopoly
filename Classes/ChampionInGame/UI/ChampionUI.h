@@ -18,7 +18,7 @@ public:
     std::string g_sBackground, g_sMain, g_sFrontEnd;
 };
 
-typedef ChampionUISupport ChampUISup;
+using ChampUISup = ChampionUISupport;
 
 class ChampionInGame;
 BEGIN_CREATE_REFCLASS(ChampionUI, GameObject)
