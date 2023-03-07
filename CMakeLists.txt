@@ -57,7 +57,6 @@ endif()
 # add cross-platforms source files and header files 
 list(APPEND GAME_SOURCE
         Classes/AppDelegate.cpp
-        Classes/HelloWorldScene.cpp
 
         Classes/GameObject/GameObject.cpp
         Classes/GameObject/Economy/Economy.cpp
@@ -93,6 +92,7 @@ list(APPEND GAME_SOURCE
         Classes/Audio/SoundManager.cpp
 
         Classes/Player/Player.cpp
+        Classes/Player/UI/PlayerUI.cpp
 
         Classes/SelectHelper/SelectHelper.cpp
 
@@ -102,19 +102,17 @@ list(APPEND GAME_SOURCE
         Classes/ChampionInGame/ChampionInGame.cpp
         Classes/ChampionInGame/UI/ChampionUI.cpp
 
-        Classes/Factory/ChampionFactory.cpp
-        Classes/Factory/ChampionInGameFactory.cpp
-        Classes/Factory/ArenaFactory.cpp
-
         Classes/Map/Map.cpp
 
         Classes/Statics/Statics.cpp
         Classes/Statics/Extension.cpp
 
         Classes/Skill/Skill.cpp
+        Classes/Skill/Condition/Condition.cpp
         Classes/Skill/SkillCard/SkillCard.cpp
         Classes/Skill/SkillStatics/SkillStatics.cpp
         Classes/Skill/SkillInGame/SkillInGame.cpp
+        Classes/Skill/SkillInGame/MoveBy/SkillMoveBy.cpp
         Classes/Skill/SkillManager/SkillManager.cpp
         Classes/Skill/SkillType/SkillType.cpp
         Classes/Skill/TargetType/TargetType.cpp
@@ -134,7 +132,11 @@ list(APPEND GAME_SOURCE
         Classes/Arena/SpecialArena/SpecialArena.cpp
         Classes/Arena/Property/Property.cpp
         Classes/Arena/GlobalArena.cpp
-        Classes/Arena/Factory/ArenaFactory.cpp
+        Classes/Arena/SpecialArena/Factory/Factory.cpp
+        Classes/Arena/SpecialArena/Tax/Tax.cpp
+        Classes/Arena/SpecialArena/Airport/Airport.cpp
+        Classes/Arena/SpecialArena/Shop/Shop.cpp
+        Classes/Arena/SpecialArena/Spawn/Spawn.cpp
 
         Classes/User/User.cpp
         Classes/User/Information/UserInformation.cpp
@@ -145,7 +147,6 @@ list(APPEND GAME_SOURCE
      )
 list(APPEND GAME_HEADER
         Classes/AppDelegate.h
-        Classes/HelloWorldScene.h
 
         Classes/GameObject/GameObject.h
         Classes/GameObject/AGameObject.h
@@ -186,6 +187,7 @@ list(APPEND GAME_HEADER
         Classes/Audio/SoundManager.h
 
         Classes/Player/Player.h
+        Classes/Player/UI/PlayerUI.h
 
         Classes/Champion/Champion.h
         Classes/Champion/Mage/Mage.h
@@ -193,10 +195,6 @@ list(APPEND GAME_HEADER
         Classes/ChampionInGame/ChampionInGame.h
         Classes/ChampionInGame/Extension.h
         Classes/ChampionInGame/UI/ChampionUI.h
-
-        Classes/Factory/ChampionFactory.h
-        Classes/Factory/ChampionInGameFactory.h
-        Classes/Factory/ArenaFactory.h
 
         Classes/Map/Map.h
 
@@ -214,6 +212,7 @@ list(APPEND GAME_HEADER
         Classes/Skill/SkillCard/SkillCard.h
         Classes/Skill/SkillStatics/SkillStatics.h
         Classes/Skill/SkillInGame/SkillInGame.h
+        Classes/Skill/SkillInGame/MoveBy/SkillMoveBy.h
         Classes/Skill/SkillManager/SkillManager.h
         Classes/Skill/TargetType/NoTarget/NoTarget.h
         Classes/Skill/TargetType/NoTarget/Toggle/Toggle.h
@@ -236,7 +235,11 @@ list(APPEND GAME_HEADER
         Classes/Arena/SpecialArena/SpecialArena.h
         Classes/Arena/Property/Property.h
         Classes/Arena/GlobalArena.h
-        Classes/Arena/Factory/ArenaFactory.h
+        Classes/Arena/SpecialArena/Factory/Factory.cpp
+        Classes/Arena/SpecialArena/Tax/Tax.cpp
+        Classes/Arena/SpecialArena/Airport/Airport.cpp
+        Classes/Arena/SpecialArena/Shop/Shop.cpp
+        Classes/Arena/SpecialArena/Spawn/Spawn.cpp
 
         Classes/User/User.h
         Classes/User/Information/UserInformation.h
