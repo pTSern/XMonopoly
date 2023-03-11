@@ -52,7 +52,7 @@ bool BattleScene::init()
     auto champ = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui = ChampionUI::createDefault();
     auto sig = SkillInGame::createTest();
-    sig->setSkillMechanic(SkillInGame::MoveBySkillX);
+    sig->setSkillMechanic(SkillInGame::MoveBySkill);
     auto sm = SkillManager::createWithSkillInGame(sig, SkillInGame::createTest(),nullptr);
     auto cig = ChampionInGame::createWithProperties(champ, ui, dice, sm);
     auto coord = Coordinate(Dir::WS, 0);
@@ -71,7 +71,7 @@ bool BattleScene::init()
     auto champ2 = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
-    sig2->setSkillMechanic(SkillInGame::MoveBySkillX);
+    sig2->setSkillMechanic(SkillInGame::MoveBySkill);
     auto sm2 = SkillManager::createWithSkillInGame(sig2, SkillInGame::createTest(),nullptr);
     auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
     auto coord2 = Coordinate(Dir::WS, 0);

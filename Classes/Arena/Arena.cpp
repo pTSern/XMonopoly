@@ -139,7 +139,7 @@ void Arena::autoSortChampion()
     auto midTopRight = m_Top.getMidpoint(m_Right);
     for(int i = 0; i < n; i++)
     {
-        m_vChampions[i]->setPosition((i+1)*(midTopRight - midLeftBot)/(n+1));
+        m_vChampions[i]->setPosition((i+1)*(midTopRight + midLeftBot)/(n+1));
     }
 }
 
@@ -161,12 +161,14 @@ Point Arena::getMoveAblePosition()
     auto midLeftBot = m_Left.getMidpoint(m_Bottom);
     auto midTopRight = m_Top.getMidpoint(m_Right);
 
-    return Point((n-1)*(midTopRight - midLeftBot)/(n));
+    auto x =  Point((n)*(midTopRight + midLeftBot)/(n+1));
+    CCLOG("%s", ZYSP_VTS(x).c_str());
+    return x;
 }
 
 void Arena::addChampion(ChampionInGame *pChamp)
 {
-    autoSortChampion();
+    //this->autoSortChampion();
     m_vChampions.push_back(pChamp);
 }
 
@@ -180,7 +182,7 @@ void Arena::removeChampion(ChampionInGame *pChamp)
             break;
         }
     }
-    this->autoSortChampion();
+    //this->autoSortChampion();
 }
 
 void Arena::setTitle(std::string text)

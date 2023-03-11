@@ -20,24 +20,10 @@ public:
         BOTH
     };
 
-    enum class SelectMode
-    {
-        NONE = 0,
-        SKILL_TARGET,
-        SELLING_ARENA
-    };
-
     enum class PlayerAction
     {
-        NORMAL,
-        THINKING
-    };
-
-    enum class PlayerSelect
-    {
-        NONE = 0,
-        YES,
-        NO
+        IDLE = 0,
+        CONTROLLING
     };
 
 public:
@@ -53,51 +39,54 @@ public:
     bool endTouch(Touch *touch, Event *event);
 
 public:
-    void setControlChampion(ChampionInGame *pChampion);
     void setChampionViewPoint(ChampionInGame *pChampion);
+    void setControlChampion(ChampionInGame* champ);
+
     bool buyingProperty(Property *pro);
     void pay(Player* player, float money);
     void onLandArena(Arena* arena);
     void receiveMoney(float fAmount);
     CREATE_SET_GET_FUNC(setSelectType, getSelectType, SelectType, m_eType);
     CREATE_SET_GET_FUNC(setSelectObject, getSelectObject, GameObject*, m_pSelectingObject)
-    CREATE_SET_FUNC(setControllingChamp, ChampionInGame*, m_pControllingChampion);
     CREATE_SET_GET_FUNC(setTheColor, getTheColor, Color4F, m_Color);
     void disable();
     void enable();
     void finishAction();
 
+    void startTurn(ChampionInGame* child);
+    void endTurn();
+
     CREATE_GET_FUNC(getChampChildren, std::vector<ChampionInGame*>, m_vChampions);
-    CREATE_GET_FUNC(isTrulyEndTurn, bool, m_bTruelyEndTurn);
 
     void lose();
+    void moneyIndicator(float money, bool isPay);
 
 
-//// Client Player
+    ///\ Client Player
     bool yesOrNoSelector(std::string sMessage);
     void addChampion(ChampionInGame* pChamp);
 
+
 protected:
     /// Must declare
-    std::vector<ChampionInGame*> m_vChampions;
-    std::vector<Property*> m_vOwn;
+    std::vector<ChampionInGame*> m_vChampions;        ///< array of children champions
+    std::vector<Property*> m_vOwn;                    ///< weak reference to parent champion
 
     /// Container
-    ChampionInGame* m_pControllingChampion;
-    ChampionInGame* m_pViewPointChampion;
-    Economy m_pEconomy;
-    EventListenerTouchOneByOne *m_pEventListener;
-    GameObject* m_pSelectingObject;
-    SelectType m_eType;
-    PlayerAction m_eAction;
-    PlayerSelect m_eSelect;
+    ChampionInGame* m_pControllingChampion;           ///< weak reference to the is-turn champion
+    ChampionInGame* m_pViewPointChampion;             ///< weak reference to the viewpoint champion
+
+    Economy m_pEconomy;                               ///< contain player's money
+    EventListenerTouchOneByOne *m_pEventListener;     ///< event listener
+    GameObject* m_pSelectingObject;                   ///< weak reference to selecting object
+    SelectType m_eType;                               ///< mark the selecting object's type
+    PlayerAction m_eAction;                           ///< current action of the player
+
     // Money Label
+    ZYLabel* m_pMoney;                                ///< money's label, help display
 
-    ZYLabel* m_pMoney;
-
-    Color4F m_Color;
+    Color4F m_Color;                                  ///< player's color
 
     int m_nChangeCount;
-    bool m_bTruelyEndTurn;
 
 END_CREATE_REFCLASS

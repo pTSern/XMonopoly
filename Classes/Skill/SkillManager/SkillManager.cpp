@@ -156,7 +156,7 @@ void SkillManager::clickButton(Ref* pSender, ui::Widget::TouchEventType type)
 {
     if(type == ui::Widget::TouchEventType::ENDED)
     {
-        m_pSelecting->triggerSkill();
+        m_pSelecting->onTrigger();
     }
 }
 
@@ -166,7 +166,6 @@ void SkillManager::unselectSkill()
     {
         m_pSelecting->unSelect();
     }
-
 }
 
 void SkillManager::setUseButton(bool var)

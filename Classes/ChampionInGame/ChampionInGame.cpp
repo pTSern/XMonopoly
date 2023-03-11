@@ -71,7 +71,7 @@ ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp, ChampionU
     auto ret = createWithChampion(pChamp, false);
     if(ret && ret->initWithProperties(pUI, pDice, vSkillDeck))
     {
-        ret->config();
+        ret->disable();
         return ret;
     }
     CC_SAFE_DELETE(ret);
@@ -212,16 +212,6 @@ std::string ChampionInGame::getChildsString(int nTab)
     return child;
 }
 
-void ChampionInGame::onLand(Arena *arena)
-{
-    this->attack(arena->getChampionInArena());
-    this->applyEffectToSelf(arena->getEffectLayer());
-    arena->addChampion(this);
-    this->m_cCoordinate = arena->getCoordinate();
-    if(m_bIsRepresentPlayer) this->m_pOwner->onLandArena(arena);
-    this->m_pLandingArena = arena;
-}
-
 void ChampionInGame::onLand(bool attack)
 {
     if(attack)
@@ -236,11 +226,6 @@ void ChampionInGame::onLand(bool attack)
 
 void ChampionInGame::endLand()
 {
-    //if(m_pLandingArena)
-    //{
-    //    CCLOG("END LAND");
-    //    m_pLandingArena->removeChampion(this);
-    //}
     if(m_pMemArena)
     {
         m_pMemArena->removeChampion(this);
@@ -267,10 +252,9 @@ void ChampionInGame::setOwner(Player *pOwner, bool bIsRepresent)
     this->m_pOwner = pOwner;
     m_bIsRepresentPlayer = bIsRepresent;
 
-    ///// Set champion out line corlor
+    ///\ Set champion out line color
     auto outline = ZYOutlineV2::create();
-    auto c = m_pOwner->getTheColor();
-    outline->setColor(Vec4(c.r, c.g, c.b, c.a));
+    outline->setColor(this->m_pOwner->getTheColor());
     m_pIcon->setEffect(outline);
 }
 
@@ -281,7 +265,6 @@ bool ChampionInGame::onTouch(Touch* touch, Event* event)
 
 bool ChampionInGame::endTouch(Touch* touch, Event* event)
 {
-    //CCLOG("TOUCH LOCATION: %f - %f", touch->getLocation().x, touch->getLocation().y);
     return true;
 }
 
@@ -299,12 +282,11 @@ void ChampionInGame::startTurn()
     this->enable();
     this->m_bIsTurn = true;
     this->m_bIsEndTurn = false;
-    this->m_pOwner->setControllingChamp(this);
+    this->m_pOwner->setControlChampion(this);
 }
 
 void ChampionInGame::endTurn()
 {
-    CCLOG("CALL END TURN");
     this->m_bIsTurn = false;
     this->m_bIsEndTurn = true;
     this->m_eAction = ChampionAction::IDLE;
@@ -362,7 +344,12 @@ void ChampionInGame::autoFlip()
 
 void ChampionInGame::jumpTo(int num)
 {
+    CCLOG("DIE B4 GET INDEX %p", this);
     this->m_cCoordinate.g_nIndex += num;
+    if(m_cCoordinate.g_nIndex > MAP_MNG_GI->getArenas().size())
+    {
+        m_cCoordinate.g_nIndex-=(MAP_MNG_GI->getArenas().size() - 1);
+    }
     this->jumpTo(m_cCoordinate);
 }
 
@@ -412,5 +399,5 @@ void ChampionInGame::disable()
 
 bool ChampionInGame::isValidTurn()
 {
-    return !m_bIsEndTurn;
+    return m_bIsEndTurn;
 }

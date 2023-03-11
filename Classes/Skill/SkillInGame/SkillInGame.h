@@ -16,11 +16,13 @@ BEGIN_CREATE_REFCLASS(SkillInGame, Skill)
 public:
     static SkillInGame* createWithSkill(Skill* skill);
     static SkillInGame* createTest();
-    static void MoveBySkillX(SkillInGame* skill, float dt);
 
-public:
+public: // Other callback func
+    static void MoveBySkill(SkillInGame* skill, float dt);
+
+public: // Virtual func
     virtual void config();
-    virtual void triggerSkill();
+    virtual void onTrigger();
     virtual void endTrigger();
 
     virtual void doMechanic(float dt);
@@ -34,7 +36,6 @@ public:
     CREATE_GET_FUNC(getSkillCard, SkillCard*, m_pSkillCard);
     CREATE_GET_FUNC(isFinishSelect, bool, m_bFinishSelect);
     CREATE_GET_FUNC(isSelectable, bool, m_pCondition->isValid());
-    CREATE_GET_FUNC(isFinish, bool, m_bIsFinish);
     CREATE_GET_FUNC(isReady, bool, m_pSkillStatics->isReady());
     void onSelect();
     void unSelect();
@@ -49,10 +50,7 @@ protected:
     SkillManager *m_pOwner;
 
     bool m_bFinishSelect;
-    bool m_bIsFinish;
-    bool m_bCastingSkill;
 
     SkillMechanicCallback m_oMechanicCallback;
-
 
 END_CREATE_REFCLASS

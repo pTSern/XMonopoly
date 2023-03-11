@@ -104,7 +104,6 @@ public:
     std::string getChildsString(int nTab);
     std::string toStringHelper(int nTab = 2, bool bIsShowParent = true);
 
-    void onLand(Arena *arena);
     void onLand(bool attack = true);
     void endLand();
 

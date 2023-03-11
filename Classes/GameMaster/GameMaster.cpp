@@ -69,7 +69,7 @@ void GameMaster::calculateNewTurn()
     {
         next_index = m_nChampionIsTurnIndex + 1;
     }
-    //if(m_vList[next_index]->isValidTurn())
+    //zif(m_vList[next_index]->isValidTurn())
     {
         m_nRound ++;
         m_pIsTurnChampion = m_vList[next_index];

@@ -7,9 +7,8 @@
 
 SkillInGame::SkillInGame() :
 m_pOwner(nullptr),
-m_bFinishSelect(false),
-m_bIsFinish(false),
-m_oMechanicCallback(nullptr)
+m_oMechanicCallback(nullptr),
+m_bFinishSelect(false)
 {
 
 }
@@ -60,11 +59,14 @@ SkillInGame* SkillInGame::createTest()
 
 // ALL MECHANIC
 
-void SkillInGame::MoveBySkillX(SkillInGame* skill, float dt)
+void SkillInGame::MoveBySkill(SkillInGame* skill, float dt)
 {
     if(skill->m_bIsNeedDice && skill->m_pOwner->getOwner()->getDice()->isRolled())
     {
-        if(skill->m_pOwner->getOwner()->isCastingSkill()) skill->m_pOwner->getOwner()->jumpTo(skill->m_pOwner->getOwner()->getDice()->getLastestDiceNum());
+        if(skill->m_pOwner->getOwner()->isCastingSkill())
+        {
+            skill->m_pOwner->getOwner()->jumpTo(skill->m_pOwner->getOwner()->getDice()->getLastestDiceNum());
+        }
     }
 }
 
@@ -99,7 +101,7 @@ void SkillInGame::update(float dt)
 
 }
 
-void SkillInGame::triggerSkill()
+void SkillInGame::onTrigger()
 {
     /*
      * This is only called after Player clicks the USE button (which belongs to
@@ -107,8 +109,10 @@ void SkillInGame::triggerSkill()
      * which, must be TRUE)
      */
 
-    this->m_bIsFinish = false;
-    if(m_bIsNeedDice) this->m_pOwner->getOwner()->enableDice();
+    if(m_bIsNeedDice)
+    {
+        this->m_pOwner->getOwner()->enableDice();
+    }
 
     /// Pay the Mana, Hp, Sp Cost. Set Skill to cool down
     this->m_pSkillStatics->castSkill();
@@ -132,7 +136,10 @@ void SkillInGame::endTrigger()
 
 void SkillInGame::scheduleMechanic(float dt)
 {
-    if(this->m_oMechanicCallback) this->m_oMechanicCallback(this, dt);
+    if(this->m_oMechanicCallback)
+    {
+        this->m_oMechanicCallback(this, dt);
+    }
     //if(this->m_bIsFinish)
     if(!this->m_pOwner->getOwner()->isTurn())
     {
@@ -151,8 +158,8 @@ void SkillInGame::onSelect()
 {
     //if(!m_pCondition->isValid()) return false;
     //// Condition
-    m_pOwner->unselectSkill();
-    m_pOwner->setSelectingSkill(this);
+    this->m_pOwner->unselectSkill();
+    this->m_pOwner->setSelectingSkill(this);
 
     //// Check On select condition (Move this to skill card -> only do True)
         ///True: Change The Owner selecting skill to this
@@ -172,15 +179,15 @@ void SkillInGame::unSelect()
 
 void SkillInGame::conNotify()
 {
-    m_pCondition->notify();
+    this->m_pCondition->notify();
 }
 
 void SkillInGame::disable()
 {
-    m_pSkillCard->disable();
+    this->m_pSkillCard->disable();
 }
 
 void SkillInGame::enable()
 {
-    m_pSkillCard->enable();
+    this->m_pSkillCard->enable();
 }

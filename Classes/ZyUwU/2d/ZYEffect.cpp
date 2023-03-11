@@ -234,6 +234,11 @@ void ZYOutlineV2::setOutlineWidth(float fWidth)
     SET_UNIFORM(m_pProgramState, "u_outlineWidth", widthPC);
 }
 
+void ZYOutlineV2::setColor(Color4F color)
+{
+    this->setColor(Vec4(color.r, color.g, color.b, color.a));
+}
+
 void ZYOutlineV2::log()
 {
 }

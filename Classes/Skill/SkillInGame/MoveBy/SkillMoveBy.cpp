@@ -43,6 +43,5 @@ void MoveBySkill::doMechanic(float dt)
     if(this->m_bIsNeedDice && this->m_pOwner->getOwner()->getDice()->isRolled())
     {
         auto dice = this->m_pOwner->getOwner()->getDice()->getLastestDiceNum();
-        m_bIsFinish = true;
     }
 }

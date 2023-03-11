@@ -97,6 +97,7 @@ public:
 public:
     CREATE_SET_EFFECT_FUNC_HELPER(setColor, Vec4, m_cColor, "u_outlineColor");
     void setOutlineWidth(float fWidth);
+    void setColor(Color4F color);
 
 protected:
     Vec4 m_cColor;

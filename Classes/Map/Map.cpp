@@ -292,6 +292,5 @@ bool MapManager::endTouch(Touch *touch, Event *event)
 
 Arena* MapManager::getArenaByCoord(Coordinate coord)
 {
-	p_vArenas[coord.g_nIndex]->log();
 	return p_vArenas[coord.g_nIndex];
 }

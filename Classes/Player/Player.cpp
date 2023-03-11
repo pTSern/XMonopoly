@@ -9,10 +9,9 @@
 Player::Player() :
 m_pEconomy(Economy::IngameCoin),
 m_pSelectingObject(nullptr),
-m_eAction(PlayerAction::THINKING),
 m_eType(SelectType::NONE),
-m_eSelect(PlayerSelect::NONE),
-m_Color(Color4F::RED)
+m_Color(Color4F::RED),
+m_eAction(PlayerAction::IDLE)
 {
 
 }
@@ -65,9 +64,9 @@ bool Player::endTouch(Touch *touch, Event *event)
     return true;
 }
 
-void Player::setControlChampion(ChampionInGame *pChampion)
+void Player::setControlChampion(ChampionInGame* champ)
 {
-
+    this->m_pControllingChampion = champ;
 }
 
 void Player::setChampionViewPoint(ChampionInGame *pChampion)
@@ -122,6 +121,7 @@ void Player::onLandArena(Arena* arena)
                                                       if(prop)
                                                       {
                                                           this->m_pEconomy.reduceMoney(prop->getPrice());
+                                                          this->moneyIndicator(prop->getPrice(), true);
                                                           this->m_vOwn.push_back(prop);
                                                           prop->setOwner(this);
                                                           prop->addDrawRectOrder();
@@ -172,6 +172,8 @@ void Player::pay(Player* player, float money)
     if(m_pEconomy.payable(money))
     {
         this->m_pEconomy.reduceMoney(money);
+        this->moneyIndicator(money, true);
+
         player->receiveMoney(money);
     }
 }
@@ -179,6 +181,7 @@ void Player::pay(Player* player, float money)
 void Player::receiveMoney(float fAmount)
 {
     this->m_pEconomy.addMoney(fAmount);
+    this->moneyIndicator(fAmount, false);
 }
 
 void Player::addChampion(ChampionInGame* pChamp)
@@ -203,25 +206,54 @@ void Player::finishAction()
 
 void Player::disable()
 {
-    m_pMoney->setVisible(false);
-    if(m_pControllingChampion) m_pControllingChampion->disable();
-    else
+    ///> disable money label
+    this->m_pMoney->setVisible(false);
+
+    ///> disable controlling champion
+    if(m_pControllingChampion)
     {
-        for(auto &x : m_vChampions)
-        {
-            x->disable();
-        }
+        this->m_pControllingChampion->disable();
+        //this->m_pControllingChampion = nullptr;
     }
-    m_bTruelyEndTurn = true;
 }
 
 void Player::enable()
 {
-    m_pMoney->setVisible(true);
-    m_bTruelyEndTurn = false;
+    this->m_pMoney->setVisible(true);
 }
 
 void Player::lose()
 {
 
+}
+
+void Player::moneyIndicator(float money, bool isPay)
+{
+    auto color = Color3B::GREEN;
+    std::string text = "$" + ZYSP_SD(money, 1) + "K";
+    std::string pre = "+";
+    if(isPay)
+    {
+        color = Color3B::RED;
+        pre = "-";
+    }
+    auto font = ZYLabel::createWithTTF(pre + text, globalFont, 20);
+    font->setColor(color);
+    this->addChild(font, 5);
+    font->setPosition(m_pControllingChampion->getPosition());
+    auto moveby = MoveBy::create(0.5, Point(0, m_pControllingChampion->getIcon()->getContentSize().height));
+    auto fadeout = FadeOut::create(0.5);
+    auto remove = RemoveSelf::create(true);
+    auto seq = Sequence::create(moveby, fadeout, remove, nullptr);
+    font->runAction(seq);
+}
+
+void Player::startTurn(ChampionInGame* child)
+{
+    this->setControlChampion(child);
+    this->setChampionViewPoint(child);
+}
+
+void Player::endTurn()
+{
 }

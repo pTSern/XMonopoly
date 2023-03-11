@@ -76,13 +76,13 @@ protected:
 
 private:
 	//DrawNode *p_pRect;
-	cocos2d::TMXTiledMap* p_pTileMap;
-    std::map<std::string, cocos2d::TMXLayer*> p_mLayers;
-	cocos2d::TMXObjectGroup* p_pArenaGroup;
-	float p_fAngleHorizon, p_fAngleVertical;
-    Size p_tObjectTile, p_tWorld;
-	Size p_world, p_objectTileSize;
-    std::vector<Arena*> p_vArenas;
-	Player* p_pClientPlayer;
+	cocos2d::TMXTiledMap* p_pTileMap;						///< the tiled map
+    std::map<std::string, cocos2d::TMXLayer*> p_mLayers;	///< array of layer of the map
+	cocos2d::TMXObjectGroup* p_pArenaGroup;					///< the arena's group-object of the map
+	float p_fAngleHorizon, p_fAngleVertical;				///< the horizon and vertical angel of the map, see document for more details
+    Size p_tObjectTile, p_tWorld;							///< the true object tile size and map size base on cocos2dx's pixel
+	Size p_objectTileSize, p_world;							///< the object tile size and map size base on tile's pixel
+    std::vector<Arena*> p_vArenas;							///< array of Arena in the map
+	Player* p_pClientPlayer;								///< weak reference to the client player, most use for selecting arena
 
 END_CREATE_INSTANCE_REFCLASS;
