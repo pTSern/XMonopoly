@@ -62,6 +62,14 @@ void IngameEconomyManager::update(float dt)
 
 ///] Public
 
+// Struct
+
+IgEcoMng::MoveDirection::MoveDirection(MoveHDirection hDir, MoveVDirection vDir)
+{
+    this->g_eHDir = hDir;
+    this->g_eVDir = vDir;
+}
+
 void IngameEconomyManager::setPosition(const float xx, const float yy)
 {
     this->m_pLabel->setPosition(xx, yy);
@@ -74,27 +82,29 @@ void IngameEconomyManager::setPosition(Point pos)
 
 void IngameEconomyManager::executeIndicator(float money, bool isPay)
 {
-    auto color = Color3B::GREEN;
-    std::string text = "$" + ZYSP_SD(money, 1) + "K";
-    std::string pre = "+";
-    if(isPay)
+    if(m_pLabel->isVisible())
     {
-        color = Color3B::RED;
-        pre = "-";
-    }
-    auto font = ZYLabel::createWithTTF(pre + text, globalFont, 20);
-    font->setColor(color);
-    this->addChild(font);
-    font->setPosition(m_pLabel->getPosition());
-    auto size = m_pLabel->getContentSize();
+        auto color = Color3B::GREEN;
+        std::string text = "$" + ZYSP_SD(money, 1) + "K";
+        std::string pre = "+";
+        if (isPay) {
+            color = Color3B::RED;
+            pre = "-";
+        }
+        auto font = ZYLabel::createWithTTF(pre + text, globalFont, 20);
+        font->setColor(color);
+        this->addChild(font);
+        font->setPosition(m_pLabel->getPosition());
+        auto size = m_pLabel->getContentSize();
 
-    auto hDir = autoSelectMoveHDirection();
-    auto vDir = autoSelectMoveVDirection();
-    auto move_by = MoveBy::create(0.5, Point(size.width * (float)hDir * 1, size.height*(float)vDir * 3));
-    auto fadeout = FadeOut::create(0.5);
-    auto remove = RemoveSelf::create(true);
-    auto seq = Sequence::create(move_by, fadeout, remove, nullptr);
-    font->runAction(seq);
+        auto move_dir = autoSelectMoveDirection();
+        auto move_by = MoveBy::create(0.5, Point(size.width * move_dir.hDirectionToFloat() * 1,
+                                                 size.height * move_dir.vDirectionToFloat() * 3));
+        auto fadeout = FadeOut::create(0.5);
+        auto remove = RemoveSelf::create(true);
+        auto seq = Sequence::create(move_by, fadeout, remove, nullptr);
+        font->runAction(seq);
+    }
 }
 
 void IngameEconomyManager::setAmount(float amount)
@@ -143,14 +153,11 @@ void IngameEconomyManager::enable()
 
 ///] Protected
 
-IgEcoMng::MoveHDirection IngameEconomyManager::autoSelectMoveHDirection()
+IgEcoMng::MoveDirection IngameEconomyManager::autoSelectMoveDirection()
 {
-    if(this->m_pLabel->getPositionX() <= ZYDR_TGVS.width/2) return MoveHDirection::RIGHT;
-    return MoveHDirection::LEFT;
-}
-
-IgEcoMng::MoveVDirection IngameEconomyManager::autoSelectMoveVDirection()
-{
-    if(this->m_pLabel->getPositionY() <= ZYDR_TGVS.height/2) return MoveVDirection::TOP;
-    return MoveVDirection::BOTTOM;
+    const auto& labelPos = this->m_pLabel->getPosition();
+    const bool isLeftHalf = labelPos.x <= ZYDR_TGVS.width / 2;
+    const bool isTopHalf = labelPos.y <= ZYDR_TGVS.height / 2;
+    return {(isLeftHalf ? MoveHDirection::NONE : MoveHDirection::LEFT),
+            (isTopHalf ? MoveVDirection::TOP : MoveVDirection::NONE)};
 }

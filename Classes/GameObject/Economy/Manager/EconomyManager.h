@@ -29,6 +29,17 @@ public:
         RIGHT = 1
     };
 
+    struct MoveDirection
+    {
+    public:
+        MoveDirection(MoveHDirection hDir, MoveVDirection vDir);
+        CREATE_GET_FUNC(hDirectionToFloat, float, (float)g_eHDir);
+        CREATE_GET_FUNC(vDirectionToFloat, float, (float)g_eVDir);
+
+        MoveHDirection g_eHDir;
+        MoveVDirection g_eVDir;
+    };
+
 ///] Global control
     void disable();
     void enable();
@@ -52,8 +63,7 @@ public:
 ///] Update loop
 
 protected:
-    MoveHDirection autoSelectMoveHDirection();
-    MoveVDirection autoSelectMoveVDirection();
+    MoveDirection autoSelectMoveDirection();
 
 protected:
     Economy m_economy;
