@@ -84,25 +84,29 @@ void IngameEconomyManager::executeIndicator(float money, bool isPay)
 {
     if(m_pLabel->isVisible())
     {
-        auto color = Color3B::GREEN;
+        const float duration = 0.75f;
+        const auto pos = this->m_pLabel->getPosition();
+
+        auto config = TTFConfig(defaultTTFConfig);
+        config.fontSize = 25;
+
         std::string text = "$" + ZYSP_SD(money, 1) + "K";
-        std::string pre = "+";
-        if (isPay) {
-            color = Color3B::RED;
-            pre = "-";
-        }
-        auto font = ZYLabel::createWithTTF(pre + text, globalFont, 20);
+        auto pre = isPay ? "-" : "+";
+        auto color = isPay ? Color3B::RED : Color3B::GREEN;
+
+        auto font = ZYLabel::createWithTTF(config, pre + text);
         font->setColor(color);
         this->addChild(font);
         font->setPosition(m_pLabel->getPosition());
-        auto size = m_pLabel->getContentSize();
 
+        const auto size = m_pLabel->getContentSize();
         auto move_dir = autoSelectMoveDirection();
-        auto move_by = MoveBy::create(0.5, Point(size.width * move_dir.hDirectionToFloat() * 1,
-                                                 size.height * move_dir.vDirectionToFloat() * 3));
-        auto fadeout = FadeOut::create(0.5);
-        auto remove = RemoveSelf::create(true);
-        auto seq = Sequence::create(move_by, fadeout, remove, nullptr);
+        const auto move_by = MoveBy::create(duration, Point(size.width * move_dir.hDirectionToFloat() * 1,
+                                                  size.height * move_dir.vDirectionToFloat() * 3));
+        const auto fadeout = FadeOut::create(duration*2);
+        const auto remove = RemoveSelf::create(true);
+        const auto spawn = Spawn::create(move_by, fadeout, nullptr);
+        const auto seq = Sequence::create(spawn, remove, nullptr);
         font->runAction(seq);
     }
 }
