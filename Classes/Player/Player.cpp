@@ -211,13 +211,13 @@ void Player::onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType ty
     {
         if(bIsYes) confirmPurchase(target);
         else cancelPurchase(target);
-        this->removeAllMarkedChild();
-        this->finishAction();
     }
 }
 
 void Player::cancelPurchase(Property* property)
 {
+    this->removeAllMarkedChild();
+    this->finishAction();
 }
 
 void Player::confirmPurchase(Property* property)
@@ -227,6 +227,8 @@ void Player::confirmPurchase(Property* property)
     property->setOwner(this);
     property->addDrawRectOrder();
     property->setRectColor(m_Color);
+    this->removeAllMarkedChild();
+    this->finishAction();
 }
 
 void Player::removeAllMarkedChild()

@@ -81,6 +81,7 @@ public:
     CREATE_GET_FUNC(getLandingArena, Arena* , m_pLandingArena);
     CREATE_GET_FUNC(isNotMoving, bool, m_eAction != ChampionAction::MOVING);
     CREATE_GET_FUNC(isCastingSkill, bool, m_eAction == ChampionAction::CASTING_SKILL);
+    CREATE_GET_FUNC(getIconSize, Size, m_pIcon->getContentSize());
     bool isValidTurn();
 
 public:

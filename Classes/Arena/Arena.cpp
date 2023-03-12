@@ -96,7 +96,7 @@ bool Arena::initWithProperties(const std::string& sTitle, Coordinate &coord, Siz
 void Arena::update(float dt)
 {
     //if(!m_vChampions.empty())
-    //{
+    //1
     //    this->autoSortChampion();
     //}
     //this->autoRotate();
@@ -134,13 +134,13 @@ void Arena::setCoordinate(Coordinate &coord)
 
 void Arena::autoSortChampion()
 {
-    auto n = this->getNumberChampionInArena();
-    if(n <= 0) return;
-    auto midLeftBot = m_Left.getMidpoint(m_Bottom);
-    auto midTopRight = m_Top.getMidpoint(m_Right);
+    const auto n = this->getNumberChampionInArena();
+    const auto midLeftBot = m_Left.getMidpoint(m_Bottom);
+    const auto midTopRight = m_Top.getMidpoint(m_Right);
     for(int i = 0; i < n; i++)
     {
-        m_vChampions[i]->setPosition((i+1)*(midTopRight + midLeftBot)/(n+1));
+        const Point target = (midLeftBot*((float)(n-i)) + midTopRight*((float)(i+1))) / ((float)(n+1));
+        m_vChampions[i]->setPosition(Point(target.x, target.y + m_vChampions[i]->getIconSize().height/2));
     }
 }
 
@@ -155,22 +155,17 @@ void Arena::autoSetPosition()
 
 Point Arena::getMoveAblePosition()
 {
-    auto n = this->getNumberChampionInArena();
-    if(n<=0) {
-        return getMiddlePoint();
-    }
-    auto midLeftBot = m_Left.getMidpoint(m_Bottom);
-    auto midTopRight = m_Top.getMidpoint(m_Right);
+    const auto n = this->getNumberChampionInArena();
+    const auto midLeftBot = m_Left.getMidpoint(m_Bottom);
+    const auto midTopRight = m_Top.getMidpoint(m_Right);
 
-    auto x =  Point((n)*(midTopRight + midLeftBot)/(n+1));
-    CCLOG("%s", ZYSP_VTS(x).c_str());
-    return x;
+    return {(midLeftBot + midTopRight*(float)(n+1))/(float)(n+2)};
 }
 
 void Arena::addChampion(ChampionInGame *pChamp)
 {
-    //this->autoSortChampion();
     m_vChampions.push_back(pChamp);
+    this->autoSortChampion();
     this->onLand(pChamp);
 }
 
@@ -184,7 +179,7 @@ void Arena::removeChampion(ChampionInGame *pChamp)
             break;
         }
     }
-    //this->autoSortChampion();
+    this->autoSortChampion();
 }
 
 void Arena::setTitle(std::string text)

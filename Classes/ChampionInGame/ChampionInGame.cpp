@@ -368,9 +368,9 @@ void ChampionInGame::jumpTo(Coordinate coord)
 
 void ChampionInGame::jumpTo(Arena *arena)
 {
-    this->jumpTo(arena->getMoveAblePosition());
     this->m_pMemArena = m_pLandingArena;
     this->m_pLandingArena = arena;
+    this->jumpTo(arena->getMoveAblePosition());
 }
 
 void ChampionInGame::castingSkill()
