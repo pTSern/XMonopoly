@@ -11,6 +11,9 @@
 #define ZY_DR_GET_VISIBLE_SIZE ZY_DIRECTOR_GI->getVisibleSize()
 #define ZYDR_GVS ZY_DR_GET_VISIBLE_SIZE
 
+#define ZYDR_GET_TRUE_VISIBLE_SIZE ZY_DIRECTOR_GI->getTrueVisibleSize()
+#define ZYDR_TGVS ZYDR_GET_TRUE_VISIBLE_SIZE
+
 NS_ZY_BEGIN
 BEGIN_CREATE_INSTANCE_REFCLASS(ZYDirector, cocos2d::Ref)
 
@@ -33,7 +36,6 @@ public:
     float getContentScaleWidth() { return m_fContentScale_Width; }
     float getContentScaleHeight() { return m_fContentScale_Height; }
 public:
-    cocos2d::Scene *getTheRunningScene();
     cocos2d::Size getTrueVisibleSize() {return cocos2d::Size(getVisibleSize().width + getVisibleOrigin().x, getVisibleSize().height + getVisibleOrigin().y);}
 
 

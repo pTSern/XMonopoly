@@ -55,7 +55,7 @@ void Property::onLand(ChampionInGame *pChamp)
     Arena::onLand(pChamp);
 
     auto owner = pChamp->getOwner();
-    owner->buyingProperty(this);
+    //owner->buyingProperty(this);
 
 }
 void Property::config()

@@ -250,12 +250,12 @@ void ChampionInGame::beAttacked(ChampionInGame* attacker)
 void ChampionInGame::setOwner(Player *pOwner, bool bIsRepresent)
 {
     this->m_pOwner = pOwner;
-    m_bIsRepresentPlayer = bIsRepresent;
+    this->m_bIsRepresentPlayer = bIsRepresent;
 
     ///\ Set champion out line color
     auto outline = ZYOutlineV2::create();
     outline->setColor(this->m_pOwner->getTheColor());
-    m_pIcon->setEffect(outline);
+    this->m_pIcon->setEffect(outline);
 }
 
 bool ChampionInGame::onTouch(Touch* touch, Event* event)

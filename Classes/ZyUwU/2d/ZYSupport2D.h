@@ -14,11 +14,14 @@ public:
 
     Point getContentPositionMiddleTop();
     Point getContentPositionMiddleBottom();
+    Point getContentPositionMiddleRight();
+    Point getContentPositionMiddleLeft();
     Point getContentPositionTopLeft();
     Point getContentPositionTopRight();
     Point getContentPositionBottomRight();
     Point getContentPositionBottomLeft();
     Point getContentPositionMiddle();
+
 
     Point getDifferentAnchorPoint(Point cNewAnchorPoint);
 

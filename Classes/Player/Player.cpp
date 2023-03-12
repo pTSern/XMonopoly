@@ -7,7 +7,7 @@
 //// Constructor
 
 Player::Player() :
-m_pEconomy(Economy::IngameCoin),
+m_pEconomy(nullptr),
 m_pSelectingObject(nullptr),
 m_eType(SelectType::NONE),
 m_Color(Color4F::RED),
@@ -27,11 +27,10 @@ bool Player::init()
     //m_pEventListener->onTouchBegan = CC_CALLBACK_2(Player::onTouch, this);
     //m_pEventListener->onTouchEnded = CC_CALLBACK_2(Player::endTouch, this);
 
-    m_pEconomy.setAmount(5000);
-    m_pMoney = ZYLabel::createWithTTF("", globalFont, 30);
-    m_pMoney->setColor(Color3B::GREEN);
-    this->addChild(m_pMoney);
-    m_pMoney->setPosition(Point(ZYDR_GVS/6));
+    m_pEconomy = IgEcoMng::create();
+    m_pEconomy->setAmount(5000);
+    this->addChild(m_pEconomy);
+    m_pEconomy->setPosition(Point(ZYDR_GVS/6));
     this->scheduleUpdate();
 
     return true;
@@ -50,7 +49,6 @@ void Player::log()
 
 void Player::update(float dt)
 {
-    m_pMoney->setString("$: " + ZYSP_SD(m_pEconomy.getAmount(), 1) + "K");
 }
 
 //// Public
@@ -74,11 +72,6 @@ void Player::setChampionViewPoint(ChampionInGame *pChampion)
 
 }
 
-bool Player::buyingProperty(Property *pro)
-{
-
-}
-
 bool Player::yesOrNoSelector(std::string sMessage)
 {
     return true;
@@ -91,7 +84,7 @@ void Player::onLandArena(Arena* arena)
     {
         if(!pro->hasOwner())
         {
-            if(m_pEconomy.payable(pro->getPrice()))
+            if(m_pEconomy->isPayable(pro->getPrice()))
             {
                 std::string s = "WOULD U LIKE TO PURCHASE THIS PROPERTY\nFOR " + ZYSP_SD(pro->getPrice(), 1) + "K";
                 auto font = ZYLabel::createWithTTF(s, globalFont, 50);
@@ -120,8 +113,7 @@ void Player::onLandArena(Arena* arena)
                                                       auto prop = dynamic_cast<Property*>(this->m_pControllingChampion->getLandingArena());
                                                       if(prop)
                                                       {
-                                                          this->m_pEconomy.reduceMoney(prop->getPrice());
-                                                          this->moneyIndicator(prop->getPrice(), true);
+                                                          this->m_pEconomy->pay(prop->getPrice());
                                                           this->m_vOwn.push_back(prop);
                                                           prop->setOwner(this);
                                                           prop->addDrawRectOrder();
@@ -154,9 +146,8 @@ void Player::onLandArena(Arena* arena)
         }
         else
         {
-            if(m_pEconomy.payable(pro->getTax()))
+            if(this->pay(pro->getOwner(), pro->getTax()))
             {
-                this->pay(pro->getOwner(), pro->getTax());
                 this->finishAction();
             }
             else this->lose();
@@ -165,23 +156,6 @@ void Player::onLandArena(Arena* arena)
         return;
     }
     this->finishAction();
-}
-
-void Player::pay(Player* player, float money)
-{
-    if(m_pEconomy.payable(money))
-    {
-        this->m_pEconomy.reduceMoney(money);
-        this->moneyIndicator(money, true);
-
-        player->receiveMoney(money);
-    }
-}
-
-void Player::receiveMoney(float fAmount)
-{
-    this->m_pEconomy.addMoney(fAmount);
-    this->moneyIndicator(fAmount, false);
 }
 
 void Player::addChampion(ChampionInGame* pChamp)
@@ -206,8 +180,8 @@ void Player::finishAction()
 
 void Player::disable()
 {
-    ///> disable money label
-    this->m_pMoney->setVisible(false);
+    ///> disable economy node
+    this->m_pEconomy->disable();
 
     ///> disable controlling champion
     if(m_pControllingChampion)
@@ -219,33 +193,12 @@ void Player::disable()
 
 void Player::enable()
 {
-    this->m_pMoney->setVisible(true);
+    this->m_pEconomy->enable();
 }
 
 void Player::lose()
 {
 
-}
-
-void Player::moneyIndicator(float money, bool isPay)
-{
-    auto color = Color3B::GREEN;
-    std::string text = "$" + ZYSP_SD(money, 1) + "K";
-    std::string pre = "+";
-    if(isPay)
-    {
-        color = Color3B::RED;
-        pre = "-";
-    }
-    auto font = ZYLabel::createWithTTF(pre + text, globalFont, 20);
-    font->setColor(color);
-    this->addChild(font, 5);
-    font->setPosition(m_pControllingChampion->getPosition());
-    auto moveby = MoveBy::create(0.5, Point(0, m_pControllingChampion->getIcon()->getContentSize().height));
-    auto fadeout = FadeOut::create(0.5);
-    auto remove = RemoveSelf::create(true);
-    auto seq = Sequence::create(moveby, fadeout, remove, nullptr);
-    font->runAction(seq);
 }
 
 void Player::startTurn(ChampionInGame* child)
@@ -256,4 +209,15 @@ void Player::startTurn(ChampionInGame* child)
 
 void Player::endTurn()
 {
+}
+
+bool Player::pay(Player* target, float money)
+{
+    if(!m_pEconomy->pay(target->m_pEconomy, money)) return false;
+    return true;
+}
+
+void Player::receiveMoney(float money)
+{
+    this->m_pEconomy->receive(money);
 }

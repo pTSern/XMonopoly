@@ -28,19 +28,20 @@ public:
 	virtual void setPosition(const cocos2d::Vec2& pos) override;
 	virtual void setPosition(const float xx, const float yy) override;
 	virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
-	virtual const Vec2& getAnchorPoint() const
+
+	virtual const Vec2& getAnchorPoint() const override
 	{
 		return Sprite::getAnchorPoint();
 	}
-	virtual float getPositionX() const
+	virtual float getPositionX() const override
 	{
 		return Sprite::getPositionX();
 	}
-	virtual float getPositionY() const
+	virtual float getPositionY() const override
 	{
 		return Sprite::getPositionY();
 	}
-	virtual const Size& getContentSize() const
+	virtual const Size& getContentSize() const override
 	{
 		return Sprite::getContentSize();
 	}

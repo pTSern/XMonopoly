@@ -4,7 +4,6 @@
 
 USING_NS_ALL;
 
-
 class Economy
 {
 public:

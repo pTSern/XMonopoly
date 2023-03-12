@@ -28,7 +28,17 @@ Point ZYSupport2D::getContentPositionMiddleBottom()
     return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_MIDDLE_BOTTOM);
 }
 
-Point ZYSupport2D::getContentPositionTopLeft()
+Point ZYSupport2D::getContentPositionMiddleRight()
+{
+    return this->getContentPositionWithNewAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+}
+
+Point ZYSupport2D::getContentPositionMiddleLeft()
+{
+    return this->getContentPositionWithNewAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+}
+
+    Point ZYSupport2D::getContentPositionTopLeft()
 {
     return this->getContentPositionWithNewAnchorPoint(cocos2d::Point::ANCHOR_TOP_LEFT);
 }
