@@ -6,7 +6,8 @@ Arena::Arena() :
 m_Coord(Dir::NE, 0),
 m_pTitle(nullptr), m_pRect(nullptr),
 m_cColor(Color4F::RED), m_nDrawRectOrder(0), m_bIsDrewRect(false),
-m_Left(0,0), m_Top(0,0), m_Right(0,0), m_Bottom(0,0)
+m_Left(0,0), m_Top(0,0), m_Right(0,0), m_Bottom(0,0),
+m_eType(Type::ARENA)
 {
     m_vEffectLayer.reserve(2);
     m_vIcons.reserve(2);
@@ -170,6 +171,7 @@ void Arena::addChampion(ChampionInGame *pChamp)
 {
     //this->autoSortChampion();
     m_vChampions.push_back(pChamp);
+    this->onLand(pChamp);
 }
 
 void Arena::removeChampion(ChampionInGame *pChamp)

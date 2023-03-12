@@ -43,12 +43,16 @@ void SpecialArena::config()
 
     m_bIsBuyAble = false;
     this->m_pTitle->setPosition(m_Left.getMidpoint(m_Right));
+
+    this->m_eType = Type::SPECIAL;
     this->scheduleUpdate();
 }
 
 void SpecialArena::onLand(ChampionInGame* pChamp)
 {
+    Arena::onLand(pChamp);
 
+    pChamp->getOwner()->onLandSpecialArena(this);
 }
 
 void SpecialArena::onPass(ChampionInGame* pChamp)

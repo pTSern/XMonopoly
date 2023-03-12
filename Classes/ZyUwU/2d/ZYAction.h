@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ZyUwU/ZyUwU.h"
+#include "../platform/ZYMacros.h"
 
-USING_NS_ALL;
+USING_NS_CC;
 
 NS_ZY_BEGIN
 

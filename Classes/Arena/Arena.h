@@ -22,6 +22,12 @@ public:
         }
     };
 public:
+    enum class Type
+    {
+        ARENA = 0,
+        PROPERTY,
+        SPECIAL
+    };
     void setCoordinate(Coordinate &coord);
     void autoSortChampion();
     void autoRotate();
@@ -39,6 +45,7 @@ public:
     CREATE_GET_FUNC(getTopPoint, Point, m_Top);
     CREATE_GET_FUNC(getBottomPoint, Point, m_Bottom);
     CREATE_SET_GET_FUNC(setRectColor, getRectColor, Color4F, m_cColor);
+    CREATE_GET_FUNC(getType, Type, m_eType);
 
     void addChampion(ChampionInGame *pChamp);
     void removeChampion(ChampionInGame *pChamp);
@@ -72,6 +79,7 @@ protected:
     DrawNode* m_pRect;
     int m_nDrawRectOrder;
     bool m_bIsDrewRect;
+    Type m_eType;
 
     Coordinate m_Coord;
 

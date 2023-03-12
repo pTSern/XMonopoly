@@ -80,11 +80,10 @@ void IngameEconomyManager::setPosition(Point pos)
     this->m_pLabel->setPosition(pos);
 }
 
-void IngameEconomyManager::executeIndicator(float money, bool isPay)
+void IngameEconomyManager::executeIndicator(const float& money, const bool& isPay)
 {
     if(m_pLabel->isVisible())
     {
-        const float duration = 0.75f;
         const auto pos = this->m_pLabel->getPosition();
 
         auto config = TTFConfig(defaultTTFConfig);
@@ -101,12 +100,11 @@ void IngameEconomyManager::executeIndicator(float money, bool isPay)
 
         const auto size = m_pLabel->getContentSize();
         auto move_dir = autoSelectMoveDirection();
-        const auto move_by = MoveBy::create(duration, Point(size.width * move_dir.hDirectionToFloat() * 1,
+        const auto move_by = MoveBy::create(0.75f, Point(size.width * move_dir.hDirectionToFloat() * 1,
                                                   size.height * move_dir.vDirectionToFloat() * 3));
-        const auto fadeout = FadeOut::create(duration*2);
+        const auto fadeout = FadeOut::create(1.5f);
         const auto remove = RemoveSelf::create(true);
-        const auto spawn = Spawn::create(move_by, fadeout, nullptr);
-        const auto seq = Sequence::create(spawn, remove, nullptr);
+        const auto seq = Sequence::create(move_by, fadeout, remove, nullptr);
         font->runAction(seq);
     }
 }

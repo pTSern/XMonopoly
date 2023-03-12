@@ -54,9 +54,7 @@ void Property::onLand(ChampionInGame *pChamp)
 {
     Arena::onLand(pChamp);
 
-    auto owner = pChamp->getOwner();
-    //owner->buyingProperty(this);
-
+    pChamp->getOwner()->onLandProperty(this);
 }
 void Property::config()
 {
@@ -106,6 +104,8 @@ void Property::config()
     }
 
     this->addChild(m_pPriceLabel);
+
+    this->m_eType = Type::PROPERTY;
 
     this->scheduleUpdate();
 }

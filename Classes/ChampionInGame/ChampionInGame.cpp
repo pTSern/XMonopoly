@@ -214,14 +214,10 @@ std::string ChampionInGame::getChildsString(int nTab)
 
 void ChampionInGame::onLand(bool attack)
 {
-    if(attack)
-    {
-        this->attack(m_pLandingArena->getChampionInArena());
-    }
-    this->applyEffectToSelf(m_pLandingArena->getEffectLayer());
-    m_pLandingArena->addChampion(this);
+    if(attack) this->attack(m_pLandingArena->getChampionInArena());
+
+    this->m_pLandingArena->addChampion(this);
     this->m_cCoordinate = m_pLandingArena->getCoordinate();
-    if(m_bIsRepresentPlayer) this->m_pOwner->onLandArena(m_pLandingArena);
 }
 
 void ChampionInGame::endLand()

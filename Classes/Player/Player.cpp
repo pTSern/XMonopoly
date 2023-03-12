@@ -2,7 +2,9 @@
 #include "Arena/Arena.h"
 #include "Support/GameConstant.h"
 #include "Arena/Property/Property.h"
+#include "Arena/SpecialArena/SpecialArena.h"
 #include "GameMaster/GameMaster.h"
+#include "Action/PlayerAction.h"
 
 //// Constructor
 
@@ -11,7 +13,7 @@ m_pEconomy(nullptr),
 m_pSelectingObject(nullptr),
 m_eType(SelectType::NONE),
 m_Color(Color4F::RED),
-m_eAction(PlayerAction::IDLE)
+m_eAction(TheAction::IDLE)
 {
 
 }
@@ -77,84 +79,47 @@ bool Player::yesOrNoSelector(std::string sMessage)
     return true;
 }
 
-void Player::onLandArena(Arena* arena)
+void Player::onLandProperty(Property* property)
 {
-    auto pro = dynamic_cast<Property*>(arena);
-    if(pro)
+    if(!property->hasOwner())
     {
-        if(!pro->hasOwner())
-        {
-            if(m_pEconomy->isPayable(pro->getPrice()))
-            {
-                std::string s = "WOULD U LIKE TO PURCHASE THIS PROPERTY\nFOR " + ZYSP_SD(pro->getPrice(), 1) + "K";
-                auto font = ZYLabel::createWithTTF(s, globalFont, 50);
-                font->setTag(77);
-                font->setColor(Color3B::BLUE);
-                this->addChild(font);
-                font->setPosition(Point(ZYDR_GVS.width/2, ZYDR_GVS.height/3*2));
-                font->setHorizontalAlignment(TextHAlignment::CENTER);
-
-                auto button = ui::Button::create("button/n.png", "button/p.png");
-                button->setTitleText("YES");
-                this->addChild(button);
-                button->setTag(88);
-                button->setPosition(Point(ZYDR_GVS.width/4, ZYDR_GVS.height/4));
-
-                auto no = ui::Button::create("button/n.png", "button/p.png");
-                no->setTitleText("NO");
-                no->setPosition(Point(ZYDR_GVS.width/4*3, ZYDR_GVS.height/4));
-                this->addChild(no);
-                no->setTag(99);
-
-                button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type)
-                                              {
-                                                  if (type == ui::Widget::TouchEventType::ENDED)
-                                                  {
-                                                      auto prop = dynamic_cast<Property*>(this->m_pControllingChampion->getLandingArena());
-                                                      if(prop)
-                                                      {
-                                                          this->m_pEconomy->pay(prop->getPrice());
-                                                          this->m_vOwn.push_back(prop);
-                                                          prop->setOwner(this);
-                                                          prop->addDrawRectOrder();
-                                                          prop->setRectColor(m_Color);
-                                                      }
-
-                                                      auto b = this->getChildByTag(88);
-                                                      auto n = this->getChildByTag(99);
-                                                      auto f = this->getChildByTag(77);
-                                                      b->removeFromParentAndCleanup(true);
-                                                      n->removeFromParentAndCleanup(true);
-                                                      f->removeFromParentAndCleanup(true);
-                                                      this->finishAction();
-                                                  }
-                                              });
-                no->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type)
-                                          {
-                                              if (type == ui::Widget::TouchEventType::ENDED)
-                                              {
-                                                  auto b = this->getChildByTag(88);
-                                                  auto n = this->getChildByTag(99);
-                                                  auto f = this->getChildByTag(77);
-                                                  b->removeFromParentAndCleanup(true);
-                                                  n->removeFromParentAndCleanup(true);
-                                                  f->removeFromParentAndCleanup(true);
-                                                  this->finishAction();
-                                              }
-                                          });
-            }
-        }
-        else
-        {
-            if(this->pay(pro->getOwner(), pro->getTax()))
-            {
-                this->finishAction();
-            }
-            else this->lose();
-        }
-        //if(pro->hasOwner()) this->pay(pro->getOwner(), pro->getTax());
-        return;
+        this->purchaseProperty(property);
     }
+    else
+    {
+        this->pay(property->getOwner(), property->getTax());
+    }
+}
+
+void Player::showPurchasePrompt(Property* property)
+{
+
+}
+
+void Player::purchaseProperty(Property *property)
+{
+    const std::string str = "WOULD U LIKE TO PURCHASE THIS PROP\nFOR " + ZYSP_SD(property->getPrice(), 1) + "K";
+
+    auto label = ZYLabel::createWithTTF(str, globalFont, 50);
+    label->setTag(77);
+    this->m_vRemoveByTagList.emplace_back(label->getTag());
+    label->setColor(Color3B::BLUE);
+    label->setHorizontalAlignment(TextHAlignment::CENTER);
+    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
+    this->addChild(label);
+
+    auto yes = this->createPurchaseButton("YES", 88, ZYDR_TGVS/4);
+    yes->addTouchEventListener(CC_CALLBACK_2(Player::onPurchaseButtonPressed, this, true, property));
+
+    auto no = this->createPurchaseButton("NO", 99, Point(ZYDR_TGVS.width/4*3, ZYDR_TGVS.height/4));
+    no->addTouchEventListener(CC_CALLBACK_2(Player::onPurchaseButtonPressed, this, false, property));
+
+    this->addChild(yes, 5);
+    this->addChild(no, 5);
+}
+
+void Player::onLandSpecialArena(SpecialArena* special)
+{
     this->finishAction();
 }
 
@@ -162,7 +127,7 @@ void Player::addChampion(ChampionInGame* pChamp)
 {
     if(pChamp)
     {
-        m_vChampions.push_back(pChamp);
+        m_vChampions.emplace_back(pChamp);
         m_vChampions.back()->setOwner(this, true);
         this->addChild(pChamp);
     }
@@ -198,7 +163,7 @@ void Player::enable()
 
 void Player::lose()
 {
-
+    finishAction();
 }
 
 void Player::startTurn(ChampionInGame* child)
@@ -211,13 +176,63 @@ void Player::endTurn()
 {
 }
 
-bool Player::pay(Player* target, float money)
+void Player::pay(Player* target, float money)
 {
-    if(!m_pEconomy->pay(target->m_pEconomy, money)) return false;
-    return true;
+    if(m_pEconomy->pay(target->m_pEconomy, money))
+    {
+        this->finishAction();
+    }
+    else
+    {
+        this->lose();
+    }
+
 }
 
 void Player::receiveMoney(float money)
 {
     this->m_pEconomy->receive(money);
+}
+///] Protected
+
+ui::Button* Player::createPurchaseButton(const std::string& title, int tag, const Point& pos)
+{
+    auto button = ui::Button::create("button/n.png", "button/p.png");
+    button->setTitleText(title);
+    button->setPosition(pos);
+    button->setTag(tag);
+    this->m_vRemoveByTagList.emplace_back(tag);
+    return button;
+}
+
+void Player::onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Property* target)
+{
+    if(type == ui::Widget::TouchEventType::ENDED)
+    {
+        if(bIsYes) confirmPurchase(target);
+        else cancelPurchase(target);
+        this->removeAllMarkedChild();
+        this->finishAction();
+    }
+}
+
+void Player::cancelPurchase(Property* property)
+{
+}
+
+void Player::confirmPurchase(Property* property)
+{
+    m_pEconomy->pay(property->getPrice());
+    m_vOwn.push_back(property);
+    property->setOwner(this);
+    property->addDrawRectOrder();
+    property->setRectColor(m_Color);
+}
+
+void Player::removeAllMarkedChild()
+{
+    for(auto &x: m_vRemoveByTagList)
+    {
+        this->removeChildByTag(x, true);
+    }
 }

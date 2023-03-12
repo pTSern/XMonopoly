@@ -48,7 +48,7 @@ public:
 
     void setPosition(Point pos);
     virtual void setPosition(const float xx, const float yy) override;
-    void executeIndicator(float money, bool isPay);
+    void executeIndicator(const float& money, const bool& isPay);
 
 ///] Economy control
 
