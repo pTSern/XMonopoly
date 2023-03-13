@@ -61,6 +61,7 @@ list(APPEND GAME_SOURCE
         Classes/GameObject/GameObject.cpp
         Classes/GameObject/Economy/Economy.cpp
         Classes/GameObject/XProperties.cpp
+        Classes/GameObject/Economy/Manager/EconomyManager.cpp
 
         Classes/ZyUwU/ZyUwU.cpp
         Classes/ZyUwU/2d/ZYSprite.cpp
@@ -68,6 +69,7 @@ list(APPEND GAME_SOURCE
         Classes/ZyUwU/2d/ZYLabel.cpp
         Classes/ZyUwU/2d/ZYShaderHelper.cpp
         Classes/ZyUwU/2d/ZYSupport2D.cpp
+        Classes/ZyUwU/2d/ZYAction.cpp
         Classes/ZyUwU/math/ZYFraction.cpp
         Classes/ZyUwU/math/SmartAlgorithm.cpp
         Classes/ZyUwU/gacha/ZYGacha.cpp
@@ -76,6 +78,7 @@ list(APPEND GAME_SOURCE
         Classes/ZyUwU/base/ZYNodeExtend.cpp
         Classes/ZyUwU/base/ZYDirector.cpp
         Classes/ZyUwU/base/ZYSupport.cpp
+        Classes/ZyUwU/ui/ZYUI.cpp
 
         Classes/GameScene/LoginScene.cpp
         Classes/GameScene/MainMenu.cpp
@@ -93,6 +96,8 @@ list(APPEND GAME_SOURCE
 
         Classes/Player/Player.cpp
         Classes/Player/UI/PlayerUI.cpp
+        Classes/Player/ViewPoint/ViewPoint.cpp
+        Classes/Player/Action/PlayerAction.cpp
 
         Classes/SelectHelper/SelectHelper.cpp
 
@@ -151,6 +156,7 @@ list(APPEND GAME_HEADER
         Classes/GameObject/GameObject.h
         Classes/GameObject/AGameObject.h
         Classes/GameObject/XProperties.h
+        Classes/GameObject/Economy/Manager/EconomyManager.h
         Classes/GameObject/Economy/Economy.h
 
         Classes/LogManager/LogManager.h
@@ -164,6 +170,7 @@ list(APPEND GAME_HEADER
         Classes/ZyUwU/2d/ZYEffect.h
         Classes/ZyUwU/2d/ZYLabel.h
         Classes/ZyUwU/2d/ZYSupport2D.h
+        Classes/ZyUwU/2d/ZYAction.h
         Classes/ZyUwU/math/ZYFraction.h
         Classes/ZyUwU/math/SmartAlgorithm.h
         Classes/ZyUwU/gacha/ZYGacha.h
@@ -173,6 +180,7 @@ list(APPEND GAME_HEADER
         Classes/ZyUwU/base/ZYConstant.h
         Classes/ZyUwU/base/ZYNodeExtend.h
         Classes/ZyUwU/base/ZYSupport.h
+        Classes/ZyUwU/ui/ZYUI.h
 
         Classes/GameScene/LoginScene.h
         Classes/GameScene/MainMenu.h
@@ -188,6 +196,8 @@ list(APPEND GAME_HEADER
 
         Classes/Player/Player.h
         Classes/Player/UI/PlayerUI.h
+        Classes/Player/ViewPoint/ViewPoint.h
+        Classes/Player/Action/PlayerAction.h
 
         Classes/Champion/Champion.h
         Classes/Champion/Mage/Mage.h
