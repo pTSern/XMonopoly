@@ -340,7 +340,6 @@ void ChampionInGame::autoFlip()
 
 void ChampionInGame::jumpTo(int num)
 {
-    CCLOG("DIE B4 GET INDEX %p", this);
     this->m_cCoordinate.g_nIndex += num;
     if(m_cCoordinate.g_nIndex > MAP_MNG_GI->getArenas().size())
     {

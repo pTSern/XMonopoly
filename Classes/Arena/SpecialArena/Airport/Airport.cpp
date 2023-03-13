@@ -40,7 +40,7 @@ void AirportArena::update(float dt)
 
 void AirportArena::onLand(ChampionInGame* pChamp)
 {
-
+    SpecialArena::onLand(pChamp);
 }
 
 void AirportArena::config()

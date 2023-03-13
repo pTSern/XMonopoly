@@ -40,6 +40,7 @@ void SpawnArena::update(float dt)
 
 void SpawnArena::onLand(ChampionInGame* pChamp)
 {
+    SpecialArena::onLand(pChamp);
 }
 
 void SpawnArena::onPass(ChampionInGame* pChamp)

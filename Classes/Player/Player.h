@@ -45,15 +45,17 @@ public:
     void setChampionViewPoint(ChampionInGame *pChampion);
     void setControlChampion(ChampionInGame* champ);
 
-    void onLandArena(Arena* arena);
-    void onLandProperty(Property* property);
     void onLandSpecialArena(SpecialArena* special);
     CREATE_SET_GET_FUNC(setSelectType, getSelectType, SelectType, m_eType);
     CREATE_SET_GET_FUNC(setSelectObject, getSelectObject, GameObject*, m_pSelectingObject)
     CREATE_SET_GET_FUNC(setTheColor, getTheColor, Color4F, m_Color);
     CREATE_GET_FUNC(getEconomy, IgEcoMng*, m_pEconomy);
 
-    void pay(Player* target, float money);
+    float getTotalPropertyValue();
+
+    CREATE_GET_FUNC(getNetWorth, float, (m_pEconomy->getAmount() + getTotalPropertyValue()));
+
+    bool doPay(Player* target, float money);
     void receiveMoney(float money);
 
     void disable();
@@ -65,24 +67,31 @@ public:
 
     CREATE_GET_FUNC(getChampChildren, std::vector<ChampionInGame*>, m_vChampions);
 
+    void addChampion(ChampionInGame* pChamp);
+    void addOwnedProperty(Property* property);
     void lose();
 
+//// PURCHASE PROPERTY /////////////////////////////////////////
+    void onLandArena(Arena* arena);
+    void onLandProperty(Property* property);
 
-    ///\ Client Player
-    bool yesOrNoSelector(std::string sMessage);
-    void addChampion(ChampionInGame* pChamp);
-
-    void showPurchasePrompt(Property* property);
     void purchaseProperty(Property* property);
     void acquireProperty(Property* property);
 
     void cancelPurchase(Property* property);
     void confirmPurchase(Property* property);
+    void pay(Player* target, float money);
+
 
 protected:
+    void showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback);
+    void showMessageHelper(const std::string& message);
+    void showMessageHelper(const std::string& message, const float duration);
+
     ui::Button* createPurchaseButton(const std::string& title, int tag, const Point& pos);
     void onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Property* target);
     void removeAllMarkedChild();
+/////////////////////////////////////////////////////////////////
 
 protected:
     /// Must declare
@@ -94,14 +103,10 @@ protected:
     ChampionInGame* m_pViewPointChampion;                ///< weak reference to the viewpoint champion
     std::vector<int> m_vRemoveByTagList;                 ///< contain child's tag that will be removed after calling removeAllMarkedChild() func
 
-    //Economy m_pEconomy;                                ///< contain player's money
     EventListenerTouchOneByOne *m_pEventListener;        ///< event listener
     GameObject* m_pSelectingObject;                      ///< weak reference to selecting object
     SelectType m_eType;                                  ///< mark the selecting object's type
     TheAction m_eAction;                                 ///< current action of the player
-
-    // Money Label
-    //ZYLabel* m_pMoney;                                ///< money's label, help display
 
     Color4F m_Color;                                  ///< player's color
 

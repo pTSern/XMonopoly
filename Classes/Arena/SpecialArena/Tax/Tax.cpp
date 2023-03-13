@@ -40,6 +40,7 @@ void TaxArena::update(float dt)
 
 void TaxArena::onLand(ChampionInGame* pChamp)
 {
+    SpecialArena::onLand(pChamp);
 }
 
 void TaxArena::config()

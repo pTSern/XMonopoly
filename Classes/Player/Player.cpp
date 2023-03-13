@@ -30,7 +30,7 @@ bool Player::init()
     //m_pEventListener->onTouchEnded = CC_CALLBACK_2(Player::endTouch, this);
 
     m_pEconomy = IgEcoMng::create();
-    m_pEconomy->setAmount(5000);
+    m_pEconomy->setAmount(500);
     this->addChild(m_pEconomy);
     m_pEconomy->setPosition(Point(ZYDR_GVS/6));
     this->scheduleUpdate();
@@ -74,11 +74,6 @@ void Player::setChampionViewPoint(ChampionInGame *pChampion)
 
 }
 
-bool Player::yesOrNoSelector(std::string sMessage)
-{
-    return true;
-}
-
 void Player::onLandProperty(Property* property)
 {
     if(!property->hasOwner())
@@ -89,33 +84,6 @@ void Player::onLandProperty(Property* property)
     {
         this->pay(property->getOwner(), property->getTax());
     }
-}
-
-void Player::showPurchasePrompt(Property* property)
-{
-
-}
-
-void Player::purchaseProperty(Property *property)
-{
-    const std::string str = "WOULD U LIKE TO PURCHASE THIS PROP\nFOR " + ZYSP_SD(property->getPrice(), 1) + "K";
-
-    auto label = ZYLabel::createWithTTF(str, globalFont, 50);
-    label->setTag(77);
-    this->m_vRemoveByTagList.emplace_back(label->getTag());
-    label->setColor(Color3B::BLUE);
-    label->setHorizontalAlignment(TextHAlignment::CENTER);
-    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
-    this->addChild(label);
-
-    auto yes = this->createPurchaseButton("YES", 88, ZYDR_TGVS/4);
-    yes->addTouchEventListener(CC_CALLBACK_2(Player::onPurchaseButtonPressed, this, true, property));
-
-    auto no = this->createPurchaseButton("NO", 99, Point(ZYDR_TGVS.width/4*3, ZYDR_TGVS.height/4));
-    no->addTouchEventListener(CC_CALLBACK_2(Player::onPurchaseButtonPressed, this, false, property));
-
-    this->addChild(yes, 5);
-    this->addChild(no, 5);
 }
 
 void Player::onLandSpecialArena(SpecialArena* special)
@@ -176,6 +144,35 @@ void Player::endTurn()
 {
 }
 
+
+
+bool Player::doPay(Player* target, float money)
+{
+    return (m_pEconomy->pay(target->m_pEconomy, money));
+}
+
+void Player::receiveMoney(float money)
+{
+    this->m_pEconomy->receive(money);
+}
+
+void Player::addOwnedProperty(Property* property)
+{
+    this->m_vOwn.push_back(property);
+}
+
+float Player::getTotalPropertyValue()
+{
+    float total = 0;
+    for (auto &x : m_vOwn)
+    {
+        total += x->getSellValue();
+    }
+    return total;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 void Player::pay(Player* target, float money)
 {
     if(m_pEconomy->pay(target->m_pEconomy, money))
@@ -186,14 +183,48 @@ void Player::pay(Player* target, float money)
     {
         this->lose();
     }
-
 }
 
-void Player::receiveMoney(float money)
-{
-    this->m_pEconomy->receive(money);
-}
 ///] Protected
+
+void Player::showMessageHelper(const std::string& message)
+{
+    auto label = ZYLabel::createWithTTF(message, globalFont, 50);
+    label->setTag(77);
+    this->m_vRemoveByTagList.emplace_back(label->getTag());
+    label->setColor(Color3B::BLUE);
+    label->setHorizontalAlignment(TextHAlignment::CENTER);
+    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
+    this->addChild(label);
+}
+
+void Player::showMessageHelper(const std::string& message, const float duration)
+{
+    auto label = ZYLabel::createWithTTF(message, globalFont, 50);
+    label->setColor(Color3B::BLUE);
+    label->setHorizontalAlignment(TextHAlignment::CENTER);
+    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
+    this->addChild(label);
+
+    auto fade_out = FadeOut::create(duration);
+    auto remove = RemoveSelf::create(true);
+    auto se = Sequence::create(fade_out, remove, nullptr);
+    label->runAction(se);
+}
+
+void Player::showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback)
+{
+    this->showMessageHelper(message);
+
+    auto yes = this->createPurchaseButton("YES", 88, ZYDR_TGVS/4);
+    yes->addTouchEventListener(yesCallBack);
+
+    auto no = this->createPurchaseButton("NO", 99, Point(ZYDR_TGVS.width/4*3, ZYDR_TGVS.height/4));
+    no->addTouchEventListener(noCallback);
+
+    this->addChild(yes, 5);
+    this->addChild(no, 5);
+}
 
 ui::Button* Player::createPurchaseButton(const std::string& title, int tag, const Point& pos)
 {
@@ -233,8 +264,23 @@ void Player::confirmPurchase(Property* property)
 
 void Player::removeAllMarkedChild()
 {
-    for(auto &x: m_vRemoveByTagList)
+    for(int i = m_vRemoveByTagList.size() - 1; i >= 0; i--)
     {
-        this->removeChildByTag(x, true);
+        this->removeChildByTag(m_vRemoveByTagList[i], true);
+        m_vRemoveByTagList.erase(m_vRemoveByTagList.begin() + i);
+    }
+}
+
+void Player::purchaseProperty(Property *property)
+{
+    if(m_pEconomy->isPayable(property->getPrice()))
+    {
+        const std::string str = "WOULD YOU LIKE TO BUY THIS\nPROPERTY FOR " + ZYSP_SD(property->getPrice(), 1) + "K";
+        this->showPurchasePromptHelper(str, CC_CALLBACK_2(Player::onPurchaseButtonPressed, this, true, property), CC_CALLBACK_2(Player::onPurchaseButtonPressed, this, false, property));
+    }
+    else
+    {
+        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO BUY THIS", 3);
+        this->finishAction();
     }
 }

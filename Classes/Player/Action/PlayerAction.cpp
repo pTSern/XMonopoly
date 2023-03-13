@@ -20,7 +20,7 @@ void PayTaxAction::execute(Player* player, SpecialArena* special)
 
 void PurchaseAction::execute(Player* player, Property* property)
 {
-    player->showPurchasePrompt(property);
+    player->purchaseProperty(property);
 }
 
 void PurchaseAction::execute(Player* player, SpecialArena* special)

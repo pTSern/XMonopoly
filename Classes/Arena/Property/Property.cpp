@@ -7,8 +7,6 @@
 
 Property::Property() :
 m_pPrice(Economy::IngameCoin),
-m_pTax(Economy::IngameCoin),
-m_pValue(Economy::IngameCoin),
 m_fSellMultiple(1),
 m_fIncomeMultiple(1),
 m_pOwner(nullptr)
@@ -53,9 +51,51 @@ void Property::update(float dt)
 void Property::onLand(ChampionInGame *pChamp)
 {
     Arena::onLand(pChamp);
+    auto target = pChamp->getOwner();
 
-    pChamp->getOwner()->onLandProperty(this);
+    /**
+     *  This property does not have owner action
+     *  Ask target player to buy this property
+     */
+    if(!this->hasOwner())
+    {
+        this->purchaseProperty(target);
+        return;
+    }
+
+    /**
+     *  This property have an owner
+     *  Force player to pay this property's tax to its owner
+     */
+    if(target->doPay(this->getOwner(), this->getTax()))
+    {
+       target->finishAction();
+
+       /**
+        *   Player pay this property's tax
+        *   Ask player to repurchase this property
+        */
+        this->acquireProperty(target);
+        return;
+    }
+
+    /**
+     *  This target player can not pay this property's tax
+     *  Force player to sell their property
+     */
+    if(target->getNetWorth() >= this->getTax())
+    {
+        this->acquireProperty(target);
+    }
+
+    /**
+     *  These properties of this target player do not have enough value to sell for this tax.
+     *  Force player to lose
+     */
+    target->lose();
+    //pChamp->getOwner()->onLandProperty(this);
 }
+
 void Property::config()
 {
     Arena::config();
@@ -109,6 +149,7 @@ void Property::config()
 
     this->scheduleUpdate();
 }
+
 bool Property::initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize, Point left,
                                 float fPrice, float fSellMultiple, float fIncomeMultiple)
 {
@@ -124,6 +165,25 @@ bool Property::initWithProperties(const std::string& sTitle, Coordinate &coord, 
     return true;
 }
 
+void Property::purchaseProperty(Player *target)
+{
+    if(target->getEconomy()->isPayable(this->getPrice()))
+    {
+        const std::string str = "WOULD YOU LIKE TO BUY THIS\nPROPERTY FOR " + ZYSP_SD(this->getPrice(), 1) + "K";
+        this->showPurchasePromptHelper(str, CC_CALLBACK_2(Property::onPurchaseButtonPressed, this, true, target), CC_CALLBACK_2(Property::onPurchaseButtonPressed, this, false, target));
+    }
+    else
+    {
+        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO BUY THIS", 3);
+        target->finishAction();
+    }
+}
+
+void Property::acquireProperty(Player* target)
+{
+    target->finishAction();
+}
+
 //// Static
 
 Property* Property::createWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize,
@@ -137,4 +197,96 @@ Property* Property::createWithProperties(const std::string& sTitle, Coordinate &
     };
     CC_SAFE_DELETE(ret);
     return nullptr;
+}
+
+///] Protected
+
+void Property::showMessageHelper(const std::string& message)
+{
+    auto label = ZYLabel::createWithTTF(message, globalFont, 50);
+    label->setTag(77);
+    this->m_vRemoveByTagList.emplace_back(label->getTag());
+    label->setColor(Color3B::BLUE);
+    label->setGlobalZOrder(5);
+    label->setHorizontalAlignment(TextHAlignment::CENTER);
+    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
+    this->addChild(label);
+}
+
+void Property::showMessageHelper(const std::string& message, const float duration)
+{
+    auto label = ZYLabel::createWithTTF(message, globalFont, 50);
+    label->setColor(Color3B::BLUE);
+    label->setHorizontalAlignment(TextHAlignment::CENTER);
+    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
+    label->setGlobalZOrder(5);
+    this->addChild(label);
+
+    auto fade_out = FadeOut::create(duration);
+    auto remove = RemoveSelf::create(true);
+    auto se = Sequence::create(fade_out, remove, nullptr);
+    label->runAction(se);
+}
+
+void Property::showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback)
+{
+    this->showMessageHelper(message);
+
+    auto yes = this->createPurchaseButton("YES", 88, ZYDR_TGVS/4);
+    yes->setGlobalZOrder(5);
+    yes->addTouchEventListener(yesCallBack);
+
+    auto no = this->createPurchaseButton("NO", 99, Point(ZYDR_TGVS.width/4*3, ZYDR_TGVS.height/4));
+    no->setGlobalZOrder(5);
+    no->addTouchEventListener(noCallback);
+
+    this->addChild(yes, 5);
+    this->addChild(no, 5);
+}
+
+ui::Button* Property::createPurchaseButton(const std::string& title, int tag, const Point& pos)
+{
+    auto button = ui::Button::create("button/n.png", "button/p.png");
+    button->setTitleText(title);
+    button->setPosition(pos);
+    button->setTag(tag);
+    this->m_vRemoveByTagList.emplace_back(tag);
+    return button;
+}
+
+void Property::onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Player* target)
+{
+    if(type == ui::Widget::TouchEventType::ENDED)
+    {
+        if(bIsYes) confirmPurchase(target);
+        else cancelPurchase(target);
+    }
+}
+
+void Property::cancelPurchase(Player* target)
+{
+    this->removeAllMarkedChild();
+    target->finishAction();
+}
+
+void Property::confirmPurchase(Player* target)
+{
+    target->getEconomy()->pay(this->getPrice());
+    target->addOwnedProperty(this);
+
+    this->setOwner(target);
+    this->addDrawRectOrder();
+    this->setRectColor(target->getTheColor());
+
+    this->removeAllMarkedChild();
+    target->finishAction();
+}
+
+void Property::removeAllMarkedChild()
+{
+    for(int i = m_vRemoveByTagList.size() - 1; i >= 0; i--)
+    {
+        this->removeChildByTag(m_vRemoveByTagList[i], true);
+        m_vRemoveByTagList.erase(m_vRemoveByTagList.begin() + i);
+    }
 }
