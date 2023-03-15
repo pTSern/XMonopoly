@@ -378,7 +378,7 @@ void ChampionInGame::jumpToNextCoord()
 {
     this->m_cCoordinate.g_nIndex += 1;
     this->p_nCurrentJump ++;
-    if(m_cCoordinate.g_nIndex > MAP_MNG_GI->getArenas().size())
+    if(m_cCoordinate.g_nIndex >= MAP_MNG_GI->getArenas().size())
     {
         m_cCoordinate.g_nIndex-=(MAP_MNG_GI->getArenas().size());
     }
