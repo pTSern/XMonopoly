@@ -142,6 +142,7 @@ list(APPEND GAME_SOURCE
         Classes/Arena/SpecialArena/Airport/Airport.cpp
         Classes/Arena/SpecialArena/Shop/Shop.cpp
         Classes/Arena/SpecialArena/Spawn/Spawn.cpp
+        Classes/Arena/SpecialArena/Hospital/Hospital.cpp
 
         Classes/User/User.cpp
         Classes/User/Information/UserInformation.cpp
@@ -245,11 +246,12 @@ list(APPEND GAME_HEADER
         Classes/Arena/SpecialArena/SpecialArena.h
         Classes/Arena/Property/Property.h
         Classes/Arena/GlobalArena.h
-        Classes/Arena/SpecialArena/Factory/Factory.cpp
-        Classes/Arena/SpecialArena/Tax/Tax.cpp
-        Classes/Arena/SpecialArena/Airport/Airport.cpp
-        Classes/Arena/SpecialArena/Shop/Shop.cpp
-        Classes/Arena/SpecialArena/Spawn/Spawn.cpp
+        Classes/Arena/SpecialArena/Factory/Factory.h
+        Classes/Arena/SpecialArena/Tax/Tax.h
+        Classes/Arena/SpecialArena/Airport/Airport.h
+        Classes/Arena/SpecialArena/Shop/Shop.h
+        Classes/Arena/SpecialArena/Hospital/Hospital.h
+        Classes/Arena/SpecialArena/Spawn/Spawn.h
 
         Classes/User/User.h
         Classes/User/Information/UserInformation.h
