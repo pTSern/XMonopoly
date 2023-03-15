@@ -28,6 +28,6 @@ class SpecialArenaTypeRegister
 public:
     SpecialArenaTypeRegister(std::string sClassName)
     {
-        SpecialArenaFactory::getInstance()->registerType(sClassName, [](const std::string& sTitle, Coordinate &coord, Size rectSize, Point left)->SpecialArena* {CCLOG("VUA"); return Type::createWithProperties(sTitle, coord, rectSize, left);});
+        SpecialArenaFactory::getInstance()->registerType(sClassName, [](const std::string& sTitle, Coordinate &coord, Size rectSize, Point left)->SpecialArena* {return Type::createWithProperties(sTitle, coord, rectSize, left);});
     }
 };

@@ -40,7 +40,7 @@ bool Dice::initWithProperties(const std::string& sPath)
 void Dice::loadElement(const std::string& sPath)
 {
     std::string path = sPath;
-    if(!CC_FILEUTILS_GI->isFileExist(sPath)) path = "dice/default.png";
+    if(!CC_FILEUTILS_GI->isFileExist(sPath)) path = "dice/128.png";
 
     m_pDice = ZYSprite::create(path.c_str());
     m_pDice->setVisible(false);
@@ -49,7 +49,9 @@ void Dice::loadElement(const std::string& sPath)
     diceSize = Size(m_pDice->getContentSize().width/6, m_pDice->getContentSize().height);
     m_centerRect = Rect(Point(0,0), diceSize);
 
-    m_pButton = ui::Button::create("dice/button/normal/default.png", "dice/button/clicked/default.png");
+    m_pButton = ui::Button::create(sr_button_default, sr_button_clicked);
+    m_pButton->setTitleText("DICE");
+    CCUB_SSTFSP(m_pButton, 0.3f);
     m_pButton->setPosition(Point(ZYDR_GVS.width/6*5, ZYDR_GVS.height/6));
 
     auto ls = EventListenerTouchOneByOne::create();
@@ -62,6 +64,11 @@ void Dice::loadElement(const std::string& sPath)
 
     this->addChild(m_pButton);
     this->addChild(m_pDice);
+}
+
+void Dice::setDiceButtonPosition(const Vec2 &pos)
+{
+    this->m_pButton->setPosition(pos);
 }
 
 // Virtual
@@ -101,6 +108,11 @@ int Dice::rollDice()
     this->m_pButton->setVisible(false);
 
     return m_vDiceMemory.back();
+}
+
+const Size& Dice::getDiceButtonSize()
+{
+    return m_pButton->getContentSize();
 }
 
 void Dice::enableDice()

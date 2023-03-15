@@ -63,7 +63,7 @@ void GameMaster::update(float dt)
 
 void GameMaster::calculateNewTurn()
 {
-    //std::sort(m_vList.begin(), m_vList.end(), ChampionInGame::sortChampion());
+    //std::sort(m_vList.begin(), m_vList.end(), ChampionInGame::SortChampion());
     int next_index = 0;
     if(m_nChampionIsTurnIndex + 1 <= m_vList.size() - 1)
     {

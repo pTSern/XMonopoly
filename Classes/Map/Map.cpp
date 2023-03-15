@@ -216,10 +216,14 @@ void MapManager::generatePropertyArenas(ValueMap obj)
 	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
 	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
 	float price = obj.at("price").asFloat();
-	float sm = obj.at("sm").asFloat();
-	float im = obj.at("im").asFloat();
+	float sm = obj.at("base_sell_multiple").asFloat();
+	float im = obj.at("base_income_multiple").asFloat();
+	float smPerLv = obj.at("sell_multiple_increment").asFloat();
+	float imPerLv = obj.at("income_multiple_increment").asFloat();
+	int minLv = obj.at("min_level").asInt();
+	int maxLv = obj.at("max_level").asInt();
 
-	auto property = Property::createWithProperties(name, coord, size, point, price, sm, im);
+	auto property = Property::createWithProperties(name, coord, size, point, price, minLv, maxLv, sm, im, smPerLv, imPerLv);
 	if(property)
 	{
 		this->addChild(property, 2);
@@ -235,11 +239,8 @@ void MapManager::generateSpecialArenas(ValueMap obj)
 	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
 
 	auto sa = SpecialArenaFactory::getInstance()->create(name, name, coord, size, point);
-	if(sa)
-	{
-		this->addChild(sa, 2);
-		p_vArenas.push_back(sa);
-	}
+	this->addChild(sa, 2);
+	p_vArenas.push_back(sa);
 }
 bool MapManager::onTouch(Touch *touch, Event *event)
 {

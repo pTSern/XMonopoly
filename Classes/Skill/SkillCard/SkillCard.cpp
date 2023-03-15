@@ -121,7 +121,7 @@ bool SkillCard::initWithProperties(std::string sIconSprite, std::string sShapeSp
     p_pDescriptionSprite = (ZYSprite::create(sDescriptionSprite.c_str()));
     p_pCoolDownSprite = (ZYSprite::create(sCoolDownSprite.c_str()));
 
-    TTFConfig ttfConfig(globalFont, 18, GlyphCollection::DYNAMIC,nullptr,true, 1);
+    TTFConfig ttfConfig(globalFont, 18, GlyphCollection::DYNAMIC,nullptr,true);
 
     p_pSkillPointCostLabel = (ZYLabel::createWithTTF(ttfConfig, sSKillPointCostLabel));
     p_pCoolDownLabel = (ZYLabel::createWithTTF(ttfConfig, sCoolDownLabel));

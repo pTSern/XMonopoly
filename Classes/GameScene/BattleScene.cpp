@@ -67,12 +67,14 @@ bool BattleScene::init()
     MAP_MNG_GI->setClientPlayer(player);
     m_vPlayers.push_back(player);
 
-    auto dice2 = Dice::createWithProperties("dice/128.png");
+    auto dice2 = Dice::createWithProperties("dice/128-red.png");
     auto champ2 = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
     sig2->setSkillMechanic(SkillInGame::MoveBySkill);
-    auto sm2 = SkillManager::createWithSkillInGame(sig2, SkillInGame::createTest(),nullptr);
+    auto sig5 = SkillInGame::createTest();
+    sig5->setSkillMechanic(SkillInGame::MoveBySkill);
+    auto sm2 = SkillManager::createWithSkillInGame(sig2, SkillInGame::createTest(), sig5, nullptr);
     auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
     auto coord2 = Coordinate(Dir::WS, 0);
     cig2->setPosition(coord2);

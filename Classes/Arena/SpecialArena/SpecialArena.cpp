@@ -21,15 +21,18 @@ bool SpecialArena::init()
     return true;
 }
 
+bool SpecialArena::initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize, Point left)
+{
+    return Arena::initWithProperties(sTitle, coord, rectSize, left);
+};
 void SpecialArena::log()
 {
-
+    Arena::log();
 }
 
 std::string SpecialArena::toString(int nTab)
 {
-    std::string ts;
-    return ts;
+    return Arena::toString(nTab);
 }
 
 void SpecialArena::update(float dt)

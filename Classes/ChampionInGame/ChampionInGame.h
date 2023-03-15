@@ -44,12 +44,19 @@ public:
         DEATH
     };
 
+    enum class ChampionTurnPhase
+    {
+        NONE,
+        PRE_DICE,
+        POS_DICE,
+    };
+
 public:
     static ChampionInGame* createWithChampion(Champion *pChamp, bool bIsClone = true, bool bIsDeleteCloner = false);
     static ChampionInGame* createWithProperties(Champion *pChamp, ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck);
 
 public:
-    struct sortChampion
+    struct SortChampion
     {
         inline bool operator() (ChampionInGame* l, ChampionInGame* r)
         {
@@ -82,6 +89,7 @@ public:
     CREATE_GET_FUNC(isNotMoving, bool, m_eAction != ChampionAction::MOVING);
     CREATE_GET_FUNC(isCastingSkill, bool, m_eAction == ChampionAction::CASTING_SKILL);
     CREATE_GET_FUNC(getIconSize, Size, m_pIcon->getContentSize());
+    CREATE_GET_FUNC(isRepresentPlayer, bool, m_bIsRepresentPlayer);
     bool isValidTurn();
 
 public:
@@ -123,8 +131,15 @@ public:
     void jumpTo(Point pos);
     void jumpTo(Coordinate coord);
     void jumpTo(Arena* arena);
+    void jumpToNextCoord();
+    void endJump();
 
     void startTurn();
+    void enterPreDicePhase();
+    void endPreDicePhase();
+    bool canEnterPostDice();
+    void enterPostDicePhase();
+    void endPostDicePhase();
     void endTurn();
 
     void castingSkill();
@@ -153,6 +168,7 @@ protected:
     ChampionStatus m_eStatus;
     HeadDir m_eHead;
     Arena *m_pLandingArena, *m_pMemArena;
+    ChampionTurnPhase m_eTurnPhase;
     ui::Button *m_pSelfButton;
 
     /// Auto declare, can be nullptr

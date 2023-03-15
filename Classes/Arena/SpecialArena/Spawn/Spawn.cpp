@@ -16,7 +16,7 @@ SpawnArena::SpawnArena()
 SpawnArena* SpawnArena::createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left)
 {
     auto ret = new (std::nothrow) SpawnArena();
-    if(ret && ret->Arena::initWithProperties(title, coord, rectSize, left))
+    if(ret && ret->SpecialArena::initWithProperties(title, coord, rectSize, left))
     {
         ret->autorelease();
         ret->config();
@@ -51,15 +51,17 @@ void SpawnArena::onPass(ChampionInGame* pChamp)
 void SpawnArena::config()
 {
     SpecialArena::config();
+    this->setName("SPAWN ARENA");
     this->m_pTitle->setVisible(false);
 }
 
 void SpawnArena::log()
 {
 
+    SpecialArena::log();
 }
 
 std::string SpawnArena::toString(int nTab)
 {
-
+    return SpecialArena::toString(nTab);
 }

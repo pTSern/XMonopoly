@@ -9,7 +9,7 @@ static SpecialArenaTypeRegister<AirportArena> s_register("AIRPORT");
 AirportArena* AirportArena::createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left)
 {
     auto ret = new (std::nothrow) AirportArena();
-    if(ret && ret->Arena::initWithProperties(title, coord, rectSize, left))
+    if(ret && ret->SpecialArena::initWithProperties(title, coord, rectSize, left))
     {
         ret->autorelease();
         ret->config();
@@ -46,15 +46,16 @@ void AirportArena::onLand(ChampionInGame* pChamp)
 void AirportArena::config()
 {
     SpecialArena::config();
+    this->setName("AIRPORT ARENA");
     this->m_pTitle->setVisible(false);
 }
 
 void AirportArena::log()
 {
-
+    SpecialArena::log();
 }
 
 std::string AirportArena::toString(int nTab)
 {
-
+    return SpecialArena::toString(nTab);
 }

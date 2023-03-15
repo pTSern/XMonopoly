@@ -69,27 +69,57 @@ public:
 
     void addChampion(ChampionInGame* pChamp);
     void addOwnedProperty(Property* property);
+    void removeOwnedProperty(Property* property);
     void lose();
 
 //// PURCHASE PROPERTY /////////////////////////////////////////
     void onLandArena(Arena* arena);
     void onLandProperty(Property* property);
 
-    void purchaseProperty(Property* property);
-    void acquireProperty(Property* property);
+    virtual void purchaseProperty(Property* property);
+    virtual void acquireProperty(Property* property);
+    virtual void upgradeProperty(Property* property);
 
     void cancelPurchase(Property* property);
     void confirmPurchase(Property* property);
-    void pay(Player* target, float money);
 
+    void confirmAcquire(Property* property);
+    void cancelAcquire(Property* property);
+
+    void confirmUpgrade(Property* property);
+    void cancelUpgrade(Property* property);
+
+    void pay(Player* target, float money);
+    void sellPropertyForTax(Property* property);
+
+    void autoSellPropertyForTax(Property* property);
 
 protected:
-    void showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback);
-    void showMessageHelper(const std::string& message);
-    void showMessageHelper(const std::string& message, const float duration);
+    void showPurchasePromptHelper(const std::string& message, const std::string& message2, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback);
+    void showMessageHelper(const std::string& message, const float& duration);
+    /**
+     *
+     * @param message
+     * @param pos
+     * @param fontSize
+     */
+    void showTheMessageHelper(const std::string& message, Vec2& pos, const float& fontSize);
+
+    /**
+     *
+     * @param message The title will be display on the screen
+     * @return The background Sprite
+     * @warning THE BACKGROUND SPRITE ALREADY ADDED IN THIS PLAYER(NODE)
+     */
+    ZYSprite* showMessageWithBackgroundHelper(const std::string& message);
 
     ui::Button* createPurchaseButton(const std::string& title, int tag, const Point& pos);
+
     void onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Property* target);
+    void onAcquireButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Property* target);
+    void onUpgradeButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Property* target);
+
+    void markChildToRemove(Node* target, int tag);
     void removeAllMarkedChild();
 /////////////////////////////////////////////////////////////////
 

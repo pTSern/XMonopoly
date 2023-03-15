@@ -46,6 +46,7 @@ SkillInGame* SkillInGame::createTest()
         ret->m_pSkillStatics = SkillStatics::create();
         ret->m_pSkillStatics->setManaCost(0);
         ret->m_pSkillCard = SkillCard::createDefault();
+        ret->m_pSkillCard->setDescriptionLabel("The champion moves to a new Arena with a number equal to the Dice number");
         ret->m_pSkillCard->setOwner(ret);
         ret->m_pCondition = Condition::create();
         ret->m_pCondition->setOwner(ret);

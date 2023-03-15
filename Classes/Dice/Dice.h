@@ -21,6 +21,8 @@ public:
     CREATE_GET_FUNC(getLastestDiceNum, int, m_vDiceMemory.back());
     CREATE_GET_FUNC(isRolled, bool, !this->m_pButton->isVisible());
 
+    const Size& getDiceButtonSize();
+
     int rollDice();
     bool initWithProperties(const std::string& sPath );
     void loadElement(const std::string& path);
@@ -32,6 +34,7 @@ public:
     bool onTouch(cocos2d::Touch *touch, cocos2d::Event *event);
     bool endTouch(cocos2d::Touch *touch, cocos2d::Event *event);
     void run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
+    void setDiceButtonPosition(const Vec2& pos);
 
 protected:
     ZYSprite* m_pDice;

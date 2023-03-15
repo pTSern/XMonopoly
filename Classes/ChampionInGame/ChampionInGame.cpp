@@ -19,7 +19,8 @@ m_bIsRepresentPlayer(false),
 m_pChampionUI(nullptr),
 m_pDice(nullptr),
 m_eStatus(ChampionStatus::NORMAL),
-m_eAction(ChampionAction::IDLE)
+m_eAction(ChampionAction::IDLE),
+m_eTurnPhase(ChampionTurnPhase::NONE)
 {
 
 }
@@ -146,10 +147,13 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     this->setUI(pUI);
     this->setPreDiceSkillDeck(vSkillDeck);
 
+
     this->addChild(m_pPreDiceSkillDeck);
     m_pPreDiceSkillDeck->setOwner(this);
 
     this->addChild(m_pDice);
+    const auto pos = vSkillDeck->getUseButtonPosition();
+    m_pDice->setDiceButtonPosition(Point(pos.x, pos.y + m_pDice->getDiceButtonSize().height));
     m_pDice->disableDice();
 
     this->addChild(m_pChampionUI);
@@ -279,6 +283,32 @@ void ChampionInGame::startTurn()
     this->m_bIsTurn = true;
     this->m_bIsEndTurn = false;
     this->m_pOwner->setControlChampion(this);
+
+    this->enterPreDicePhase();
+}
+
+void ChampionInGame::enterPreDicePhase()
+{
+    m_eTurnPhase = ChampionTurnPhase::PRE_DICE;
+}
+
+void ChampionInGame::endPreDicePhase()
+{
+
+}
+
+bool ChampionInGame::canEnterPostDice()
+{
+    return true;
+}
+
+void ChampionInGame::enterPostDicePhase()
+{
+    if(!canEnterPostDice()) endTurn();
+}
+
+void ChampionInGame::endPostDicePhase()
+{
 }
 
 void ChampionInGame::endTurn()
@@ -286,6 +316,7 @@ void ChampionInGame::endTurn()
     this->m_bIsTurn = false;
     this->m_bIsEndTurn = true;
     this->m_eAction = ChampionAction::IDLE;
+    m_eTurnPhase = ChampionTurnPhase::NONE;
     this->endLand();
     this->onLand();
 }
@@ -343,7 +374,17 @@ void ChampionInGame::jumpTo(int num)
     this->m_cCoordinate.g_nIndex += num;
     if(m_cCoordinate.g_nIndex > MAP_MNG_GI->getArenas().size())
     {
-        m_cCoordinate.g_nIndex-=(MAP_MNG_GI->getArenas().size() - 1);
+        m_cCoordinate.g_nIndex-=(MAP_MNG_GI->getArenas().size());
+    }
+    this->jumpTo(m_cCoordinate);
+}
+
+void ChampionInGame::jumpToNextCoord()
+{
+    this->m_cCoordinate.g_nIndex += 1;
+    if(m_cCoordinate.g_nIndex > MAP_MNG_GI->getArenas().size())
+    {
+        m_cCoordinate.g_nIndex-=(MAP_MNG_GI->getArenas().size());
     }
     this->jumpTo(m_cCoordinate);
 }

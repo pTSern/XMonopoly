@@ -1,14 +1,14 @@
-#include "Tax.h"
+#include "Hospital.h"
 
 //// Factory Register
 
-static SpecialArenaTypeRegister<TaxArena> s_register("TAX");
+static SpecialArenaTypeRegister<HospitalArena> s_register("HOSPITAL");
 
 //// Static
 
-TaxArena* TaxArena::createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left)
+HospitalArena* HospitalArena::createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left)
 {
-    auto ret = new (std::nothrow) TaxArena();
+    auto ret = new (std::nothrow) HospitalArena();
     if(ret && ret->SpecialArena::initWithProperties(title, coord, rectSize, left))
     {
         ret->autorelease();
@@ -21,29 +21,29 @@ TaxArena* TaxArena::createWithProperties(const std::string& title, Coordinate& c
 
 //// Constructor
 
-TaxArena::TaxArena()
+HospitalArena::HospitalArena()
 {
 
 }
 
 //// Virtual
 
-bool TaxArena::init()
+bool HospitalArena::init()
 {
     return true;
 }
 
-void TaxArena::update(float dt)
+void HospitalArena::update(float dt)
 {
     SpecialArena::update(dt);
 }
 
-void TaxArena::onLand(ChampionInGame* pChamp)
+void HospitalArena::onLand(ChampionInGame* pChamp)
 {
     SpecialArena::onLand(pChamp);
 }
 
-void TaxArena::config()
+void HospitalArena::config()
 {
     SpecialArena::config();
     this->setName("TAX ARENA");
@@ -54,12 +54,12 @@ void TaxArena::config()
     m_pTitle->setRotationSkewY(x*MAP_MNG_GI->getAngleHorizon());
 }
 
-void TaxArena::log()
+void HospitalArena::log()
 {
     SpecialArena::log();
 }
 
-std::string TaxArena::toString(int nTab)
+std::string HospitalArena::toString(int nTab)
 {
     return SpecialArena::toString(nTab);
 }

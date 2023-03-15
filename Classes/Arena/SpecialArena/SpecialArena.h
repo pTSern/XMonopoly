@@ -14,5 +14,6 @@ public:
     virtual void onLand(ChampionInGame *pChamp);
     virtual void onPass(ChampionInGame *pChamp);
     virtual void config();
+    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize, Point left);
 
 END_CREATE_REFCLASS

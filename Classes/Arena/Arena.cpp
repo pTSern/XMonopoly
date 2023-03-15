@@ -182,6 +182,19 @@ void Arena::removeChampion(ChampionInGame *pChamp)
     this->autoSortChampion();
 }
 
+void Arena::setRectColor(Color4F color)
+{
+    if(color != m_cColor)
+    {
+        this->m_cColor = color;
+        if(m_bIsDrewRect)
+        {
+            this->revokeRect();
+            this->drawRect();
+        }
+    }
+}
+
 void Arena::setTitle(std::string text)
 {
     m_pTitle->setString(text);

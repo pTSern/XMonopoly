@@ -44,8 +44,10 @@ public:
     CREATE_GET_FUNC(getRightPoint, Point, m_Right);
     CREATE_GET_FUNC(getTopPoint, Point, m_Top);
     CREATE_GET_FUNC(getBottomPoint, Point, m_Bottom);
-    CREATE_SET_GET_FUNC(setRectColor, getRectColor, Color4F, m_cColor);
+    CREATE_GET_FUNC(getRectColor, Color4F, m_cColor);
     CREATE_GET_FUNC(getType, Type, m_eType);
+
+    void setRectColor(Color4F color);
 
     void addChampion(ChampionInGame *pChamp);
     void removeChampion(ChampionInGame *pChamp);

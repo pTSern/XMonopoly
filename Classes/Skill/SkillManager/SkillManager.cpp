@@ -82,8 +82,10 @@ bool SkillManager::initWithVector(std::vector<SkillInGame*>& vectorOfSkills)
     {
         this->scheduleUpdate();
 
-        m_pUse = ui::Button::create("ui/button/use/normal.png", "ui/button/use/press.png", "ui/button/use/disable.png");
-        this->addChild(m_pUse);
+        m_pUse = ui::Button::create(sr_button_default, sr_button_clicked, sr_button_disable);
+        m_pUse->setTitleText("USE");
+
+        this->addChild(m_pUse, 2);
 
         this->setContentSize(ZYDR_GVS);
 
@@ -97,7 +99,7 @@ bool SkillManager::initWithVector(std::vector<SkillInGame*>& vectorOfSkills)
         auto first = (ZYDR_GVS.width - max_size)/2;
         auto minus = (scw * s - max_size)/(s - 1);
 
-        m_pUse->setPosition(Point(first + max_size + scw, yy));
+        m_pUse->setPosition(Point(first + max_size + + scw/2 + m_pUse->getContentSize().width/2, yy));
 
         auto ls = EventListenerTouchOneByOne::create();
 
@@ -105,6 +107,7 @@ bool SkillManager::initWithVector(std::vector<SkillInGame*>& vectorOfSkills)
         ls->onTouchEnded = CC_CALLBACK_2(SkillManager::endTouch, this);
         m_pUse->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, m_pUse);
         m_pUse->addTouchEventListener(CC_CALLBACK_2(SkillManager::clickButton, this));
+        CCUB_SSTFSP(m_pUse, 0.3f);
 
         if(s <= 1)
         {
@@ -123,6 +126,11 @@ bool SkillManager::initWithVector(std::vector<SkillInGame*>& vectorOfSkills)
         return true;
     }
     return false;
+}
+
+const Vec2& SkillManager::getUseButtonPosition()
+{
+    return m_pUse->getPosition();
 }
 
 void SkillManager::update(float dt)
@@ -192,4 +200,5 @@ void SkillManager::disable()
     {
         x->disable();
     }
+    m_pUse->setVisible(false);
 }
