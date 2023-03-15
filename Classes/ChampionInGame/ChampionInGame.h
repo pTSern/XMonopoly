@@ -90,6 +90,7 @@ public:
     CREATE_GET_FUNC(isCastingSkill, bool, m_eAction == ChampionAction::CASTING_SKILL);
     CREATE_GET_FUNC(getIconSize, Size, m_pIcon->getContentSize());
     CREATE_GET_FUNC(isRepresentPlayer, bool, m_bIsRepresentPlayer);
+
     bool isValidTurn();
 
 public:
@@ -127,7 +128,17 @@ public:
     bool endTouch(cocos2d::Touch *touch, cocos2d::Event *event);
     void run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
 
+    /**
+     *
+     * @param num The number of Dice
+     * @warning THIS WILL FORCE CHAMPION TO END THIS CURRENT PHASE.
+     */
     void jumpTo(int num);
+    /**
+     *
+     * @param pos
+     * @warning THIS WILL CALL endJump() FUNCTION AFTER FINISHING JUMP. DO NOT CALL THIS IF U DONT KNOW WHAT R U DOIN, CALL SetPosition(Point) INSTEAD
+     */
     void jumpTo(Point pos);
     void jumpTo(Coordinate coord);
     void jumpTo(Arena* arena);
@@ -180,6 +191,6 @@ protected:
     bool m_bIsAction;
 
 private:
-
+    int p_nJumpTime, p_nCurrentJump;                ///< This only use for storing data to use all jumpTo() function
 
 END_CREATE_REFCLASS

@@ -220,7 +220,7 @@ void ChampionInGame::onLand(bool attack)
 {
     if(attack) this->attack(m_pLandingArena->getChampionInArena());
 
-    this->m_pLandingArena->addChampion(this);
+    this->m_pLandingArena->addChampion(this, attack);
     this->m_cCoordinate = m_pLandingArena->getCoordinate();
 }
 
@@ -289,22 +289,22 @@ void ChampionInGame::startTurn()
 
 void ChampionInGame::enterPreDicePhase()
 {
-    m_eTurnPhase = ChampionTurnPhase::PRE_DICE;
+    this->m_eTurnPhase = ChampionTurnPhase::PRE_DICE;
 }
 
 void ChampionInGame::endPreDicePhase()
 {
-
+    if(!canEnterPostDice()) endTurn();
 }
 
 bool ChampionInGame::canEnterPostDice()
 {
-    return true;
+    return false;
 }
 
 void ChampionInGame::enterPostDicePhase()
 {
-    if(!canEnterPostDice()) endTurn();
+    this->m_eTurnPhase = ChampionTurnPhase::POS_DICE;
 }
 
 void ChampionInGame::endPostDicePhase()
@@ -317,8 +317,6 @@ void ChampionInGame::endTurn()
     this->m_bIsEndTurn = true;
     this->m_eAction = ChampionAction::IDLE;
     m_eTurnPhase = ChampionTurnPhase::NONE;
-    this->endLand();
-    this->onLand();
 }
 
 void ChampionInGame::enableDice()
@@ -371,17 +369,15 @@ void ChampionInGame::autoFlip()
 
 void ChampionInGame::jumpTo(int num)
 {
-    this->m_cCoordinate.g_nIndex += num;
-    if(m_cCoordinate.g_nIndex > MAP_MNG_GI->getArenas().size())
-    {
-        m_cCoordinate.g_nIndex-=(MAP_MNG_GI->getArenas().size());
-    }
-    this->jumpTo(m_cCoordinate);
+    this->p_nJumpTime = num;
+    this->p_nCurrentJump = 0;
+    this->jumpToNextCoord();
 }
 
 void ChampionInGame::jumpToNextCoord()
 {
     this->m_cCoordinate.g_nIndex += 1;
+    this->p_nCurrentJump ++;
     if(m_cCoordinate.g_nIndex > MAP_MNG_GI->getArenas().size())
     {
         m_cCoordinate.g_nIndex-=(MAP_MNG_GI->getArenas().size());
@@ -395,7 +391,7 @@ void ChampionInGame::jumpTo(Point pos)
     auto target = Point(pos.x, pos.y + m_pIcon->getContentSize().height/2);
     auto distance = this->getPosition().distance(target);
     auto jump = JumpTo::create(distance/200, target, this->m_pIcon->getContentSize().height/2, 1);
-    auto callback = CallFunc::create(CC_CALLBACK_0(ChampionInGame::endTurn, this));
+    auto callback = CallFunc::create(CC_CALLBACK_0(ChampionInGame::endJump, this));
     auto seq = Sequence::create(jump, callback, nullptr);
     this->m_pIcon->runAction(seq);
     //this->m_pSelfButton->runAction(seq->clone());
@@ -412,7 +408,30 @@ void ChampionInGame::jumpTo(Arena *arena)
     this->m_pLandingArena = arena;
     this->jumpTo(arena->getMoveAblePosition());
 }
-
+void ChampionInGame::endJump()
+{
+    auto attack = false;
+    if(p_nCurrentJump == p_nJumpTime)
+    {
+        attack = true;
+        ///< Force champion to end the current phase
+        switch (m_eTurnPhase)
+        {
+            case ChampionTurnPhase::PRE_DICE:
+                this->endPreDicePhase();
+                break;
+            case ChampionTurnPhase::POS_DICE:
+                this->endPostDicePhase();
+                break;
+        }
+    }
+    this->endLand();
+    this->onLand(attack);
+    if(p_nCurrentJump < p_nJumpTime)
+    {
+        jumpToNextCoord();
+    }
+}
 void ChampionInGame::castingSkill()
 {
     this->m_eAction = ChampionInGame::ChampionAction::CASTING_SKILL;

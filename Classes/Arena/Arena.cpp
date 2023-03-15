@@ -162,11 +162,12 @@ Point Arena::getMoveAblePosition()
     return {(midLeftBot + midTopRight*(float)(n+1))/(float)(n+2)};
 }
 
-void Arena::addChampion(ChampionInGame *pChamp)
+void Arena::addChampion(ChampionInGame *pChamp, bool callOnLand)
 {
     m_vChampions.push_back(pChamp);
     this->autoSortChampion();
-    this->onLand(pChamp);
+
+    if(callOnLand) this->onLand(pChamp);
 }
 
 void Arena::removeChampion(ChampionInGame *pChamp)

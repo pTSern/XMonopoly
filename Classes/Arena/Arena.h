@@ -49,7 +49,7 @@ public:
 
     void setRectColor(Color4F color);
 
-    void addChampion(ChampionInGame *pChamp);
+    void addChampion(ChampionInGame *pChamp, bool callOnLand = false);
     void removeChampion(ChampionInGame *pChamp);
 
     void addIcon(ZYSprite *pSprite);
