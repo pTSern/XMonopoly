@@ -32,6 +32,13 @@ void GameMaster::log()
 
 }
 
+void GameMaster::setRunningScene(Scene* var, Layer* layer,std::function<void(Ref*)> callback)
+{
+    this->m_pRunningScene = var;
+    this->m_pEndGameCallback = callback;
+    this->m_pBattleLayer = layer;
+}
+
 std::string GameMaster::toString(int nTab)
 {
     std::string ts;
@@ -85,4 +92,15 @@ void GameMaster::addChampList(std::vector<ChampionInGame*> list)
     {
         m_vList.push_back(x);
     }
+}
+
+void GameMaster::endGame(const std::string& loser)
+{
+    m_pEndGameCallback(m_pBattleLayer);
+}
+
+void GameMaster::revoke()
+{
+    m_vList.clear();
+    this->removeFromParentAndCleanup(true);
 }

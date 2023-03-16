@@ -117,8 +117,10 @@ void SkillInGame::onTrigger()
 
     /// Pay the Mana, Hp, Sp Cost. Set Skill to cool down
     this->m_pSkillStatics->castSkill();
-    this->m_pOwner->getOwner()->castingSkill();
-
+    auto mc = m_pSkillStatics->getManaCost();
+    auto hc = m_pSkillStatics->getHpCost();
+    auto sc = m_pSkillStatics->getSpCost();
+    this->m_pOwner->getOwner()->castingSkill(mc, hc, sc);
     /// Disable USE button
     this->m_pOwner->setUseButton(false);
 

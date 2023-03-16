@@ -79,7 +79,7 @@ void Arena::config()
     this->addChild(m_pTitle, 1);
 }
 
-bool Arena::initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize, Point left)
+bool Arena::initWithProperties(const std::string& sTitle, Coordinate &coord, Size& rectSize, Point& left)
 {
     this->setRectPoint(left, rectSize);
     m_pRect = DrawNode::create();
@@ -121,6 +121,11 @@ void Arena::onLand(ChampionInGame *pChamp)
         //Cast effect
     }
 }
+
+void Arena::onPass(ChampionInGame *pChamp)
+{
+}
+
 //public
 
 void Arena::setCoordinate(Coordinate &coord)
@@ -168,6 +173,7 @@ void Arena::addChampion(ChampionInGame *pChamp, bool callOnLand)
     this->autoSortChampion();
 
     if(callOnLand) this->onLand(pChamp);
+    else this->onPass(pChamp);
 }
 
 void Arena::removeChampion(ChampionInGame *pChamp)

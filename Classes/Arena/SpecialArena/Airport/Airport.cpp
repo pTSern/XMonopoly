@@ -2,17 +2,29 @@
 
 //// Factory Register
 
-static SpecialArenaTypeRegister<AirportArena> s_register("AIRPORT");
+static SpecialArenaTypeRegister<AirportArena> s_register(special_arena_airport_key);
 
 //// Static
 
-AirportArena* AirportArena::createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left)
+AirportArena* AirportArena::createWithProperties(const std::string& title, Coordinate& coord, Size& rectSize, Point& left)
 {
     auto ret = new (std::nothrow) AirportArena();
     if(ret && ret->SpecialArena::initWithProperties(title, coord, rectSize, left))
     {
         ret->autorelease();
         ret->config();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+AirportArena* AirportArena::createFullPath(const std::string& title, Coordinate& coord, Size& rectSize, Point& left, float& price)
+{
+    auto ret = AirportArena::createWithProperties(title, coord, rectSize, left);
+    if(ret)
+    {
+        ret->setPricePerArena(price);
         return ret;
     }
     CC_SAFE_DELETE(ret);

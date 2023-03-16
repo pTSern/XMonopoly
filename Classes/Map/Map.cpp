@@ -3,6 +3,12 @@
 #include "Arena/Property/Property.h"
 #include "Arena/SpecialArena/SpecialArena.h"
 
+#include "Arena/SpecialArena/Tax/Tax.h"
+#include "Arena/SpecialArena/Spawn/Spawn.h"
+#include "Arena/SpecialArena/Shop/Shop.h"
+#include "Arena/SpecialArena/Airport/Airport.h"
+#include "Arena/SpecialArena/Hospital/Hospital.h"
+
 #include "GameMaster/GameMaster.h"
 
 MapManager* MapManager::sp_pInstance = nullptr;
@@ -15,7 +21,8 @@ MapManager* MapManager::sp_pInstance = nullptr;
 MapManager::MapManager() :
 p_pTileMap(nullptr),
 p_pArenaGroup(nullptr),
-p_pClientPlayer(nullptr)
+p_pClientPlayer(nullptr),
+p_hospital(Dir::WS, 0)
 {
     p_vArenas.reserve(2);
 }
@@ -31,6 +38,25 @@ bool MapManager::init()
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, this);
 	this->scheduleUpdate();
 	return true;
+}
+void MapManager::revoke()
+{
+	for(auto &x : p_vArenas)
+	{
+		x->removeAllChildren();
+		x->removeFromParentAndCleanup(true);
+	}
+	p_vArenas.clear();
+	p_pTileMap->removeAllChildren();
+	p_pTileMap->removeFromParentAndCleanup(true);
+	//for(auto&x : p_mLayers)
+	//{
+	//	x.second->removeAllChildren();
+	//	x.second->removeFromParentAndCleanup(true);
+	//}
+	p_mLayers.clear();
+	p_pClientPlayer = nullptr;
+	this->removeFromParentAndCleanup(true);
 }
 
 cocos2d::TMXTiledMap* MapManager::getTileMap()
@@ -234,14 +260,134 @@ void MapManager::generatePropertyArenas(ValueMap obj)
 void MapManager::generateSpecialArenas(ValueMap obj)
 {
 	std::string name = obj.at("name").asString();
+	//Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
+	//Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
+	//Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
+
+	//auto sa = SpecialArenaFactory::getInstance()->create(name, name, coord, size, point);
+	//if(sa)
+	//{
+	//	this->addChild(sa, 2);
+	//	p_vArenas.push_back(sa);
+	//}
+
+	if(name == special_arena_tax_key)
+	{
+		createTaxArena(obj);
+		return;
+	}
+
+	if(name == special_arena_spawn_key)
+	{
+		createSpawnArena(obj);
+		return;
+	}
+
+	if(name == special_arena_hospital_key)
+	{
+		createHospitalArena(obj);
+		return;
+	}
+
+	if(name == special_arena_shop_key)
+	{
+		createShopArena(obj);
+		return;
+	}
+
+	if(name == special_arena_airport_key)
+	{
+		createAirPortArena(obj);
+		return;
+	}
+
+}
+
+void MapManager::createTaxArena(ValueMap obj)
+{
+	const std::string name = obj.at("name").asString();
+	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
+	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
+	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
+
+	auto tax = obj.at("tax").asFloat();
+
+	auto ta = TaxArena::createFullPath(name, coord, size, point, tax);
+	if(ta)
+	{
+		this->addChild(ta, 2);
+		p_vArenas.push_back(ta);
+	}
+}
+
+void MapManager::createHospitalArena(ValueMap obj)
+{
+	const std::string name = obj.at("name").asString();
+	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
+	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
+	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
+
+	auto fee = obj.at("fee_per_hp").asFloat();
+
+	auto ta = HospitalArena::createFullPath(name, coord, size, point, fee);
+	if(ta)
+	{
+		this->addChild(ta, 2);
+		p_vArenas.push_back(ta);
+		p_hospital = coord;
+	}
+
+}
+
+void MapManager::createShopArena(ValueMap obj)
+{
+	std::string name = obj.at("name").asString();
 	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
 	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
 	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
 
 	auto sa = SpecialArenaFactory::getInstance()->create(name, name, coord, size, point);
-	this->addChild(sa, 2);
-	p_vArenas.push_back(sa);
+	if(sa)
+	{
+		this->addChild(sa, 2);
+		p_vArenas.push_back(sa);
+	}
 }
+
+void MapManager::createAirPortArena(ValueMap obj)
+{
+	const std::string name = obj.at("name").asString();
+	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
+	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
+	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
+
+	auto price = obj.at("price_per_arena").asFloat();
+
+	auto ta = AirportArena::createFullPath(name, coord, size, point, price);
+	if(ta)
+	{
+		this->addChild(ta, 2);
+		p_vArenas.push_back(ta);
+	}
+}
+
+void MapManager::createSpawnArena(ValueMap obj)
+{
+	std::string name = obj.at("name").asString();
+	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
+	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
+	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
+
+	auto bonus = obj.at("bonus").asFloat();
+
+	auto ta = SpawnArena::createFullPath(name, coord, size, point,  bonus);
+	if(ta)
+	{
+		this->addChild(ta, 2);
+		p_vArenas.push_back(ta);
+	}
+}
+
 bool MapManager::onTouch(Touch *touch, Event *event)
 {
 	return true;

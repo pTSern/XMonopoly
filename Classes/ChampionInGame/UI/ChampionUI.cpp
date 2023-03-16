@@ -134,12 +134,12 @@ void ChampionUI::loadElement(const ChampUISup& hp, const ChampUISup& mana, const
 
 void ChampionUI::loadElement(std::string hp_background, std::string hp_main, std::string hp_front_end, std::string mana_background, std::string mana_main, std::string mana_front_end, std::string global_background)
 {
-    m_pHpBar = ui::LoadingBar::create(hp_background);
-    m_pHpFrontEnd = ZYSprite::create(hp_main.c_str());
-    m_pHpBackground = ZYSprite::create(hp_front_end.c_str());
+    m_pHpBar = ui::LoadingBar::create(hp_main);
+    m_pHpFrontEnd = ZYSprite::create(hp_front_end.c_str());
+    m_pHpBackground = ZYSprite::create(hp_background.c_str());
 
-    m_pManaBar = ui::LoadingBar::create(mana_background);
-    m_pManaBackground = ZYSprite::create(mana_main.c_str());
+    m_pManaBar = ui::LoadingBar::create(mana_main);
+    m_pManaBackground = ZYSprite::create(mana_background.c_str());
     m_pManaFrontEnd = ZYSprite::create(mana_front_end.c_str());
 
     TTFConfig ttfConfig(globalFont, 14, GlyphCollection::DYNAMIC,nullptr);

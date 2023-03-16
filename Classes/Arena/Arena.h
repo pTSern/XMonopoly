@@ -71,9 +71,10 @@ public:
 public:
     virtual void update(float dt);
     virtual void onLand(ChampionInGame *pChamp);
+    virtual void onPass(ChampionInGame *pChamp);
     virtual ~Arena();
     virtual void config();
-    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize, Point left);
+    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord, Size& rectSize, Point& left);
 
 protected:
     Point m_Left, m_Top, m_Right, m_Bottom;

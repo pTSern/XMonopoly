@@ -11,8 +11,8 @@ m_fArmor(0),
 m_fMagicResis(0),
 m_cLifeSteal(0),
 m_cMagicLifeSteal(0),
-m_cHP(1,0),
-m_cMana(1,0),
+m_cHP(100,0),
+m_cMana(100,0),
 m_cSkillPoint(1,0)
 {
 
@@ -201,6 +201,14 @@ IngameStatics* IngameStatics::createWithStatics(Statics* pStatics, bool bIsClone
     return nullptr;
 }
 
+IngameStatics* IngameStatics::createTest()
+{
+    auto ret = new (std::nothrow) IngameStatics();
+    ret->m_pStatics = Statics::createWithProperties(50, 0 ,0,1,1,0,0,0,RegenStatics(100, 1), RegenStatics(20, 2), RegenStatics(1,1));
+    ret->fillStatics(100);
+    return ret;
+}
+
 //// public
 
 void IngameStatics::fillStatics(float percent)
@@ -211,6 +219,59 @@ void IngameStatics::fillStatics(float percent)
     m_fCurrentSp = m_pStatics->getMaxSkillPoint() * double_percent;
     m_fCurrentHp = m_pStatics->getMaxHp() * double_percent;
     m_fCurrentMana = m_pStatics->getMaxMana() * double_percent;
+}
+
+void IngameStatics::fillHp(float percent)
+{
+    if(percent > 100) percent = 100;
+    if(percent < 0) percent = 0;
+    auto double_percent = percent/100;
+    m_fCurrentHp = m_pStatics->getMaxHp() * double_percent;
+}
+
+void IngameStatics::fillMana(float percent)
+{
+    if(percent > 100) percent = 100;
+    if(percent < 0) percent = 0;
+    auto double_percent = percent/100;
+    m_fCurrentMana = m_pStatics->getMaxMana() * double_percent;
+}
+
+bool IngameStatics::reduceLife(int num)
+{
+    if(m_nCurrentLife <= 1) return false;
+    this->m_nCurrentLife-=num;
+    return true;
+}
+
+void IngameStatics::addLife(int num)
+{
+    this->m_nCurrentLife+=num;
+}
+
+bool IngameStatics::doRespawn(float percent)
+{
+    if(reduceLife())
+    {
+        this->fillStatics(percent);
+        return true;
+    }
+    return false;
+}
+
+void IngameStatics::fillSp(float percent)
+{
+    if(percent > 100) percent = 100;
+    if(percent < 0) percent = 0;
+    auto double_percent = percent/100;
+    m_fCurrentSp = m_pStatics->getMaxSkillPoint() * double_percent;
+}
+
+void IngameStatics::autoValid()
+{
+    if(m_fCurrentSp > m_pStatics->getMaxSkillPoint()) m_fCurrentSp = m_pStatics->getMaxSkillPoint();
+    if(m_fCurrentHp > m_pStatics->getMaxHp()) m_fCurrentHp = m_pStatics->getMaxHp();
+    if(m_fCurrentMana > m_pStatics->getMaxMana()) m_fCurrentMana = m_pStatics->getMaxMana();
 }
 
 IngameStatics* IngameStatics::clone()

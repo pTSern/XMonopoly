@@ -218,7 +218,11 @@ std::string ChampionInGame::getChildsString(int nTab)
 
 void ChampionInGame::onLand(bool attack)
 {
-    if(attack) this->attack(m_pLandingArena->getChampionInArena());
+    if(attack)
+    {
+        auto v = m_pLandingArena->getChampionInArena();
+        this->attack(v);
+    }
 
     this->m_pLandingArena->addChampion(this, attack);
     this->m_cCoordinate = m_pLandingArena->getCoordinate();
@@ -237,14 +241,17 @@ void ChampionInGame::applyEffectToSelf(std::vector<GameEffect*> vEffects)
 
 }
 
-void ChampionInGame::attack(std::vector<ChampionInGame*> vChampions)
+void ChampionInGame::attack(std::vector<ChampionInGame*>& vChampions)
 {
-
+    for(auto &x : vChampions)
+    {
+        x->getStatics()->reduceHp(this->getStatics()->getStatics()->getAttackDmg());
+        x->beAttacked(this);
+    }
 }
 
 void ChampionInGame::beAttacked(ChampionInGame* attacker)
 {
-
 }
 
 void ChampionInGame::setOwner(Player *pOwner, bool bIsRepresent)
@@ -326,14 +333,15 @@ void ChampionInGame::enableDice()
 
 void ChampionInGame::lifeCheck()
 {
-     if(m_pIngameStatics->getCurrentHp() <= 0 ) {
+     if(!m_pIngameStatics->isAlive())
+     {
          this->onDying();
 
-         if (m_pIngameStatics->getStatics()->getLife() < 0)
+         if (m_pIngameStatics->doRespawn())
          {
-             this->onDeath();
+             this->respawn();
          }
-         else this->respawn();
+         else this->onDeath();
      }
 }
 
@@ -341,24 +349,30 @@ void ChampionInGame::onDeath()
 {
     /// replace sprite to death image
     this->m_pIcon->replaceSprite("champion/death.png");
+    this->m_pSelfButton->setVisible(false);
     this->m_eStatus = ChampionStatus::DEATH;
+    this->m_pOwner->checkLoseCondition();
 }
 
 void ChampionInGame::onDying()
 {
     /// Do dying thing
     this->m_eStatus = ChampionStatus::DYING;
+    this->m_pMemArena = m_pLandingArena;
+    this->endLand();
 }
 
 void ChampionInGame::respawn()
 {
-    this->m_pIngameStatics->getStatics()->setLife(m_pIngameStatics->getStatics()->getLife() - 1);
-
     /// Respawn champion
-    this->m_pIngameStatics->fillStatics(100);
     this->m_eStatus = ChampionStatus::NORMAL;
 
     /// Respawn at Hospital
+    auto hospital = MAP_MNG_GI->getArenaByCoord(MAP_MNG_GI->getHospitalCoord());
+    this->m_pLandingArena = hospital;
+    m_pSelfButton->setVisible(true);
+    this->setPosition(hospital);
+    this->onLand();
 }
 
 void ChampionInGame::autoFlip()
@@ -432,11 +446,14 @@ void ChampionInGame::endJump()
         jumpToNextCoord();
     }
 }
-void ChampionInGame::castingSkill()
+void ChampionInGame::castingSkill(float& manaCost, float& hpCost, float& SpCost)
 {
     this->m_eAction = ChampionInGame::ChampionAction::CASTING_SKILL;
 
     /// Reduce Static
+    this->m_pIngameStatics->reduceHp(hpCost);
+    this->m_pIngameStatics->reduceMana(manaCost);
+    this->m_pIngameStatics->reduceSp(SpCost);
 }
 
 void ChampionInGame::enable()

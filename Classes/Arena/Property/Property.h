@@ -59,8 +59,8 @@ public:
     virtual void update(float dt);
     virtual void onLand(ChampionInGame* pChamp);
     virtual void config();
-    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize,
-                                    Point cLeft, float fPrice, int minLv, int maxLv,
+    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord, Size& rectSize,
+                                    Point& cLeft, float fPrice, int minLv, int maxLv,
                                     float baseSellMulti, float baseIncomeMulti,
                                     float sellIncrement, float incomeIncrement);
 

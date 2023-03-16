@@ -71,6 +71,7 @@ public:
     void addOwnedProperty(Property* property);
     void removeOwnedProperty(Property* property);
     void lose();
+    void checkLoseCondition();
 
 //// PURCHASE PROPERTY /////////////////////////////////////////
     void onLandArena(Arena* arena);
@@ -133,15 +134,14 @@ protected:
     ChampionInGame* m_pViewPointChampion;                ///< weak reference to the viewpoint champion
     std::vector<int> m_vRemoveByTagList;                 ///< contain child's tag that will be removed after calling removeAllMarkedChild() func
 
-    EventListenerTouchOneByOne *m_pEventListener;        ///< event listener
     GameObject* m_pSelectingObject;                      ///< weak reference to selecting object
     SelectType m_eType;                                  ///< mark the selecting object's type
     TheAction m_eAction;                                 ///< current action of the player
 
-    Color4F m_Color;                                  ///< player's color
+    Color4F m_Color;                                     ///< player's color
 
     IgEcoMng* m_pEconomy;
-    int m_nChangeCount;
+    int m_nRepresentNumber;
 
 
 END_CREATE_REFCLASS

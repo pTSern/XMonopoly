@@ -22,6 +22,8 @@ do {                                                                   \
 
 class Arena;
 class Player;
+class HospitalArena;
+class SpawnArena;
 BEGIN_CREATE_INSTANCE_REFCLASS(MapManager, cocos2d::Node)
 
 public:
@@ -49,6 +51,7 @@ public:
 	CREATE_GET_FUNC(getTrueWorldSize, Size, p_tWorld);
 	CREATE_GET_FUNC(getArenas, std::vector<Arena*>, p_vArenas);
 	CREATE_SET_GET_FUNC(setClientPlayer, getClientPlayer, Player*, p_pClientPlayer);
+	CREATE_GET_FUNC(getHospitalCoord, Coordinate, p_hospital);
 	Arena* getArenaByCoord(Coordinate coord);
 
 	/**
@@ -73,6 +76,11 @@ public:
 protected:
     void generatePropertyArenas(ValueMap obj);
     void generateSpecialArenas(ValueMap obj);
+	void createTaxArena(ValueMap obj);
+	void createHospitalArena(ValueMap obj);
+	void createShopArena(ValueMap obj);
+	void createAirPortArena(ValueMap obj);
+	void createSpawnArena(ValueMap obj);
 
 private:
 	//DrawNode *p_pRect;
@@ -84,5 +92,7 @@ private:
 	Size p_objectTileSize, p_world;							///< the object tile size and map size base on tile's pixel
     std::vector<Arena*> p_vArenas;							///< array of Arena in the map
 	Player* p_pClientPlayer;								///< weak reference to the client player, most use for selecting arena
+
+	Coordinate p_hospital;
 
 END_CREATE_INSTANCE_REFCLASS;

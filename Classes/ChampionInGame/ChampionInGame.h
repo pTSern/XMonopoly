@@ -90,6 +90,7 @@ public:
     CREATE_GET_FUNC(isCastingSkill, bool, m_eAction == ChampionAction::CASTING_SKILL);
     CREATE_GET_FUNC(getIconSize, Size, m_pIcon->getContentSize());
     CREATE_GET_FUNC(isRepresentPlayer, bool, m_bIsRepresentPlayer);
+    CREATE_GET_FUNC(isDeath, bool, m_eStatus == ChampionStatus::DEATH);
 
     bool isValidTurn();
 
@@ -120,7 +121,7 @@ public:
     void applyEffectToSelf(std::vector<GameEffect*> vEffects);
 
     //// Attack
-    void attack(std::vector<ChampionInGame*> vChampions);
+    void attack(std::vector<ChampionInGame*>& vChampions);
     void beAttacked(ChampionInGame* attacker);
 
     /// Self-Button
@@ -153,7 +154,7 @@ public:
     void endPostDicePhase();
     void endTurn();
 
-    void castingSkill();
+    void castingSkill(float& manaCost, float& hpCost, float& SpCost);
 
     void disable();
     void enable();

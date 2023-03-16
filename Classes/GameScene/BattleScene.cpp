@@ -1,6 +1,8 @@
 #include "BattleScene.h"
 #include "Map/Map.h"
 
+#include "GameOver.h"
+
 #include "Dice/Dice.h"
 #include "Champion/Champion.h"
 #include "ChampionInGame/ChampionInGame.h"
@@ -21,6 +23,7 @@ Scene* BattleScene::createScene()
 
     auto layer = BattleScene::create();
     scene->addChild(layer);
+    GM_GI->setRunningScene(scene, layer,CC_CALLBACK_1(BattleScene::goToGameOver, layer));
     return scene;
 }
 
@@ -30,6 +33,10 @@ bool BattleScene::init()
 {
     if(!Layer::init()) return false;
 
+    auto backgroundSprite = ZYSprite::create("background/battle.png");
+    backgroundSprite->setPosition(ZYDR_TGVS/2);
+    this->addChild(backgroundSprite, -5);
+
     this->setName("Battle Scene");
 
     auto visibleSize = ZYDR_GI->getVisibleSize();
@@ -37,7 +44,6 @@ bool BattleScene::init()
 
     auto x = ZYSprite::create("skill_icon/skillcard2.png");
     x->setPosition(Point((visibleSize.width/2 + origin.x)/1, (x->getContentSize().height/3 + origin.y)/1));
-
     /// Input Map
     MAP_MNG_GI->loadTileMap("TileMaps/map-13.tmx");
     MAP_MNG_GI->getTileMap()->setPosition(x->getPositionX(), (ZYDR_GI->getTrueVisibleSize().height + x->getContentPositionMiddleTop().y) /2);
@@ -57,15 +63,16 @@ bool BattleScene::init()
     auto cig = ChampionInGame::createWithProperties(champ, ui, dice, sm);
     auto coord = Coordinate(Dir::WS, 0);
     cig->setPosition(coord);
-    auto ig = IngameStatics::create();
-    ig->setStatics(Statics::createWithProperties(50, 50));
+    auto ig = IngameStatics::createTest();
     cig->setStatics(ig);
     auto player = Player::create();
     player->setTheColor(Color4F::YELLOW);
     player->addChampion(cig);
     player->disable();
+    player->setName("PLAYER 1");
     MAP_MNG_GI->setClientPlayer(player);
     m_vPlayers.push_back(player);
+    CCLOG("DIE 2.5");
 
     auto dice2 = Dice::createWithProperties("dice/128-red.png");
     auto champ2 = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
@@ -78,15 +85,16 @@ bool BattleScene::init()
     auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
     auto coord2 = Coordinate(Dir::WS, 0);
     cig2->setPosition(coord2);
-    auto ig2 = IngameStatics::create();
-    ig2->setStatics(Statics::createWithProperties(50, 50));
+    auto ig2 = IngameStatics::createTest();
     cig2->setStatics(ig2);
     auto player2 = Player::create();
     player2->setTheColor(Color4F::RED);
     player2->addChampion(cig2);
     player2->disable();
+    player2->setName("PLAYER 2");
     m_vPlayers.push_back(player2);
 
+    CCLOG("DIE 3.5");
     for(auto x : m_vPlayers)
     {
         this->addChild(x, 1);
@@ -97,6 +105,7 @@ bool BattleScene::init()
     GM_GI->addChampList(player2->getChampChildren());
     GM_GI->calculateNewTurn();
 
+    CCLOG("DIE 5");
     return true;
 }
 
@@ -104,4 +113,10 @@ bool BattleScene::init()
 
 void BattleScene::update(float dt)
 {
+}
+
+void BattleScene::goToGameOver(Ref* sender)
+{
+    auto scene = GameOverScene::createScene();
+    CCDR_GI->replaceScene(scene);
 }

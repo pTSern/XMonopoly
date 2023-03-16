@@ -2,11 +2,11 @@
 
 //// Factory Register
 
-static SpecialArenaTypeRegister<HospitalArena> s_register("HOSPITAL");
+static SpecialArenaTypeRegister<HospitalArena> s_register(special_arena_hospital_key);
 
 //// Static
 
-HospitalArena* HospitalArena::createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left)
+HospitalArena* HospitalArena::createWithProperties(const std::string& title, Coordinate& coord, Size& rectSize, Point& left)
 {
     auto ret = new (std::nothrow) HospitalArena();
     if(ret && ret->SpecialArena::initWithProperties(title, coord, rectSize, left))
@@ -19,6 +19,17 @@ HospitalArena* HospitalArena::createWithProperties(const std::string& title, Coo
     return nullptr;
 }
 
+HospitalArena* HospitalArena::createFullPath(const std::string& title, Coordinate& coord, Size& rectSize, Point& left, float& fee)
+{
+    auto ret = HospitalArena::createWithProperties(title, coord, rectSize, left);
+    if(ret)
+    {
+        ret->setFeePerHp(fee);
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
 //// Constructor
 
 HospitalArena::HospitalArena()

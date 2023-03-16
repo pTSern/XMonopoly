@@ -158,11 +158,11 @@ void Property::onLand(ChampionInGame *pChamp)
      *  This target player can not pay this property's tax
      *  Force player to sell their property
      */
-    if(target->getNetWorth() >= this->getTax())
-    {
-        target->sellPropertyForTax(this);
-        return;
-    }
+    //if(target->getNetWorth() >= this->getTax())
+    //{
+    //    target->sellPropertyForTax(this);
+    //    return;
+    //}
 
     /**
      *  These properties of this target player do not have enough value to sell for this tax.
@@ -226,8 +226,8 @@ void Property::config()
     this->scheduleUpdate();
 }
 
-bool Property::initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize,
-                                    Point cLeft, float fPrice, int minLv, int maxLv,
+bool Property::initWithProperties(const std::string& sTitle, Coordinate &coord, Size& rectSize,
+                                    Point& cLeft, float fPrice, int minLv, int maxLv,
                                     float baseSellMulti, float baseIncomeMulti,
                                     float sellIncrement, float incomeIncrement)
 {

@@ -21,7 +21,7 @@ bool SpecialArena::init()
     return true;
 }
 
-bool SpecialArena::initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize, Point left)
+bool SpecialArena::initWithProperties(const std::string& sTitle, Coordinate &coord, Size& rectSize, Point& left)
 {
     return Arena::initWithProperties(sTitle, coord, rectSize, left);
 };
@@ -60,5 +60,4 @@ void SpecialArena::onLand(ChampionInGame* pChamp)
 
 void SpecialArena::onPass(ChampionInGame* pChamp)
 {
-
 }

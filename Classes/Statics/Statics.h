@@ -6,7 +6,7 @@
 BEGIN_CREATE_CLASS(Statics)
 public:
     static Statics* createWithProperties(float fAttackDmg = 0, float fMagicDmg = 0, float fArmor = 0,
-                                         int nLife = 0, float speed = 1, float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
+                                         int nLife = 1, float speed = 1, float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
                                          PercentStatics cMagicLifeSteal = 0, RegenStatics cHP = RegenStatics(10, 1), RegenStatics cMana = RegenStatics(10, 1),
                                          RegenStatics cSkillPoint = RegenStatics(10, 1));
 
@@ -14,7 +14,7 @@ public:
 public:
     Statics* clone();
     void setProperties(float fAttackDmg = 0, float fMagicDmg = 0, float fArmor = 0,
-                       int nLife = 0, float speed = 1,float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
+                       int nLife = 1, float speed = 1,float fMagicRisis = 0, PercentStatics cLifeSteal = 0,
                        PercentStatics cMagicLifeSteal = 0, RegenStatics cHP = 0, RegenStatics cMana = 0,
                        RegenStatics cSkillPoint = 0);
 public:
@@ -82,8 +82,24 @@ END_CREATE_CLASS
 //
 BEGIN_CREATE_CLASS(IngameStatics)
 
+protected:
+#define CREATE_ADD_FUNC(__NAME__, __VAR__) \
+void __NAME__(float var)                   \
+{                                          \
+    this->__VAR__ += var;                  \
+    this->autoValid();                     \
+}                                          \
+
+#define CREATE_REDUCE_FUNC(__NAME__, __VAR__) \
+void __NAME__(float var)                      \
+{                                             \
+    this->__VAR__ -= var;                     \
+    if(this->__VAR__ < 0) this->__VAR__ = 0;  \
+}                                             \
+
 public:
     static IngameStatics* createWithStatics(Statics* pStatics, bool bIsClone = true, bool bIsClean = false);
+    static IngameStatics* createTest();
 
 public:
     CREATE_CLONE_SET_FUNC(setStatics, Statics, m_pStatics);
@@ -93,8 +109,13 @@ public:
     void setCurrentSp(float fSp) {this->m_fCurrentSp = fSp;}
 
     void fillStatics(float percent);
+    void fillHp(float percent);
+    void fillMana(float percent);
+    void fillSp(float percent);
+    void autoValid();
 
     IngameStatics* clone();
+
 
 public:
     inline Statics* getStatics() {return this->m_pStatics;}
@@ -105,9 +126,24 @@ public:
     CREATE_GET_FUNC(getCurrentHpInPercent, float, m_fCurrentHp/m_pStatics->getMaxHp());
     CREATE_GET_FUNC(getCurrentMnInPercent, float, m_fCurrentMana/m_pStatics->getMaxMana());
     CREATE_GET_FUNC(getCurrentSpInPercent, float, m_fCurrentSp/m_pStatics->getMaxSkillPoint());
+    CREATE_GET_FUNC(isAlive, bool, m_fCurrentHp > 0);
+
+    CREATE_ADD_FUNC(addHp, m_fCurrentHp);
+    CREATE_ADD_FUNC(addMana, m_fCurrentMana);
+    CREATE_ADD_FUNC(addSp, m_fCurrentSp);
+
+    CREATE_REDUCE_FUNC(reduceHp, m_fCurrentHp);
+    CREATE_REDUCE_FUNC(reduceMana, m_fCurrentMana);
+    CREATE_REDUCE_FUNC(reduceSp, m_fCurrentSp);
+
+    bool reduceLife(int num = 1);
+    void addLife(int num = 1);
+
+    bool doRespawn(float percent = 100);
 
 protected:
     Statics *m_pStatics;
     float m_fCurrentHp, m_fCurrentMana, m_fCurrentSp;
+    int m_nCurrentLife;
 
 END_CREATE_REFCLASS

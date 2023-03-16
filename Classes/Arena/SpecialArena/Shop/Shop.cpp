@@ -2,7 +2,7 @@
 
 //// Factory Register
 
-static SpecialArenaTypeRegister<ShopArena> s_register("SHOP");
+static SpecialArenaTypeRegister<ShopArena> s_register(special_arena_shop_key);
 
 //// Constructor
 

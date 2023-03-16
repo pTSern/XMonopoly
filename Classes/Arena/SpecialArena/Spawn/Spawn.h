@@ -8,7 +8,8 @@ USING_NS_ALL;
 BEGIN_CREATE_REFCLASS(SpawnArena, SpecialArena)
 
 public:
-    static SpawnArena* createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left);
+    static SpawnArena* createWithProperties(const std::string& title, Coordinate& coord, Size& rectSize, Point left);
+    static SpawnArena* createFullPath(const std::string& title, Coordinate& coord, Size& rectSize, Point left, float bonus);
 
 public:
     virtual void update(float dt);

@@ -187,7 +187,7 @@ public:                                                                         
 	}                                                                                       \
     static void selfDestroyInstance()                                                    	\
 	{                                                                                       \
-    	delete __NAME__::sp_pInstance;                                                      \
+    	CC_SAFE_DELETE(__NAME__::sp_pInstance);                                             \
 		__NAME__::sp_pInstance = nullptr;													\
 	}																						\
 	virtual bool init();                                                                 	\

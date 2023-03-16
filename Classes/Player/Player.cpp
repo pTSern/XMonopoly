@@ -13,7 +13,8 @@ m_pEconomy(nullptr),
 m_pSelectingObject(nullptr),
 m_eType(SelectType::NONE),
 m_Color(Color4F::RED),
-m_eAction(TheAction::IDLE)
+m_eAction(TheAction::IDLE),
+m_nRepresentNumber(0)
 {
 
 }
@@ -30,7 +31,7 @@ bool Player::init()
     //m_pEventListener->onTouchEnded = CC_CALLBACK_2(Player::endTouch, this);
 
     m_pEconomy = IgEcoMng::create();
-    m_pEconomy->setAmount(5000);
+    m_pEconomy->setAmount(500);
     this->addChild(m_pEconomy);
     m_pEconomy->setPosition(Point(ZYDR_GVS/6));
     this->scheduleUpdate();
@@ -96,6 +97,7 @@ void Player::addChampion(ChampionInGame* pChamp)
     if(pChamp)
     {
         pChamp->disable();
+        m_nRepresentNumber++;
         m_vChampions.emplace_back(pChamp);
         m_vChampions.back()->setOwner(this, true);
         this->addChild(pChamp);
@@ -132,7 +134,23 @@ void Player::enable()
 
 void Player::lose()
 {
-    finishAction();
+    const auto str = this->getName() + " LOSE";
+    GM_GI->endGame(str);
+    CCLOG("CALL LOSE");
+    //this->finishAction();
+}
+
+void Player::checkLoseCondition()
+{
+    int count = 0;
+    for(auto &x : m_vChampions)
+    {
+        if(x->isDeath() && x->isRepresentPlayer()) count++;
+    }
+    if(count == m_nRepresentNumber)
+    {
+        this->lose();
+    }
 }
 
 void Player::startTurn(ChampionInGame* child)

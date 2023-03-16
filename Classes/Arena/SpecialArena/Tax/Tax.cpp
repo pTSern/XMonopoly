@@ -2,17 +2,29 @@
 
 //// Factory Register
 
-static SpecialArenaTypeRegister<TaxArena> s_register("TAX");
+static SpecialArenaTypeRegister<TaxArena> s_register(special_arena_tax_key);
 
 //// Static
 
-TaxArena* TaxArena::createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left)
+TaxArena* TaxArena::createWithProperties(const std::string& title, Coordinate& coord, Size& rectSize, Point& left)
 {
     auto ret = new (std::nothrow) TaxArena();
     if(ret && ret->SpecialArena::initWithProperties(title, coord, rectSize, left))
     {
         ret->autorelease();
         ret->config();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+TaxArena* TaxArena::createFullPath(const std::string& title, Coordinate& coord, Size& rectSize, Point& left, float& tax)
+{
+    auto ret = TaxArena::createWithProperties(title, coord, rectSize, left);
+    if(ret)
+    {
+        ret->setTax(tax);
         return ret;
     }
     CC_SAFE_DELETE(ret);

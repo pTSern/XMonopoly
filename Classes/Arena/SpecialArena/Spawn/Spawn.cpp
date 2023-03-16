@@ -2,7 +2,7 @@
 
 //// Register To Factory
 
-static SpecialArenaTypeRegister<SpawnArena> s_register("SPAWN");
+static SpecialArenaTypeRegister<SpawnArena> s_register(special_arena_spawn_key);
 
 //// Constructor
 
@@ -13,7 +13,7 @@ SpawnArena::SpawnArena()
 
 //// Static
 
-SpawnArena* SpawnArena::createWithProperties(const std::string& title, Coordinate& coord, Size rectSize, Point left)
+SpawnArena* SpawnArena::createWithProperties(const std::string& title, Coordinate& coord, Size& rectSize, Point left)
 {
     auto ret = new (std::nothrow) SpawnArena();
     if(ret && ret->SpecialArena::initWithProperties(title, coord, rectSize, left))
@@ -26,6 +26,17 @@ SpawnArena* SpawnArena::createWithProperties(const std::string& title, Coordinat
     return nullptr;
 }
 
+SpawnArena* SpawnArena::createFullPath(const std::string& title, Coordinate& coord, Size& rectSize, Point left, float bonus)
+{
+    auto ret = SpawnArena::createWithProperties(title, coord, rectSize, left);
+    if(ret)
+    {
+        ret->setBonusMoney(bonus);
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
 //// Virtual
 
 bool SpawnArena::init()

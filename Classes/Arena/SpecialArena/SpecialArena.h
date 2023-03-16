@@ -12,8 +12,8 @@ public:
 public:
     virtual void update(float dt);
     virtual void onLand(ChampionInGame *pChamp);
-    virtual void onPass(ChampionInGame *pChamp);
+    virtual void onPass(ChampionInGame *pChamp) override;
     virtual void config();
-    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord, Size rectSize, Point left);
+    virtual bool initWithProperties(const std::string& sTitle, Coordinate &coord, Size& rectSize, Point& left);
 
 END_CREATE_REFCLASS

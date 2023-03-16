@@ -29,3 +29,9 @@ static const std::string sr_button_clicked("ui/button/self_remove/clicked.png");
 static const std::string sr_button_disable("ui/button/self_remove/disable.png");
 static const char* sr_background("ui/button/self_remove/background.png");
 static const TTFConfig defaultTTFConfig(globalFont, 18);
+
+static const std::string special_arena_spawn_key("SPAWN");
+static const std::string special_arena_tax_key("TAX");
+static const std::string special_arena_hospital_key("HOSPITAL");
+static const std::string special_arena_shop_key("SHOP");
+static const std::string special_arena_airport_key("AIRPORT");
