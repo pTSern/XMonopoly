@@ -26,6 +26,7 @@ class GameEffect;
 class Dice;
 class ChampionUI;
 class SkillManager;
+class ChampionHUD;
 BEGIN_CREATE_REFCLASS(ChampionInGame, Champion)
 
 public:
@@ -91,18 +92,16 @@ public:
     CREATE_GET_FUNC(getIconSize, Size, m_pIcon->getContentSize());
     CREATE_GET_FUNC(isRepresentPlayer, bool, m_bIsRepresentPlayer);
     CREATE_GET_FUNC(isDeath, bool, m_eStatus == ChampionStatus::DEATH);
+    CREATE_GET_FUNC(getAvatar, ZYSprite*, m_pAvatar);
 
     bool isValidTurn();
 
 public:
     bool initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck);
 
-
-//    void move(Coordinate &coord, MoveType eMoveType);
     void autoFlip();
 
     //// IN UPDATE LOOP
-    // Life checker
     void lifeCheck();
     void onDeath();
     void onDying();
@@ -159,7 +158,13 @@ public:
     void disable();
     void enable();
 
+    void setHUD(bool var);
+
 public:
+    /**
+     * A small function to enable the dice.
+     * The purpose of making this function is to prevent other objects from accessing to the Dice Object.
+     */
     void enableDice();
 
 protected:
@@ -172,6 +177,7 @@ protected:
     Dice* m_pDice;
     Player *m_pOwner;
     ChampionUI* m_pChampionUI;
+    ChampionHUD* m_pChampionHUD;
     SkillManager* m_pPreDiceSkillDeck, *m_pPostDiceSkillDeck;
 
     /// Auto declare, has first init value

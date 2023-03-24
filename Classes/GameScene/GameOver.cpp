@@ -48,9 +48,6 @@ void GameOverScene::goToMainMenu(Ref* sender)
 {
     auto scene = MainMenuScene::createScene();
     Director::getInstance()->replaceScene(TransitionFade::create(0.0, scene));
-    MAP_MNG_GI->revoke();
-    MAP_MNG_GI->selfDestroyInstance();
-
-    GM_GI->revoke();
-    GM_GI->selfDestroyInstance();
+    //GM_GI->selfDestroyInstance();
+    //MAP_MNG_GI->selfDestroyInstance();
 }

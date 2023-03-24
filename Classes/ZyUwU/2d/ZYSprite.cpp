@@ -18,13 +18,26 @@ ZYSprite::~ZYSprite()
 	ZY_EZ_DE_LOG;
 }
 
-ZYSprite* ZYSprite::create(const char* pFileName, bool bIsScale)
+ZYSprite* ZYSprite::create(const std::string& pFileName, bool bIsScale)
 {
-	ZYSprite* pElement = new (std::nothrow) ZYSprite();
+	auto pElement = new (std::nothrow) ZYSprite();
 	if (pElement && pElement->Sprite::initWithFile(pFileName))
 	{
 		pElement->autorelease();
-        if(bIsScale) pElement->setScale();
+		if(bIsScale) pElement->setScale();
+		return pElement;
+	}
+	CC_SAFE_DELETE(pElement);
+	return nullptr;
+}
+
+ZYSprite* ZYSprite::create(const char* pFileName, bool bIsScale)
+{
+	auto pElement = new (std::nothrow) ZYSprite();
+	if (pElement && pElement->Sprite::initWithFile(pFileName))
+	{
+		pElement->autorelease();
+		if(bIsScale) pElement->setScale();
 		return pElement;
 	}
 	CC_SAFE_DELETE(pElement);
@@ -32,7 +45,7 @@ ZYSprite* ZYSprite::create(const char* pFileName, bool bIsScale)
 }
 ZYSprite* ZYSprite::create(const std::string& filename, const Rect& rect, bool bIsScale)
 {
-	ZYSprite *pRet = new (std::nothrow) ZYSprite();
+	auto pRet = new (std::nothrow) ZYSprite();
 	if(pRet && pRet->Sprite::initWithFile(filename, rect))
 	{
 		pRet->autorelease();
@@ -45,7 +58,7 @@ ZYSprite* ZYSprite::create(const std::string& filename, const Rect& rect, bool b
 
 ZYSprite* ZYSprite::create(cocos2d::Texture2D *p)
 {
-	ZYSprite* pE = new (std::nothrow) ZYSprite();
+	auto pE = new (std::nothrow) ZYSprite();
 	if(pE && pE->initWithTexture(p))
 	{
 		pE->autorelease();

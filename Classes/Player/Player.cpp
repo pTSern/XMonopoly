@@ -10,11 +10,14 @@
 
 Player::Player() :
 m_pEconomy(nullptr),
+m_pViewPointChampion(nullptr),
 m_pSelectingObject(nullptr),
 m_eType(SelectType::NONE),
 m_Color(Color4F::RED),
 m_eAction(TheAction::IDLE),
-m_nRepresentNumber(0)
+m_nRepresentNumber(0),
+m_pControllingChampion(nullptr),
+m_bIsClient(false)
 {
 
 }
@@ -56,6 +59,33 @@ void Player::update(float dt)
 
 //// Public
 
+void Player::setSelectObject(GameObject* target, SelectType type)
+{
+    this->m_pSelectingObject = target;
+    this->m_eType = type;
+    switch (m_eType)
+    {
+        case SelectType::CHAMPION:
+            switchViewPointChampion(dynamic_cast<ChampionInGame*>(target));
+            break;
+    }
+}
+
+void Player::switchViewPointChampion(ChampionInGame* target)
+{
+    if(m_bIsClient && target && m_pViewPointChampion != target)
+    {
+        if(m_pViewPointChampion)
+        {
+            m_pViewPointChampion->disable();
+            m_pViewPointChampion->setHUD(false);
+        }
+        target->enable();
+        target->setHUD(true);
+        m_pViewPointChampion = target;
+    }
+}
+
 bool Player::onTouch(Touch *touch, Event *event)
 {
     return true;
@@ -68,6 +98,7 @@ bool Player::endTouch(Touch *touch, Event *event)
 void Player::setControlChampion(ChampionInGame* champ)
 {
     this->m_pControllingChampion = champ;
+    switchViewPointChampion(champ);
 }
 
 void Player::setChampionViewPoint(ChampionInGame *pChampion)
@@ -96,10 +127,10 @@ void Player::addChampion(ChampionInGame* pChamp)
 {
     if(pChamp)
     {
-        pChamp->disable();
         m_nRepresentNumber++;
         m_vChampions.emplace_back(pChamp);
-        m_vChampions.back()->setOwner(this, true);
+        pChamp->setOwner(this, true);
+        pChamp->disable();
         this->addChild(pChamp);
     }
 }

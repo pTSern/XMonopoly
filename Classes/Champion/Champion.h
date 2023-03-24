@@ -10,7 +10,7 @@ USING_NS_ALL;
 BEGIN_CREATE_REFCLASS(Champion, GameObject)
 
 public:
-    static Champion* createWithProperties(std::string path, Statics* pStatics, ChampionStatics* pChampStatics);
+    static Champion* createWithProperties(const std::string& icon, Statics* pStatics, ChampionStatics* pChampStatics);
 
 public:
     Champion* clone();
@@ -31,7 +31,7 @@ public:
     virtual void config();
 
 protected:
-    ZYSprite* m_pIcon;
+    ZYSprite* m_pIcon, *m_pAvatar;
     Statics* m_pStatics;
     ChampionStatics* m_pChampionStatics;
 

@@ -39,6 +39,11 @@ public:
     CREATE_GET_FUNC(getRegenMana, float, m_cMana.getRegen());
     CREATE_GET_FUNC(getRegenSkillPoint, float, m_cSkillPoint.getRegen());
 
+    CREATE_GET_FUNC(getPCLifeSteal, float, m_cLifeSteal.getPcAmount());
+    CREATE_GET_FUNC(getLifeSteal, float, m_cLifeSteal.getAmount());
+    CREATE_GET_FUNC(getPCMagicLifeSteal, float, m_cMagicLifeSteal.getPcAmount());
+    CREATE_GET_FUNC(getMagicLifeSteal, float, m_cMagicLifeSteal.getAmount());
+
     inline void setMagicLifeSteal(float fAmount) {this->m_cMagicLifeSteal.setAmount(fAmount);}
     inline void setLifeSteal(float fAmount) {this->m_cLifeSteal.setAmount(fAmount);}
 
@@ -58,6 +63,7 @@ protected:
     PercentStatics m_cLifeSteal, m_cMagicLifeSteal;
     RegenStatics m_cHP, m_cMana, m_cSkillPoint;
     float m_fSpeed;
+
 
 END_CREATE_CLASS
 
@@ -138,8 +144,9 @@ public:
 
     bool reduceLife(int num = 1);
     void addLife(int num = 1);
+    void regen(float multiple = 0);
 
-    bool doRespawn(float percent = 100);
+    bool doRespawn(const float percent = 100);
 
 protected:
     Statics *m_pStatics;

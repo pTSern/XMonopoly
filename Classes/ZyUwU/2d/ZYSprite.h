@@ -16,6 +16,7 @@ class ZYEffect;
 class ZYSprite : public cocos2d::Sprite, public ZYShaderHelper, public ZYSupport2D
 {
 public:
+	static ZYSprite* create(const std::string& pFileName, bool bIsScale = true);
 	static ZYSprite* create(const char* pFileName, bool bIsScale = true);
 	static ZYSprite* create(const std::string& filename, const Rect& rect, bool bIsScale = true);
 	static ZYSprite* create(cocos2d::Texture2D *p);

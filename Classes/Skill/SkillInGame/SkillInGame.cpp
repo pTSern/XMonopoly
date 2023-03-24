@@ -47,6 +47,9 @@ SkillInGame* SkillInGame::createTest()
         ret->m_pSkillStatics->setManaCost(0);
         ret->m_pSkillCard = SkillCard::createDefault();
         ret->m_pSkillCard->setDescriptionLabel("The champion moves to a new Arena with a number equal to the Dice number");
+        ret->m_pSkillCard->setManaCostLabel("0");
+        ret->m_pSkillCard->setNameLabel("MOVE");
+        ret->m_pSkillCard->setSkillPointCostLabel("0");
         ret->m_pSkillCard->setOwner(ret);
         ret->m_pCondition = Condition::create();
         ret->m_pCondition->setOwner(ret);
@@ -110,17 +113,21 @@ void SkillInGame::onTrigger()
      * which, must be TRUE)
      */
 
+    ///) If this skill need dice, enable dice (the button of dice).
     if(m_bIsNeedDice)
     {
         this->m_pOwner->getOwner()->enableDice();
     }
 
-    /// Pay the Mana, Hp, Sp Cost. Set Skill to cool down
+    ///) Set this skill to cool down
     this->m_pSkillStatics->castSkill();
+
+    ///) Force owner to pay the mana/hp/sp cost.
     auto mc = m_pSkillStatics->getManaCost();
     auto hc = m_pSkillStatics->getHpCost();
     auto sc = m_pSkillStatics->getSpCost();
     this->m_pOwner->getOwner()->castingSkill(mc, hc, sc);
+
     /// Disable USE button
     this->m_pOwner->setUseButton(false);
 

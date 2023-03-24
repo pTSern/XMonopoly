@@ -204,7 +204,7 @@ IngameStatics* IngameStatics::createWithStatics(Statics* pStatics, bool bIsClone
 IngameStatics* IngameStatics::createTest()
 {
     auto ret = new (std::nothrow) IngameStatics();
-    ret->m_pStatics = Statics::createWithProperties(50, 0 ,0,1,1,0,0,0,RegenStatics(100, 1), RegenStatics(20, 2), RegenStatics(1,1));
+    ret->m_pStatics = Statics::createWithProperties(50, 0 ,0,1,1,0,0,0,RegenStatics(100, 20), RegenStatics(20, 2), RegenStatics(1,1));
     ret->fillStatics(100);
     return ret;
 }
@@ -247,6 +247,14 @@ bool IngameStatics::reduceLife(int num)
 void IngameStatics::addLife(int num)
 {
     this->m_nCurrentLife+=num;
+}
+
+void IngameStatics::regen(const float multiple)
+{
+    this->m_fCurrentHp += m_pStatics->getRegenHp() * (1.0f + multiple);
+    this->m_fCurrentSp += m_pStatics->getRegenSkillPoint() * (1.0f + multiple);
+    this->m_fCurrentMana += m_pStatics->getRegenMana() * (1.0f + multiple);
+    this->autoValid();
 }
 
 bool IngameStatics::doRespawn(float percent)

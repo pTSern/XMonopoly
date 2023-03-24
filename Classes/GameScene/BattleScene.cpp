@@ -8,6 +8,7 @@
 #include "ChampionInGame/ChampionInGame.h"
 #include "Player/Player.h"
 #include "ChampionInGame/UI/ChampionUI.h"
+#include "ChampionInGame/UI/ChampionHUD.h"
 #include "Arena/Arena.h"
 #include "Skill/SkillManager/SkillManager.h"
 #include "Skill/SkillInGame/SkillInGame.h"
@@ -44,6 +45,7 @@ bool BattleScene::init()
 
     auto x = ZYSprite::create("skill_icon/skillcard2.png");
     x->setPosition(Point((visibleSize.width/2 + origin.x)/1, (x->getContentSize().height/3 + origin.y)/1));
+
     /// Input Map
     MAP_MNG_GI->loadTileMap("TileMaps/map-13.tmx");
     MAP_MNG_GI->getTileMap()->setPosition(x->getPositionX(), (ZYDR_GI->getTrueVisibleSize().height + x->getContentPositionMiddleTop().y) /2);
@@ -59,42 +61,38 @@ bool BattleScene::init()
     auto ui = ChampionUI::createDefault();
     auto sig = SkillInGame::createTest();
     sig->setSkillMechanic(SkillInGame::MoveBySkill);
-    auto sm = SkillManager::createWithSkillInGame(sig, SkillInGame::createTest(),nullptr);
+    auto sm = SkillManager::createWithSkillInGame(sig,SkillInGame::createTest(), SkillInGame::createTest(), SkillInGame::createTest(), SkillInGame::createTest(), SkillInGame::createTest(), nullptr);
     auto cig = ChampionInGame::createWithProperties(champ, ui, dice, sm);
     auto coord = Coordinate(Dir::WS, 0);
-    cig->setPosition(coord);
-    auto ig = IngameStatics::createTest();
-    cig->setStatics(ig);
+    //auto ig = IngameStatics::createTest();
+    //cig->setStatics(ig);
     auto player = Player::create();
     player->setTheColor(Color4F::YELLOW);
+    MAP_MNG_GI->setClientPlayer(player);
     player->addChampion(cig);
     player->disable();
     player->setName("PLAYER 1");
-    MAP_MNG_GI->setClientPlayer(player);
     m_vPlayers.push_back(player);
-    CCLOG("DIE 2.5");
+    cig->setPosition(coord);
 
     auto dice2 = Dice::createWithProperties("dice/128-red.png");
     auto champ2 = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
     sig2->setSkillMechanic(SkillInGame::MoveBySkill);
-    auto sig5 = SkillInGame::createTest();
-    sig5->setSkillMechanic(SkillInGame::MoveBySkill);
-    auto sm2 = SkillManager::createWithSkillInGame(sig2, SkillInGame::createTest(), sig5, nullptr);
+    auto sm2 = SkillManager::createWithSkillInGame(sig2, nullptr);
     auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
     auto coord2 = Coordinate(Dir::WS, 0);
-    cig2->setPosition(coord2);
-    auto ig2 = IngameStatics::createTest();
-    cig2->setStatics(ig2);
+    //auto ig2 = IngameStatics::createTest();
+    //cig2->setStatics(ig2);
     auto player2 = Player::create();
     player2->setTheColor(Color4F::RED);
     player2->addChampion(cig2);
     player2->disable();
     player2->setName("PLAYER 2");
     m_vPlayers.push_back(player2);
+    cig2->setPosition(coord2);
 
-    CCLOG("DIE 3.5");
     for(auto x : m_vPlayers)
     {
         this->addChild(x, 1);
@@ -105,7 +103,6 @@ bool BattleScene::init()
     GM_GI->addChampList(player2->getChampChildren());
     GM_GI->calculateNewTurn();
 
-    CCLOG("DIE 5");
     return true;
 }
 

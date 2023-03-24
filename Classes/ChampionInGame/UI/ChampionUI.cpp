@@ -14,7 +14,6 @@ m_pSkillPoint(nullptr), m_pGlobalBackground(nullptr)
 
 ChampionUI::~ChampionUI()
 {
-
     CC_SAFE_RELEASE(m_pHpBackground);
     CC_SAFE_RELEASE(m_pHpFrontEnd);
     CC_SAFE_RELEASE(m_pHpBar);
@@ -22,7 +21,6 @@ ChampionUI::~ChampionUI()
     CC_SAFE_RELEASE(m_pManaBar);
     CC_SAFE_RELEASE(m_pManaBackground);
     CC_SAFE_RELEASE(m_pSkillPoint);
-    CCLOG("CHAMPION UI DESTRUC");
 };
 //// Static
 

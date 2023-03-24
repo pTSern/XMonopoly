@@ -50,6 +50,8 @@ public:
     CREATE_SET_GET_FUNC(setSelectObject, getSelectObject, GameObject*, m_pSelectingObject)
     CREATE_SET_GET_FUNC(setTheColor, getTheColor, Color4F, m_Color);
     CREATE_GET_FUNC(getEconomy, IgEcoMng*, m_pEconomy);
+    CREATE_SET_GET_FUNC(setIsClient, isClient, bool, m_bIsClient);
+    void setSelectObject(GameObject* target, SelectType type);
 
     float getTotalPropertyValue();
 
@@ -72,6 +74,8 @@ public:
     void removeOwnedProperty(Property* property);
     void lose();
     void checkLoseCondition();
+
+    void switchViewPointChampion(ChampionInGame* target);
 
 //// PURCHASE PROPERTY /////////////////////////////////////////
     void onLandArena(Arena* arena);
@@ -142,6 +146,8 @@ protected:
 
     IgEcoMng* m_pEconomy;
     int m_nRepresentNumber;
+
+    bool m_bIsClient;                                   ///< Mark if this player is client or not
 
 
 END_CREATE_REFCLASS

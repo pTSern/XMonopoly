@@ -27,7 +27,6 @@ class SpawnArena;
 BEGIN_CREATE_INSTANCE_REFCLASS(MapManager, cocos2d::Node)
 
 public:
-    void generateGameBoard();
 	cocos2d::TMXTiledMap* getTileMap();
 	cocos2d::TMXLayer* getLayer(std::string sLayerId);
 	void loadTileMap(std::string sMapName);
@@ -45,14 +44,27 @@ public:
 	CREATE_GET_FUNC(getAngleVerticalInRad, float, p_fAngleVertical);
 	CREATE_GET_FUNC(getAngleVertical, float, ZY_SUPPORT_GI->radToDegree(p_fAngleVertical));
 	CREATE_GET_FUNC(getArenaGroup, cocos2d::TMXObjectGroup*, p_pArenaGroup);
+	/**
+	 * @return The size of the board in Tile system.
+	 */
 	CREATE_GET_FUNC(getWorldSize, Size, p_world);
+	/**
+	 * @return The size of a object tile in Tile system.
+	 */
 	CREATE_GET_FUNC(getObjectTileSize, Size, p_objectTileSize);
+	/**
+	 * @return The true size of a object tile in OpenGL pixel.
+	 */
 	CREATE_GET_FUNC(getTrueObjectTileSize, Size, p_tObjectTile);
+	/**
+	 * @return The true size of the board in OpenGL pixel.
+	 */
 	CREATE_GET_FUNC(getTrueWorldSize, Size, p_tWorld);
 	CREATE_GET_FUNC(getArenas, std::vector<Arena*>, p_vArenas);
-	CREATE_SET_GET_FUNC(setClientPlayer, getClientPlayer, Player*, p_pClientPlayer);
+	CREATE_GET_FUNC(getClientPlayer, Player*, p_pClientPlayer);
 	CREATE_GET_FUNC(getHospitalCoord, Coordinate, p_hospital);
 	Arena* getArenaByCoord(Coordinate coord);
+	void setClientPlayer(Player* target);
 
 	/**
 	* Check if input position is contact to a collision object

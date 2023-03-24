@@ -5,7 +5,8 @@
 
 IngameEconomyManager::IngameEconomyManager() :
 m_economy(Economy::IngameCoin),
-m_pLabel(nullptr)
+m_pLabel(nullptr),
+m_pIcon(nullptr)
 {
 
 }
@@ -40,6 +41,9 @@ bool IngameEconomyManager::init()
     this->addChild(m_pLabel);
     m_economy = Economy::IngameCoin;
 
+    m_pIcon = ZYSprite::create("ui/economy/icon.png");
+    this->addChild(m_pIcon);
+
     this->scheduleUpdate();
     return true;
 }
@@ -57,7 +61,9 @@ std::string IngameEconomyManager::toString(int nTab)
 
 void IngameEconomyManager::update(float dt)
 {
-    this->m_pLabel->setString("$: " + ZYSP_SD(m_economy.getAmount(), 1) + "K");
+    this->m_pLabel->setString("$: " + ZYSP_SRF(m_economy.getAmount(), 2)  + " ");
+    auto pos = (m_pLabel->getContentPositionMiddleRight());
+    this->m_pIcon->setPosition(Point(pos.x + m_pIcon->getContentSize().width/2, pos.y));
 }
 
 ///] Public

@@ -18,8 +18,13 @@ public: // Initialize Function
     bool initWithVector(std::vector<SkillInGame*>& vectorOfSkills);
 
 public: // Public function that use to use
+
     CREATE_SET_GET_FUNC(setOwner, getOwner, ChampionInGame*, m_pOwner);
     CREATE_SET_GET_FUNC(setSelectingSkill, getSelectingSkill, SkillInGame*, m_pSelecting);
+
+    /**
+     * @return The position (x,y) of this object's use button in OpenGL coordinates.
+     */
     const Vec2& getUseButtonPosition();
 
     /**
@@ -27,13 +32,10 @@ public: // Public function that use to use
      */
     void unselectSkill();
 
-    /**
-     *  Turn this object's USE button to be On/Off.
-     *  @prama var TRUE: turn on the button, false otherwise
-     */
      /**
+      * Turn this object's USE button to be On/Off.
       *
-      * @param var
+      * @param var TRUE: turn on the button, FALSE otherwise
       */
     void setUseButton(bool var);
 

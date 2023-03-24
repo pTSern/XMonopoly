@@ -2,6 +2,7 @@
 #include "Arena/Arena.h"
 #include "Dice/Dice.h"
 #include "ChampionInGame/UI/ChampionUI.h"
+#include "ChampionInGame/UI/ChampionHUD.h"
 #include "Skill/SkillManager/SkillManager.h"
 #include "Player/Player.h"
 #include "GameMaster/GameMaster.h"
@@ -20,7 +21,14 @@ m_pChampionUI(nullptr),
 m_pDice(nullptr),
 m_eStatus(ChampionStatus::NORMAL),
 m_eAction(ChampionAction::IDLE),
-m_eTurnPhase(ChampionTurnPhase::NONE)
+m_eTurnPhase(ChampionTurnPhase::NONE),
+m_pChampionHUD(nullptr),
+m_pPreDiceSkillDeck(nullptr),
+m_pPostDiceSkillDeck(nullptr),
+m_pSelfButton(nullptr),
+m_bIsTurn(false), m_bIsEndTurn(false),
+m_bIsAction(false),
+p_nCurrentJump(0), p_nJumpTime(0)
 {
 
 }
@@ -67,7 +75,7 @@ ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClo
     return nullptr;
 }
 
-ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp, ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
+ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp , ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
 {
     auto ret = createWithChampion(pChamp, false);
     if(ret && ret->initWithProperties(pUI, pDice, vSkillDeck))
@@ -118,6 +126,8 @@ void ChampionInGame::setPosition(Arena *pArena)
 {
     auto pos = pArena->getMoveAblePosition();
     this->setPosition(Point(pos.x, pos.y + m_pIcon->getContentSize().height/2));
+    this->m_pLandingArena = pArena;
+    this->onLand(false);
     //this->m_pMemArena = m_pLandingArena;
     //this->m_pLandingArena = pArena;
     //this->endLand();
@@ -147,7 +157,6 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     this->setUI(pUI);
     this->setPreDiceSkillDeck(vSkillDeck);
 
-
     this->addChild(m_pPreDiceSkillDeck);
     m_pPreDiceSkillDeck->setOwner(this);
 
@@ -171,6 +180,12 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     ls->onTouchEnded = CC_CALLBACK_2(ChampionInGame::endTouch, this);
     m_pSelfButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, m_pSelfButton);
     m_pSelfButton->addTouchEventListener(CC_CALLBACK_2(ChampionInGame::run, this));
+
+    /**
+     *
+     */
+    this->m_pIngameStatics = IngameStatics::createTest();
+
     this->scheduleUpdate();
     return true;
 }
@@ -263,6 +278,9 @@ void ChampionInGame::setOwner(Player *pOwner, bool bIsRepresent)
     auto outline = ZYOutlineV2::create();
     outline->setColor(this->m_pOwner->getTheColor());
     this->m_pIcon->setEffect(outline);
+
+    this->m_pChampionHUD = ChampionHUD::createWithChampion(this);
+    this->addChild(m_pChampionHUD);
 }
 
 bool ChampionInGame::onTouch(Touch* touch, Event* event)
@@ -279,28 +297,38 @@ void ChampionInGame::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventT
 {
     if(type ==  ui::Widget::TouchEventType::ENDED)
     {
-        m_pOwner->setSelectType(Player::SelectType::CHAMPION);
-        m_pOwner->setSelectObject(this);
+        MAP_MNG_GI->getClientPlayer()->setSelectObject(this, Player::SelectType::CHAMPION);
     }
 }
 
 void ChampionInGame::startTurn()
 {
+    ///) Enable this champion
     this->enable();
+
+    ///) Regen stats
+    this->m_pIngameStatics->regen();
+
+    ///) This champion is on turn and does not finish the turn(end turn)
     this->m_bIsTurn = true;
     this->m_bIsEndTurn = false;
+
+    ///) The owner now controlling this champion
     this->m_pOwner->setControlChampion(this);
 
+    ///) Enter the pre-dice phase
     this->enterPreDicePhase();
 }
 
 void ChampionInGame::enterPreDicePhase()
 {
+    ///) This player is now on pre-dice phase
     this->m_eTurnPhase = ChampionTurnPhase::PRE_DICE;
 }
 
 void ChampionInGame::endPreDicePhase()
 {
+    ///) Check if this champion can enter the pos-dice phase. Call endTurn() if not
     if(!canEnterPostDice()) endTurn();
 }
 
@@ -320,6 +348,7 @@ void ChampionInGame::endPostDicePhase()
 
 void ChampionInGame::endTurn()
 {
+    ///) This champion is not on turn and finishes the turn
     this->m_bIsTurn = false;
     this->m_bIsEndTurn = true;
     this->m_eAction = ChampionAction::IDLE;
@@ -328,6 +357,7 @@ void ChampionInGame::endTurn()
 
 void ChampionInGame::enableDice()
 {
+    ///) Enable the dice
     this->m_pDice->enableDice();
 }
 
@@ -340,6 +370,7 @@ void ChampionInGame::lifeCheck()
          if (m_pIngameStatics->doRespawn())
          {
              this->respawn();
+             this->endTurn();
          }
          else this->onDeath();
      }
@@ -369,10 +400,10 @@ void ChampionInGame::respawn()
 
     /// Respawn at Hospital
     auto hospital = MAP_MNG_GI->getArenaByCoord(MAP_MNG_GI->getHospitalCoord());
-    this->m_pLandingArena = hospital;
+    //this->m_pLandingArena = hospital;
     m_pSelfButton->setVisible(true);
     this->setPosition(hospital);
-    this->onLand();
+    //this->onLand();
 }
 
 void ChampionInGame::autoFlip()
@@ -404,7 +435,7 @@ void ChampionInGame::jumpTo(Point pos)
     m_eAction = ChampionAction::MOVING;
     auto target = Point(pos.x, pos.y + m_pIcon->getContentSize().height/2);
     auto distance = this->getPosition().distance(target);
-    auto jump = JumpTo::create(distance/200, target, this->m_pIcon->getContentSize().height/2, 1);
+    auto jump = JumpTo::create(distance/400, target, this->m_pIcon->getContentSize().height/2, 1);
     auto callback = CallFunc::create(CC_CALLBACK_0(ChampionInGame::endJump, this));
     auto seq = Sequence::create(jump, callback, nullptr);
     this->m_pIcon->runAction(seq);
@@ -467,6 +498,12 @@ void ChampionInGame::disable()
 {
     this->m_pDice->disable();
     this->m_pPreDiceSkillDeck->disable();
+}
+
+void ChampionInGame::setHUD(bool var)
+{
+    if(var) this->m_pChampionHUD->enable();
+    else this->m_pChampionHUD->disable();
 }
 
 bool ChampionInGame::isValidTurn()

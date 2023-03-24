@@ -36,7 +36,7 @@ bool MapManager::init()
 	ls->onTouchBegan = CC_CALLBACK_2(MapManager::onTouch, this);
 	ls->onTouchEnded = CC_CALLBACK_2(MapManager::endTouch, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, this);
-	this->scheduleUpdate();
+	//this->scheduleUpdate();
 	return true;
 }
 void MapManager::revoke()
@@ -56,7 +56,6 @@ void MapManager::revoke()
 	//}
 	p_mLayers.clear();
 	p_pClientPlayer = nullptr;
-	this->removeFromParentAndCleanup(true);
 }
 
 cocos2d::TMXTiledMap* MapManager::getTileMap()
@@ -100,6 +99,7 @@ void MapManager::loadTileMap(std::string sMapName)
 
 	//Self config
 	this->config();
+
 	//Generate the map's arena
 	//this->generateArenas();
 	//_eventDispatcher->addEventListenerWithSceneGraphPriority(ls, this);
@@ -435,6 +435,15 @@ bool MapManager::endTouch(Touch *touch, Event *event)
 	//}
 
 	return true;
+}
+
+void MapManager::setClientPlayer(Player* target)
+{
+	if(target)
+	{
+		target->setIsClient(true);
+		p_pClientPlayer = target;
+	}
 }
 
 Arena* MapManager::getArenaByCoord(Coordinate coord)

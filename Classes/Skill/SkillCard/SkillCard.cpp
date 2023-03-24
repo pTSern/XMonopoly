@@ -138,8 +138,6 @@ bool SkillCard::initWithProperties(std::string sIconSprite, std::string sShapeSp
     p_pDescriptionLabel->setMaxLineWidth(p_pDescriptionSprite->getContentSize().width - 2);
 
     SET_FULL_LABEL(setTextColor(Color4B::BLACK));
-    SET_FULL_LABEL(setTTFConfig(ttfConfig));
-    SET_FULL_LABEL(enableOutline(Color4B::RED));
 
     //PRESET_FULL_VARIABLE(addChild);
 

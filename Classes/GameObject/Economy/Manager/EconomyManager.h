@@ -68,6 +68,7 @@ protected:
 protected:
     Economy m_economy;
     ZYLabel *m_pLabel;
+    ZYSprite *m_pIcon;
 
 END_CREATE_REFCLASS
 

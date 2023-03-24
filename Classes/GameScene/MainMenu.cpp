@@ -33,7 +33,7 @@ bool MainMenuScene::init()
     auto config = defaultTTFConfig;
     config.fontSize = pvp->getContentSize().height/2;
     config.bold = true;
-    auto label = ZYLabel::createWithTTF(config, "PLAYE", TextHAlignment::CENTER, ZYDR_TGVS.width/2);
+    auto label = ZYLabel::createWithTTF(config, "PLAY", TextHAlignment::CENTER, ZYDR_TGVS.width/2);
     label->setColor(Color3B::BLACK);
     label->setPosition(ZYDR_TGVS/2);
     this->addChild(label, 2);

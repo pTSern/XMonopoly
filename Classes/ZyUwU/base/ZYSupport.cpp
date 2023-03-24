@@ -26,6 +26,18 @@ std::string ZYSupport::shorterDecimal(float fNum, int nLength)
     return stream.str();
 }
 
+std::string ZYSupport::smartRoundingFloat(float num, int length)
+{
+    double rounded_num = std::round(num * std::pow(10, length)) / std::pow(10, length);
+    std::stringstream stream;
+    auto str = shorterDecimal(rounded_num, length);
+    str.erase(str.find_last_not_of('0') + 1, std::string::npos);
+
+    if(str.back() == '.') str.pop_back();
+
+    return str;
+}
+
 std::string ZYSupport::tabString(int nTab)
 {
     if (0 > nTab || nTab > 10) nTab = 2;
@@ -120,5 +132,11 @@ void ZYSupport::log()
 
 }
 //protected
+
+const Color3B& ZYSupport::convert4FTo3B(const Color4F& color)
+{
+    const auto color3 = Color3B(color.r * 250.0f, color.g * 250.0f, color.b * 250.0f);
+    return color3;
+}
 
 NS_ZY_END

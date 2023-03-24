@@ -5,6 +5,8 @@
 #include "cocos2d.h"
 #include "iomanip"
 
+USING_NS_CC;
+
 NS_ZY_BEGIN
 
 #define ZY_SUPPORT_GI zy::ZYSupport::getInstance()
@@ -30,6 +32,12 @@ NS_ZY_BEGIN
 #define ZY_SP_SHORTER_DECIMAL(__NUM__, __LENGTH__) zy::ZYSupport::getInstance()->shorterDecimal(__NUM__, __LENGTH__)
 #define ZYSP_SD(__NUM__, __LENGTH__) ZY_SP_SHORTER_DECIMAL(__NUM__, __LENGTH__)
 
+#define ZY_SP_COLOR3B_TO_COLOR4F(__COLOR4F__) ZY_SUPPORT_GI->convert4FTo3B(__COLOR4F__)
+#define ZYSP_3BT4F(__COLOR4F__) ZY_SP_COLOR3B_TO_COLOR4F(__COLOR4F__)
+
+#define ZY_SP_SMART_ROUNDING_FLOAT(__NUM__, __LENGTH__) ZY_SUPPORT_GI->smartRoundingFloat(__NUM__, __LENGTH__)
+#define ZYSP_SRF(__NUM__, __LENGTH__) ZY_SP_SMART_ROUNDING_FLOAT(__NUM__, __LENGTH__)
+
 #define PI 3.14159265359
 
 class ZYLabel;
@@ -42,6 +50,7 @@ public:
     std::string vec2ToString(cocos2d::Point vec2);
     std::string noNumberString(std::string sText);
     std::string tabString(int nTab = 2);
+    std::string smartRoundingFloat(float num, int length);
     void fitStringInSize(zy::ZYLabel* pLabel, std::string str, cocos2d::Size borderSize, int nMinFontSize = 14);
 
 public:
@@ -51,6 +60,9 @@ public:
 public:
     float radToDegree(float fRad);
     float degreeToRad(float fDegree);
+
+public:
+    const Color3B& convert4FTo3B(const Color4F& color);
 
 END_CREATE_INSTANCE_REFCLASS
 

@@ -54,8 +54,12 @@ void GameMaster::markChampion()
 {
     if(m_pIsTurnChampion)
     {
-        this->m_pMarkIsTurnChampion_UP->setPosition(Point(m_pIsTurnChampion->getIcon()->getPosition().x, m_pIsTurnChampion->getIcon()->getContentPositionMiddleTop().y + m_pMarkIsTurnChampion_UP->getContentSize().height));
+        this->m_pMarkIsTurnChampion_UP->setPosition(Point(m_pIsTurnChampion->getIcon()->getPosition().x, m_pIsTurnChampion->getIcon()->getContentPositionMiddleTop().y + 2*m_pMarkIsTurnChampion_UP->getContentSize().height/3));
         this->m_pMarkIsTurnChampion_DOWN->setPosition(m_pIsTurnChampion->getIcon()->getContentPositionMiddleBottom());
+        auto color = m_pIsTurnChampion->getOwner()->getTheColor();
+        auto color3b = ZYSP_3BT4F(m_pIsTurnChampion->getOwner()->getTheColor());
+        this->m_pMarkIsTurnChampion_UP->setColor(color3b);
+        this->m_pMarkIsTurnChampion_DOWN->setColor(color3b);
     }
 }
 
@@ -102,5 +106,4 @@ void GameMaster::endGame(const std::string& loser)
 void GameMaster::revoke()
 {
     m_vList.clear();
-    this->removeFromParentAndCleanup(true);
 }
