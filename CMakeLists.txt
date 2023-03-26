@@ -85,6 +85,7 @@ list(APPEND GAME_SOURCE
         Classes/GameScene/BattleScene.cpp
         Classes/GameScene/ShopScene.cpp
         Classes/GameScene/MarketScene.cpp
+        Classes/GameScene/GameOver.cpp
 
         Classes/LogManager/LogManager.cpp
 
@@ -98,6 +99,7 @@ list(APPEND GAME_SOURCE
         Classes/Player/UI/PlayerUI.cpp
         Classes/Player/ViewPoint/ViewPoint.cpp
         Classes/Player/Action/PlayerAction.cpp
+        Classes/Player/Brain/AI/BotPlayer.cpp
 
         Classes/SelectHelper/SelectHelper.cpp
 
@@ -106,6 +108,7 @@ list(APPEND GAME_SOURCE
 
         Classes/ChampionInGame/ChampionInGame.cpp
         Classes/ChampionInGame/UI/ChampionUI.cpp
+        Classes/ChampionInGame/UI/ChampionHUD.cpp
 
         Classes/Map/Map.cpp
 
@@ -188,6 +191,7 @@ list(APPEND GAME_HEADER
         Classes/GameScene/BattleScene.h
         Classes/GameScene/ShopScene.h
         Classes/GameScene/MarketScene.h
+        Classes/GameScene/GameOver.h
 
         Classes/Dice/Dice.h
 
@@ -199,6 +203,7 @@ list(APPEND GAME_HEADER
         Classes/Player/UI/PlayerUI.h
         Classes/Player/ViewPoint/ViewPoint.h
         Classes/Player/Action/PlayerAction.h
+        Classes/Player/Brain/AI/BotPlayer.h
 
         Classes/Champion/Champion.h
         Classes/Champion/Mage/Mage.h
@@ -206,6 +211,7 @@ list(APPEND GAME_HEADER
         Classes/ChampionInGame/ChampionInGame.h
         Classes/ChampionInGame/Extension.h
         Classes/ChampionInGame/UI/ChampionUI.h
+        Classes/ChampionInGame/UI/ChampionHUD.h
 
         Classes/Map/Map.h
 
