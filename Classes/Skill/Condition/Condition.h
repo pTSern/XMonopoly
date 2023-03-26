@@ -39,7 +39,6 @@ protected:
     SkillInGame* m_pOwner;
     bool m_bIsValid;
     std::vector<GameEffect*> m_vEffectCondition;
-    TTFConfig m_font;
     std::string m_sMessage;
 
 END_CREATE_CLASS

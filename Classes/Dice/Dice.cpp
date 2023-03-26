@@ -44,7 +44,7 @@ void Dice::loadElement(const std::string& sPath)
 
     m_pDice = ZYSprite::create(path.c_str());
     m_pDice->setVisible(false);
-    m_pDice->setPosition(Point(MAP_MNG_GI->getPosition().x, MAP_MNG_GI->getPosition().y + MAP_MNG_GI->getMapPixelSize().height/4));
+    m_pDice->setPosition(Point(GM_GI->getMap()->getPosition().x, GM_GI->getMap()->getPosition().y + GM_GI->getMap()->getMapPixelSize().height/4));
 
     diceSize = Size(m_pDice->getContentSize().width/6, m_pDice->getContentSize().height);
     m_centerRect = Rect(Point(0,0), diceSize);
@@ -98,7 +98,7 @@ void Dice::log()
 int Dice::rollDice()
 {
     auto dice = random(1, 6);
-    dice = 3;
+    dice = 10;
     m_vDiceMemory.push_back(dice);
 
     m_centerRect.origin.x = diceSize.width * (dice - 1);

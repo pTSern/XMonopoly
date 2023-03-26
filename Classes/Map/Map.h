@@ -24,7 +24,8 @@ class Arena;
 class Player;
 class HospitalArena;
 class SpawnArena;
-BEGIN_CREATE_INSTANCE_REFCLASS(MapManager, cocos2d::Node)
+//BEGIN_CREATE_INSTANCE_REFCLASS(MapManager, cocos2d::Node)
+BEGIN_CREATE_REFCLASS(MapManager, Node)
 
 public:
 	cocos2d::TMXTiledMap* getTileMap();
@@ -61,10 +62,9 @@ public:
 	 */
 	CREATE_GET_FUNC(getTrueWorldSize, Size, p_tWorld);
 	CREATE_GET_FUNC(getArenas, std::vector<Arena*>, p_vArenas);
-	CREATE_GET_FUNC(getClientPlayer, Player*, p_pClientPlayer);
 	CREATE_GET_FUNC(getHospitalCoord, Coordinate, p_hospital);
 	Arena* getArenaByCoord(Coordinate coord);
-	void setClientPlayer(Player* target);
+	//void setClientPlayer(Player* target);
 
 	/**
 	* Check if input position is contact to a collision object
@@ -103,7 +103,6 @@ private:
     Size p_tObjectTile, p_tWorld;							///< the true object tile size and map size base on cocos2dx's pixel
 	Size p_objectTileSize, p_world;							///< the object tile size and map size base on tile's pixel
     std::vector<Arena*> p_vArenas;							///< array of Arena in the map
-	Player* p_pClientPlayer;								///< weak reference to the client player, most use for selecting arena
 
 	Coordinate p_hospital;
 

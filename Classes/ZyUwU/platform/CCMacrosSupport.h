@@ -11,7 +11,7 @@
 #define CC_DIRECTOR_GI cocos2d::Director::getInstance()
 #define CCDR_GI CC_DIRECTOR_GI
 
-#define CC_FILEUTILS_GI cocos2d::FileUtils::getInstance()
+//#define CC_FILEUTILS_GI cocos2d::FileUtils::getInstance()
 #define CCFU_GI CC_FILEUTILS_GI
 
 #define CC_DEVICE_GI cocos2d::backend::Device::getInstance()

@@ -181,8 +181,8 @@ void Property::config()
     int x = 1;
     if ((int)m_Coord.g_eDir < 0) x = -1;
 
-    m_pTitle->setRotationSkewX(x*MAP_MNG_GI->getAngleVertical());
-    m_pTitle->setRotationSkewY(x*MAP_MNG_GI->getAngleHorizon());
+    m_pTitle->setRotationSkewX(x*GM_GI->getMap()->getAngleVertical());
+    m_pTitle->setRotationSkewY(x*GM_GI->getMap()->getAngleHorizon());
 
     m_pPriceLabel->setRotationSkewX(m_pTitle->getRotationSkewX());
     m_pPriceLabel->setRotationSkewY(m_pTitle->getRotationSkewY());
@@ -191,7 +191,7 @@ void Property::config()
     m_pPriceLabel->setVerticalAlignment(cocos2d::TextVAlignment::CENTER);
     auto mid = m_Bottom.getMidpoint(m_Right);
     auto mid2 = m_Left.getMidpoint(m_Bottom);
-    auto size = MAP_MNG_GI->getTileMap()->getTileSize();
+    auto size = GM_GI->getMap()->getTileMap()->getTileSize();
 
     switch (m_Coord.g_eDir) 
     {

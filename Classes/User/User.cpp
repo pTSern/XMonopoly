@@ -1,13 +1,13 @@
 #include "User.h"
 
-//Constructor
+///] Constructor
 
 User::User()
 {
 
 }
 
-//Public
+///] Virtual
 
 bool User::init()
 {
@@ -24,4 +24,33 @@ std::string User::toString(int nTab)
     std::string ts;
     std::string tab = ZY_SP_TAB(nTab);
     return ts;
+}
+
+void User::loadEconomy()
+{
+}
+
+void User::loadAudio()
+{
+
+}
+
+void User::loadGameData()
+{
+
+}
+
+void User::loadInformation()
+{
+
+}
+
+void User::loadIngameUI()
+{
+
+}
+
+void User::loadUI()
+{
+
 }

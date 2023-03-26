@@ -2,9 +2,13 @@
 
 #include "sqlite3.h"
 #include "cocos2d.h"
+#include "ZyUwU/platform/CCMacrosSupport.h"
+#include "ZyUwU/platform/ZYMacros.h"
 
 #define FALSE 0
 #define TRUE 1
+
+#define ZYDB_GI ZYDatabase::getInstance()
 
 class ZYDatabase
 {
@@ -13,48 +17,33 @@ public:
 	{
 		return sp_pInstance = (sp_pInstance != nullptr) ? sp_pInstance : new ZYDatabase();
 	}
-	inline sqlite3* GetZYDatabase()
-	{
-		return this->p_pZYDatabase;
-	}
-	inline sqlite3_stmt* getStatement()
-	{
-		return this->p_pStatement;
-	}
-	inline sqlite3_stmt** getPStatement()
-	{
-		return &this->p_pStatement;
-	}
-	inline bool getPrepareV2(std::string command, const char **pzTail = 0)
-	{
-		int result = sqlite3_prepare_v2(this->p_pZYDatabase, command.c_str(), -1, &this->p_pStatement, pzTail);
-		if ( result == SQLITE_OK)
-		{
-			return true;
-		}
-		return false;
-	}
-	inline bool getExec(std::string command)
-	{
-		int result = sqlite3_exec(this->p_pZYDatabase, command.c_str(), NULL, NULL, NULL);
-		if (result == SQLITE_OK)
-		{
-			return true;
-		}
-		return false;
-	}
+	sqlite3* getZYDatabase();
+	sqlite3_stmt* getStatement();
+	sqlite3_stmt** getPStatement();
+	bool getPrepareV2(const std::string& command, const char **pzTail = 0);
+	bool getExec(const std::string& command);
+	bool isRowStepStatement();
+	CREATE_GET_FUNC(isReady, bool, p_bIsReady);
+
 public:
 	bool openConnection();
 	bool closeConnection();
-	void supperInit();
-private:
-	void createDatabase();
+	void init(const std::string& name);
+	bool isEmpty();
+	void transferDataToResourcePath();
+
+protected:
+	void transferDataToWriteablePath();
+
 private:
 	static ZYDatabase *sp_pInstance;
 	std::string p_sPath;
+	std::string p_sFileName;
 
 	sqlite3 *p_pZYDatabase;
 	sqlite3_stmt *p_pStatement;
+
+	bool p_bIsReady;
 private:
 	ZYDatabase();
 };

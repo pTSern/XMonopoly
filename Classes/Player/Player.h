@@ -58,6 +58,7 @@ public:
     CREATE_GET_FUNC(getNetWorth, float, (m_pEconomy->getAmount() + getTotalPropertyValue()));
 
     bool doPay(Player* target, float money);
+    bool doPay(float money);
     void receiveMoney(float money);
 
     void disable();
@@ -78,8 +79,6 @@ public:
     void switchViewPointChampion(ChampionInGame* target);
 
 //// PURCHASE PROPERTY /////////////////////////////////////////
-    void onLandArena(Arena* arena);
-    void onLandProperty(Property* property);
 
     virtual void purchaseProperty(Property* property);
     virtual void acquireProperty(Property* property);

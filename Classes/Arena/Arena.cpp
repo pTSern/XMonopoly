@@ -1,5 +1,6 @@
 #include "Arena.h"
 
+
 //// Constructor
 
 Arena::Arena() :
@@ -16,20 +17,23 @@ m_eType(Type::ARENA)
 
 Arena::~Arena()
 {
-    CC_SAFE_RELEASE(m_pTitle);
-    CC_SAFE_RELEASE(m_pRect);
+    CC_SAFE_RELEASE_NULL(m_pTitle);
+    CC_SAFE_RELEASE_NULL(m_pRect);
     for(auto &effect : m_vEffectLayer)
     {
-        CC_SAFE_RELEASE(effect);
+        CC_SAFE_RELEASE_NULL(effect);
     }
     for(auto &sprite : m_vIcons)
     {
-        CC_SAFE_RELEASE(sprite);
+        CC_SAFE_RELEASE_NULL(sprite);
     }
-    for(auto &champs : m_vChampions)
+    for(auto &champ : m_vChampions)
     {
-        CC_SAFE_RELEASE(champs);
+        champ = nullptr;
     }
+    m_Coord = Coordinate(Dir::NE, 0);
+    m_nDrawRectOrder = 0;
+    m_bIsDrewRect = false;
 }
 //// Public
 
@@ -224,7 +228,7 @@ void Arena::setRectPoint(Point cLeft, Size cSize)
 
 void Arena::setRectPoint(float xx, float yy, float width, float height)
 {
-    auto ah = MAP_MNG_GI->getAngleHorizonInRad();
+    auto ah = GM_GI->getMap()->getAngleHorizonInRad();
 
     this->m_Left = Point(xx, yy);
     this->m_Top = Point(xx + height*cos(ah), yy +height*sin(ah));

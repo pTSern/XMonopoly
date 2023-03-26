@@ -54,8 +54,6 @@ void SpecialArena::config()
 void SpecialArena::onLand(ChampionInGame* pChamp)
 {
     Arena::onLand(pChamp);
-
-    pChamp->getOwner()->onLandSpecialArena(this);
 }
 
 void SpecialArena::onPass(ChampionInGame* pChamp)

@@ -53,6 +53,34 @@ void TaxArena::update(float dt)
 void TaxArena::onLand(ChampionInGame* pChamp)
 {
     SpecialArena::onLand(pChamp);
+    auto target = pChamp->getOwner();
+
+    /**
+     *  This Champion is not represent its owner
+     */
+    if(!pChamp->isRepresentPlayer()) return;
+
+    if(target->doPay(target->getNetWorth()*m_fTax))
+    {
+        /**
+         *   Player pay this property's tax
+         *   Ask player to repurchase this property
+         */
+         target->finishAction();
+         return;
+    }
+
+    /**
+     *  This target player can not pay this property's tax
+     *  Force player to sell their property
+     */
+    //if(target->getNetWorth() >= this->getTax())
+    //{
+    //    target->sellPropertyForTax(this);
+    //    return;
+    //}
+
+    target->lose();
 }
 
 void TaxArena::config()
@@ -62,8 +90,8 @@ void TaxArena::config()
     int x = 1;
     if ((int)m_Coord.g_eDir < 0) x = -1;
 
-    m_pTitle->setRotationSkewX(x*MAP_MNG_GI->getAngleVertical());
-    m_pTitle->setRotationSkewY(x*MAP_MNG_GI->getAngleHorizon());
+    m_pTitle->setRotationSkewX(x*GM_GI->getMap()->getAngleVertical());
+    m_pTitle->setRotationSkewY(x*GM_GI->getMap()->getAngleHorizon());
 }
 
 void TaxArena::log()

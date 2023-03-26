@@ -8,6 +8,7 @@
 #include "Support/GameConstant.h"
 #include "Map/Map.h"
 #include "Player/Player.h"
+#include "GameMaster/GameMaster.h"
 
 USING_NS_ALL;
 

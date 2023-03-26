@@ -61,8 +61,8 @@ void HospitalArena::config()
     int x = 1;
     if ((int)m_Coord.g_eDir < 0) x = -1;
 
-    m_pTitle->setRotationSkewX(x*MAP_MNG_GI->getAngleVertical());
-    m_pTitle->setRotationSkewY(x*MAP_MNG_GI->getAngleHorizon());
+    m_pTitle->setRotationSkewX(x*GM_GI->getMap()->getAngleVertical());
+    m_pTitle->setRotationSkewY(x*GM_GI->getMap()->getAngleHorizon());
 }
 
 void HospitalArena::log()

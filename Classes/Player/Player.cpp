@@ -78,9 +78,11 @@ void Player::switchViewPointChampion(ChampionInGame* target)
         if(m_pViewPointChampion)
         {
             m_pViewPointChampion->disable();
+            m_pViewPointChampion->getOwner()->m_pEconomy->disable();
             m_pViewPointChampion->setHUD(false);
         }
         target->enable();
+        target->getOwner()->m_pEconomy->enable();
         target->setHUD(true);
         m_pViewPointChampion = target;
     }
@@ -106,18 +108,6 @@ void Player::setChampionViewPoint(ChampionInGame *pChampion)
 
 }
 
-void Player::onLandProperty(Property* property)
-{
-    if(!property->hasOwner())
-    {
-        this->purchaseProperty(property);
-    }
-    else
-    {
-        this->pay(property->getOwner(), property->getTax());
-    }
-}
-
 void Player::onLandSpecialArena(SpecialArena* special)
 {
     this->finishAction();
@@ -140,7 +130,7 @@ void Player::finishAction()
     //m_pControllingChampion->endTurn();
     if(!m_pControllingChampion->isTurn())
     {
-        this->disable();
+        this->m_pControllingChampion->disable();
     }
     GM_GI->calculateNewTurn();
 }
@@ -149,25 +139,16 @@ void Player::disable()
 {
     ///> disable economy node
     this->m_pEconomy->disable();
-
-    ///> disable all owned champion
-    if(m_pControllingChampion)
-    {
-        this->m_pControllingChampion->disable();
-        //this->m_pControllingChampion = nullptr;
-    }
 }
 
 void Player::enable()
 {
-    this->m_pEconomy->enable();
+    //this->m_pEconomy->enable();
 }
 
 void Player::lose()
 {
-    const auto str = this->getName() + " LOSE";
-    GM_GI->endGame(str);
-    CCLOG("CALL LOSE");
+    GM_GI->endGame(m_bIsClient);
     //this->finishAction();
 }
 
@@ -197,6 +178,11 @@ void Player::endTurn()
 bool Player::doPay(Player* target, float money)
 {
     return (m_pEconomy->pay(target->m_pEconomy, money));
+}
+
+bool Player::doPay(float money)
+{
+    return (m_pEconomy->pay(money));
 }
 
 void Player::receiveMoney(float money)
@@ -252,16 +238,7 @@ void Player::showMessageHelper(const std::string& message, const float& duration
     auto config = defaultTTFConfig;
     config.fontSize = 60;
     config.bold = true;
-    auto label = ZYLabel::createWithTTF(config, message, TextHAlignment::CENTER, ZYDR_TGVS.width/2);
-    label->setColor(Color3B::WHITE);
-    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
-    this->addChild(label);
-    label->setGlobalZOrder(5);
-
-    auto fade_out = FadeOut::create(duration);
-    auto remove = RemoveSelf::create(true);
-    auto se = Sequence::create(fade_out, remove, nullptr);
-    label->runAction(se);
+    GM_GI->floatingNotify(message, config, Color3B::WHITE, Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2), duration);
 }
 
 void Player::showTheMessageHelper(const std::string& message, Vec2& pos, const float& fontSize)

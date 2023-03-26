@@ -181,6 +181,8 @@ void ChampionHUD::config()
     m_pDefBox->setPosition(Point(distance*2 + m_pAtkBox->getContentSize().width/2*3, m_pBackgroundBox->getPositionY()));
     m_pDefBoxLabel->setPosition(Point(m_pDefBox->getPositionX(), m_pDefBox->getContentPositionMiddleTop().y - m_pAtkBoxLabel->getContentSize().height/2));
 
+
+
     m_pManaBackground->setPosition(Point(m_pAvatar->getContentSize().width + distance, m_pManaBackground->getContentSize().height/2), Vec2::ANCHOR_MIDDLE_LEFT);
     m_pManaBar->setPosition(m_pManaBackground->getPosition());
     m_pMana->setPosition(m_pManaBar->getPosition());

@@ -2,6 +2,7 @@
 #include "Skill/SkillManager/SkillManager.h"
 #include "Skill/SkillInGame/SkillInGame.h"
 #include "ChampionInGame/ChampionInGame.h"
+#include "GameMaster/GameMaster.h"
 
 //// Constructor
 
@@ -96,11 +97,6 @@ bool SkillCondition::initWithVector(std::vector<GameEffect*>& effect)
 
         this->m_vEffectCondition = effect;
 
-        m_font = TTFConfig(defaultTTFConfig);
-        m_font.fontSize = 50;
-        m_font.outlineSize = 1;
-        m_font.bold = true;
-
         return true;
     }
     return false;
@@ -108,14 +104,19 @@ bool SkillCondition::initWithVector(std::vector<GameEffect*>& effect)
 
 void SkillCondition::notify()
 {
-    auto label = ZYLabel::createWithTTF(m_font, m_sMessage);
-    this->addChild(label);
-    label->setGlobalZOrder(100);
-    label->setColor(Color3B::RED);
-    label->setPosition(ZYDR_GVS/2);
-    auto delay = DelayTime::create(1.0f);
-    auto fadeOut = FadeOut::create(0.5f);
-    auto remove = RemoveSelf::create();
-    auto sequence = Sequence::create(delay, fadeOut, remove, nullptr);
-    label->runAction(sequence);
+    //auto label = ZYLabel::createWithTTF(m_font, m_sMessage);
+    //this->addChild(label);
+    //label->setGlobalZOrder(100);
+    //label->setColor(Color3B::RED);
+    //label->setPosition(ZYDR_GVS/2);
+    //auto delay = DelayTime::create(1.0f);
+    //auto fadeOut = FadeOut::create(0.5f);
+    //auto remove = RemoveSelf::create();
+    //auto sequence = Sequence::create(delay, fadeOut, remove, nullptr);
+    //label->runAction(sequence);
+    auto ttf = TTFConfig(defaultTTFConfig);
+    ttf.fontSize = 50;
+    ttf.outlineSize = 1;
+    ttf.bold = true;
+    GM_GI->floatingNotify(m_sMessage, ttf, Color3B::RED, ZYDR_TGVS/2);
 }

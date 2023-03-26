@@ -16,6 +16,7 @@ public:
     ZY_CREATE_FUNC(BattleScene);
 
     void goToGameOver(Ref* sender);
+    void goToMenu(Ref* sender);
 
 protected:
     std::vector<Player*> m_vPlayers;

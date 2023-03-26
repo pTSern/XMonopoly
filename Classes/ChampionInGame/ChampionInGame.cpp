@@ -119,7 +119,7 @@ std::string ChampionInGame::toString(int nTab)
 
 void ChampionInGame::setPosition(Coordinate &coord)
 {
-    this->setPosition(MAP_MNG_GI->getArenaByCoord(coord));
+    this->setPosition(GM_GI->getMap()->getArenaByCoord(coord));
 }
 
 void ChampionInGame::setPosition(Arena *pArena)
@@ -297,7 +297,7 @@ void ChampionInGame::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventT
 {
     if(type ==  ui::Widget::TouchEventType::ENDED)
     {
-        MAP_MNG_GI->getClientPlayer()->setSelectObject(this, Player::SelectType::CHAMPION);
+        GM_GI->getClientPlayer()->setSelectObject(this, Player::SelectType::CHAMPION);
     }
 }
 
@@ -399,7 +399,7 @@ void ChampionInGame::respawn()
     this->m_eStatus = ChampionStatus::NORMAL;
 
     /// Respawn at Hospital
-    auto hospital = MAP_MNG_GI->getArenaByCoord(MAP_MNG_GI->getHospitalCoord());
+    auto hospital = GM_GI->getMap()->getArenaByCoord(GM_GI->getMap()->getHospitalCoord());
     //this->m_pLandingArena = hospital;
     m_pSelfButton->setVisible(true);
     this->setPosition(hospital);
@@ -423,9 +423,9 @@ void ChampionInGame::jumpToNextCoord()
 {
     this->m_cCoordinate.g_nIndex += 1;
     this->p_nCurrentJump ++;
-    if(m_cCoordinate.g_nIndex >= MAP_MNG_GI->getArenas().size())
+    if(m_cCoordinate.g_nIndex >= GM_GI->getMap()->getArenas().size())
     {
-        m_cCoordinate.g_nIndex-=(MAP_MNG_GI->getArenas().size());
+        m_cCoordinate.g_nIndex-=(GM_GI->getMap()->getArenas().size());
     }
     this->jumpTo(m_cCoordinate);
 }
@@ -444,7 +444,7 @@ void ChampionInGame::jumpTo(Point pos)
 
 void ChampionInGame::jumpTo(Coordinate coord)
 {
-    this->jumpTo(MAP_MNG_GI->getArenaByCoord(coord));
+    this->jumpTo(GM_GI->getMap()->getArenaByCoord(coord));
 }
 
 void ChampionInGame::jumpTo(Arena *arena)

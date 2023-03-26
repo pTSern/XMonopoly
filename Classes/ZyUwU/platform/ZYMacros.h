@@ -187,8 +187,7 @@ public:                                                                         
 	}                                                                                       \
     static void selfDestroyInstance()                                                    	\
 	{                                                                                       \
-    	CC_SAFE_DELETE(__NAME__::sp_pInstance);                                             \
-		__NAME__::sp_pInstance = nullptr;													\
+    	CC_SAFE_RELEASE_NULL(__NAME__::sp_pInstance);                                       \
 	}																						\
 	virtual bool init();                                                                 	\
     virtual std::string toString(int nTab = 2);                                          	\

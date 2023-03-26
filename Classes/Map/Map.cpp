@@ -11,7 +11,7 @@
 
 #include "GameMaster/GameMaster.h"
 
-MapManager* MapManager::sp_pInstance = nullptr;
+//MapManager* MapManager::sp_pInstance = nullptr;
 //cocos2d::TMXTiledMap* MapManager::p_pTileMap = nullptr;
 
 ///// MAP MANAGER
@@ -21,7 +21,6 @@ MapManager* MapManager::sp_pInstance = nullptr;
 MapManager::MapManager() :
 p_pTileMap(nullptr),
 p_pArenaGroup(nullptr),
-p_pClientPlayer(nullptr),
 p_hospital(Dir::WS, 0)
 {
     p_vArenas.reserve(2);
@@ -41,21 +40,22 @@ bool MapManager::init()
 }
 void MapManager::revoke()
 {
-	for(auto &x : p_vArenas)
-	{
-		x->removeAllChildren();
-		x->removeFromParentAndCleanup(true);
-	}
-	p_vArenas.clear();
-	p_pTileMap->removeAllChildren();
-	p_pTileMap->removeFromParentAndCleanup(true);
-	//for(auto&x : p_mLayers)
+	//for(auto &arena : p_vArenas)
 	//{
-	//	x.second->removeAllChildren();
-	//	x.second->removeFromParentAndCleanup(true);
+	//	arena = nullptr;
 	//}
-	p_mLayers.clear();
-	p_pClientPlayer = nullptr;
+	p_vArenas.clear();
+	CC_SAFE_RELEASE_NULL(p_pTileMap);
+
+	if (!p_mLayers.empty())
+	{
+		for (auto& it : p_mLayers)
+		{
+			it.second->release();
+			it.second = nullptr;
+		}
+	}
+	CC_SAFE_RELEASE_NULL(p_pArenaGroup);
 }
 
 cocos2d::TMXTiledMap* MapManager::getTileMap()
@@ -405,14 +405,16 @@ bool MapManager::endTouch(Touch *touch, Event *event)
 											   p_vArenas[i]->getBottomPoint(),
 											   touchPoint))
 		{
-			p_pClientPlayer->setSelectObject(p_vArenas[i]);
-			p_pClientPlayer->setSelectType(Player::SelectType::ARENA);
+			//p_pClientPlayer->setSelectObject(p_vArenas[i]);
+			//p_pClientPlayer->setSelectType(Player::SelectType::ARENA);
+			GM_GI->getClientPlayer()->setSelectObject(p_vArenas[i], Player::SelectType::ARENA);
 			return true;
 		}
+		GM_GI->getClientPlayer()->setSelectObject(nullptr, Player::SelectType::NONE);
 	}
 
-	p_pClientPlayer->setSelectObject(nullptr);
-	p_pClientPlayer->setSelectType(Player::SelectType::NONE);
+	//p_pClientPlayer->setSelectObject(nullptr);
+	//p_pClientPlayer->setSelectType(Player::SelectType::NONE);
 
 	//if(touchPoint.y < anchorPoint.y)
 	//{
@@ -437,14 +439,14 @@ bool MapManager::endTouch(Touch *touch, Event *event)
 	return true;
 }
 
-void MapManager::setClientPlayer(Player* target)
-{
-	if(target)
-	{
-		target->setIsClient(true);
-		p_pClientPlayer = target;
-	}
-}
+//void MapManager::setClientPlayer(Player* target)
+//{
+//	if(target)
+//	{
+//		target->setIsClient(true);
+//		p_pClientPlayer = target;
+//	}
+//}
 
 Arena* MapManager::getArenaByCoord(Coordinate coord)
 {

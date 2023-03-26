@@ -2,6 +2,7 @@
 #include "Map/Map.h"
 
 #include "GameOver.h"
+#include "MainMenu.h"
 
 #include "Dice/Dice.h"
 #include "Champion/Champion.h"
@@ -24,7 +25,7 @@ Scene* BattleScene::createScene()
 
     auto layer = BattleScene::create();
     scene->addChild(layer);
-    GM_GI->setRunningScene(scene, layer,CC_CALLBACK_1(BattleScene::goToGameOver, layer));
+    GM_GI->setRunningScene(scene, layer,CC_CALLBACK_1(BattleScene::goToMenu, layer));
     return scene;
 }
 
@@ -33,6 +34,12 @@ Scene* BattleScene::createScene()
 bool BattleScene::init()
 {
     if(!Layer::init()) return false;
+
+    GM_GI->revoke();
+    ZYDB_GI->transferDataToResourcePath();
+
+    auto ttf = defaultTTFConfig;
+    ttf.fontSize = 60;
 
     auto backgroundSprite = ZYSprite::create("background/battle.png");
     backgroundSprite->setPosition(ZYDR_TGVS/2);
@@ -47,11 +54,16 @@ bool BattleScene::init()
     x->setPosition(Point((visibleSize.width/2 + origin.x)/1, (x->getContentSize().height/3 + origin.y)/1));
 
     /// Input Map
-    MAP_MNG_GI->loadTileMap("TileMaps/map-13.tmx");
-    MAP_MNG_GI->getTileMap()->setPosition(x->getPositionX(), (ZYDR_GI->getTrueVisibleSize().height + x->getContentPositionMiddleTop().y) /2);
-    this->addChild(MAP_MNG_GI, 0);
-
-    MAP_MNG_GI->generateArenas();
+    auto map = MapManager::create();
+    GM_GI->setMap(map);
+    //MAP_MNG_GI->loadTileMap("TileMaps/map-13.tmx");
+    //MAP_MNG_GI->getTileMap()->setPosition(x->getPositionX(), (ZYDR_GI->getTrueVisibleSize().height + x->getContentPositionMiddleTop().y) /2);
+    //this->addChild(MAP_MNG_GI, 0);
+    //MAP_MNG_GI->generateArenas();
+    map->loadTileMap("TileMaps/map-13.tmx");
+    map->getTileMap()->setPosition(x->getPositionX(), (ZYDR_GI->getTrueVisibleSize().height + x->getContentPositionMiddleTop().y) /2);
+    this->addChild(map, 0);
+    map->generateArenas();
 
     /// Add schedule update
     this->scheduleUpdate();
@@ -68,7 +80,8 @@ bool BattleScene::init()
     //cig->setStatics(ig);
     auto player = Player::create();
     player->setTheColor(Color4F::YELLOW);
-    MAP_MNG_GI->setClientPlayer(player);
+    //MAP_MNG_GI->setClientPlayer(player);
+    GM_GI->setClientPlayer(player);
     player->addChampion(cig);
     player->disable();
     player->setName("PLAYER 1");
@@ -93,9 +106,9 @@ bool BattleScene::init()
     m_vPlayers.push_back(player2);
     cig2->setPosition(coord2);
 
-    for(auto x : m_vPlayers)
+    for(auto z : m_vPlayers)
     {
-        this->addChild(x, 1);
+        this->addChild(z, 1);
     }
 
     this->addChild(GM_GI, 1);
@@ -115,5 +128,11 @@ void BattleScene::update(float dt)
 void BattleScene::goToGameOver(Ref* sender)
 {
     auto scene = GameOverScene::createScene();
+    CCDR_GI->replaceScene(scene);
+}
+
+void BattleScene::goToMenu(Ref* sender)
+{
+    auto scene = MainMenuScene::createScene();
     CCDR_GI->replaceScene(scene);
 }

@@ -25,6 +25,7 @@
 #include "AppDelegate.h"
 #include "GameScene/MainMenu.h"
 #include "GameScene/BattleScene.h"
+#include "ZyUwU/data-manager/ZYDatabase.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -113,6 +114,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
         zy::ZYDirector::getInstance()->setResolutionName("SMALL");
     }
     register_all_packages();
+
+    // init the database file loc
+    ZYDB_GI->init("database.db");
 
     // create a scene. it's an autorelease object
     auto scene = MainMenuScene::createScene();
