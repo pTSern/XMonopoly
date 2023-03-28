@@ -1,6 +1,7 @@
 #include "SkillManager.h"
 #include "Skill/SkillInGame/SkillInGame.h"
 #include "ChampionInGame/ChampionInGame.h"
+#include "Player/Player.h"
 
 //// Constructor
 
@@ -128,6 +129,31 @@ bool SkillManager::initWithVector(std::vector<SkillInGame*>& vectorOfSkills)
     return false;
 }
 
+void SkillManager::autoSort()
+{
+    int z = 0;
+    float s = m_vSkillDecks.size();
+    auto ap = m_vSkillDecks[0]->getSkillCard();
+    auto yy = ap->getShapeSize().height/3;
+    auto scw = ap->getShapeSize().width;
+    auto max_size = scw * MAX_SKILL_IN_DECK;
+    auto first = (ZYDR_GVS.width - max_size)/2;
+    auto minus = (scw * s - max_size)/(s - 1);
+
+    if(s <= 1)
+    {
+        first = ZYDR_GVS.width/2 - scw/2;
+        minus = 0;
+    }
+
+    for(int i = 0; i < m_vSkillDecks.size(); i++)
+    {
+        m_vSkillDecks[i]->getSkillCard()->setPosition(Point(first + scw/2 * (i + z + 1) - (i * minus), yy));
+        m_vSkillDecks[i]->setOwner(this);
+        z++;
+    }
+}
+
 const Vec2& SkillManager::getUseButtonPosition()
 {
     return m_pUse->getPosition();
@@ -135,6 +161,12 @@ const Vec2& SkillManager::getUseButtonPosition()
 
 void SkillManager::update(float dt)
 {
+    if(!m_pOwner->getOwner()->isClient())
+    {
+        m_pUse->setEnabled(false);
+        return;
+    }
+
     if(m_pSelecting && m_pOwner->isTurn())
     {
         if(m_pSelecting->getTarget() ==  Skill::TargetType::NONE)
@@ -201,4 +233,41 @@ void SkillManager::disable()
         x->disable();
     }
     m_pUse->setVisible(false);
+}
+
+void SkillManager::addSkill(SkillInGame *pSkill)
+{
+    if(pSkill)
+    {
+        this->m_vSkillDecks.push_back(pSkill);
+        this->addChild(pSkill, m_vSkillDecks.size()-1);
+        this->autoSort();
+    }
+}
+
+void SkillManager::removeSkill(SkillInGame *pSkill)
+{
+    for(int i = 0; i < m_vSkillDecks.size(); i++)
+    {
+        if(pSkill == m_vSkillDecks[i])
+        {
+            m_vSkillDecks[i]->removeFromParentAndCleanup(true);
+            m_vSkillDecks.erase(m_vSkillDecks.begin() + i);
+            autoSort();
+            break;
+        }
+    }
+}
+
+SkillInGame* SkillManager::getSkillByName(const std::string& name)
+{
+    for(auto i = 0; i < m_vSkillDecks.size(); i++)
+    {
+        CCLOG("SKILL NAME: %s", m_vSkillDecks[i]->getName().c_str());
+        if(m_vSkillDecks[i]->getName() == name)
+        {
+            return m_vSkillDecks[i];
+        }
+    }
+    return m_vSkillDecks[0];
 }

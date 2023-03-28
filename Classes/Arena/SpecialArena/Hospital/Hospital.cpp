@@ -52,6 +52,8 @@ void HospitalArena::update(float dt)
 void HospitalArena::onLand(ChampionInGame* pChamp)
 {
     SpecialArena::onLand(pChamp);
+    auto target = pChamp->getOwner();
+    target->finishAction();
 }
 
 void HospitalArena::config()

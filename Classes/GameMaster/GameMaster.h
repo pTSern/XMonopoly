@@ -12,6 +12,7 @@ class MapManager;
 class ChampionInGame;
 class Player;
 class MapManager;
+class PlayerUI;
 BEGIN_CREATE_INSTANCE_REFCLASS(GameMaster, Node)
 
 public:
@@ -31,6 +32,7 @@ public:
 
     CREATE_GET_FUNC(getClientPlayer, Player*, m_pClient);
     CREATE_SET_GET_FUNC(setMap, getMap, MapManager*, m_pMap);
+    //CREATE_GET_FUNC(getClientUI, PlayerUI*, m_pClientUI);
 
 protected:
     ZYSprite* m_pMarkIsTurnChampion_UP, * m_pMarkIsTurnChampion_DOWN;
@@ -43,6 +45,8 @@ protected:
     ui::Widget::ccWidgetTouchCallback m_pEndGameCallback;
     Player* m_pClient;
     MapManager* m_pMap;
+
+    PlayerUI* m_pClientUI;
 
 private:
     bool p_bLockEndGame;

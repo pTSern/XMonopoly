@@ -39,6 +39,11 @@ public: // Public function that use to use
       */
     void setUseButton(bool var);
 
+    void addSkill(SkillInGame *pSkill);
+    void autoSort();
+    void removeSkill(SkillInGame *pSkill);
+    SkillInGame* getSkillByName(const std::string& name);
+
 public: // Schedule Handle
     virtual void update(float dt);
 

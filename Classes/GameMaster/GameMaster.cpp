@@ -1,6 +1,7 @@
 #include "GameMaster.h"
 #include "ChampionInGame/ChampionInGame.h"
 #include "Player/Player.h"
+#include "Player/UI/PlayerUI.h"
 
 GameMaster* GameMaster::sp_pInstance = nullptr;
 
@@ -21,6 +22,7 @@ void GameMaster::revoke()
     //CC_SAFE_RELEASE_NULL(m_pMarkIsTurnChampion_UP);
     //CC_SAFE_RELEASE_NULL(m_pMarkIsTurnChampion_DOWN);
     m_pIsTurnChampion = nullptr;
+    m_pClientUI = nullptr;
 
     for(auto &child: m_vList)
     {
@@ -54,7 +56,9 @@ void GameMaster::setClientPlayer(Player* target)
 {
     if(target)
     {
+        //m_pClientUI = PlayerUI::createClientUI();
         target->setIsClient(true);
+        //target->addChild(m_pClientUI, 5);
         m_pClient = target;
     }
 }
@@ -102,7 +106,8 @@ void GameMaster::update(float dt)
 
 void GameMaster::calculateNewTurn()
 {
-    std::sort(m_vList.begin(), m_vList.end(), ChampionInGame::SortChampion());
+    //std::sort(m_vList.begin(), m_vList.end(), ChampionInGame::SortChampion());
+    CCLOG("CALL CALCULATE NEW TURN");
     int next_index = 0;
     if(m_nChampionIsTurnIndex + 1 <= m_vList.size() - 1)
     {
@@ -113,6 +118,7 @@ void GameMaster::calculateNewTurn()
         m_nRound ++;
         m_pIsTurnChampion = m_vList[next_index];
         m_nChampionIsTurnIndex = next_index;
+        CCLOG("INDEX: %d", m_nChampionIsTurnIndex);
         m_pIsTurnChampion->startTurn();
     }
 }
@@ -134,12 +140,13 @@ void GameMaster::endGame(bool bIsClient)
         ttf.bold = true;
         auto color = Color3B::BLUE;
         std::string str= "YOU WIN";
-        if(!bIsClient)
+        if(bIsClient)
         {
             color = Color3B::RED;
             str = "YOU LOSE";
         }
         floatingNotify(str, ttf, color, ZYDR_TGVS/2, 2, true);
+        m_pBattleLayer->getEventDispatcher()->removeAllEventListeners();
 
         auto button = ui::Button::create(sr_button_default, sr_button_clicked);
         button->setTitleText("CONTINUE");
@@ -154,26 +161,29 @@ void GameMaster::endGame(bool bIsClient)
 
 void GameMaster::floatingNotify(const std::string& message, const TTFConfig& ttf, const Color3B& color, const Point& position, const float& duration, bool isLock)
 {
-    auto dim = LayerColor::create(Color4B::BLACK);
-    m_pBattleLayer->addChild(dim);
-    dim->setGlobalZOrder(5);
-    dim->setOpacity(dim->getOpacity()/2);
-    auto label = ZYLabel::createWithTTF(ttf, message);
-    m_pBattleLayer->addChild(label);
-    label->setGlobalZOrder(6);
-    label->setColor(color);
-    label->setPosition(position);
-    if(!isLock)
+    if(m_pBattleLayer)
     {
-        label->setScale(0);
-        auto scaleTo = ScaleTo::create(0.75f, 1.0f);
-        auto delay = DelayTime::create(duration);
-        auto fade = FadeOut::create(0.25f);
-        auto remove = RemoveSelf::create();
-        auto sequence = Sequence::create(scaleTo, delay, fade, remove, nullptr);
-        label->runAction(sequence);
-        auto seq = Sequence::create(DelayTime::create(duration + 1.5f), remove->clone(), nullptr);
-        dim->runAction(seq);
+        auto dim = LayerColor::create(Color4B::BLACK);
+        m_pBattleLayer->addChild(dim);
+        dim->setGlobalZOrder(5);
+        dim->setOpacity(dim->getOpacity()/2);
+        auto label = ZYLabel::createWithTTF(ttf, message, TextHAlignment::CENTER, ZYDR_TGVS.width/4*3);
+        m_pBattleLayer->addChild(label);
+        label->setGlobalZOrder(6);
+        label->setColor(color);
+        label->setPosition(position);
+        if(!isLock)
+        {
+            label->setScale(0);
+            auto scaleTo = ScaleTo::create(0.75f, 1.0f);
+            auto delay = DelayTime::create(duration);
+            auto fade = FadeOut::create(0.25f);
+            auto remove = RemoveSelf::create();
+            auto sequence = Sequence::create(scaleTo, delay, fade, remove, nullptr);
+            label->runAction(sequence);
+            auto seq = Sequence::create(DelayTime::create(duration + 1.5f), remove->clone(), nullptr);
+            dim->runAction(seq);
+        }
     }
 }
 

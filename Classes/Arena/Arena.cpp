@@ -245,6 +245,8 @@ void Arena::drawRect()
 void Arena::revokeRect()
 {
     m_pRect->clear();
+    m_bIsDrewRect = false;
+    m_nDrawRectOrder = 0;
 }
 
 bool Arena::isContainPoint(Point point)

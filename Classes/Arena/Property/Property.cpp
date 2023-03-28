@@ -158,11 +158,11 @@ void Property::onLand(ChampionInGame *pChamp)
      *  This target player can not pay this property's tax
      *  Force player to sell their property
      */
-    //if(target->getNetWorth() >= this->getTax())
-    //{
-    //    target->sellPropertyForTax(this);
-    //    return;
-    //}
+    if(target->getNetWorth() >= this->getTax())
+    {
+        target->autoSellPropertyForTax(this);
+        return;
+    }
 
     /**
      *  These properties of this target player do not have enough value to sell for this tax.
@@ -372,4 +372,16 @@ void Property::removeAllMarkedChild()
         this->removeChildByTag(m_vRemoveByTagList[i], true);
         m_vRemoveByTagList.erase(m_vRemoveByTagList.begin() + i);
     }
+}
+
+void Property::removeOwner()
+{
+    m_pOwner = nullptr;
+    revokeRect();
+}
+
+void Property::selfSell()
+{
+    m_pOwner->receiveMoney(getSellValue());
+    removeOwner();
 }

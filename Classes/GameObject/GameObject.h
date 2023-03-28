@@ -23,7 +23,7 @@ public:
 	virtual bool init();
 
 public:
-	void setName(std::string sName);
+	virtual void setName(const std::string& sName) override;
 	void setPriority(int nPriority);
 	void setDeputizeTexture(std::string var);
 

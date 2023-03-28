@@ -2,6 +2,8 @@
 #include "ChampionInGame/ChampionInGame.h"
 #include "Player/Player.h"
 #include "Support/GameConstant.h"
+#include "GameMaster/GameMaster.h"
+#include "Player/UI/PlayerUI.h"
 
 ///] Static
 
@@ -33,7 +35,8 @@ m_pLife(nullptr), m_pSpeed(nullptr),
 m_pAtkBox(nullptr), m_pDefBox(nullptr),
 m_pBackgroundBox(nullptr),
 m_bIsShow(false), m_pTinyBox(nullptr),
-m_pAtkBoxLabel(nullptr), m_pDefBoxLabel(nullptr)
+m_pAtkBoxLabel(nullptr), m_pDefBoxLabel(nullptr),
+m_pHpRegen(nullptr), m_pManaRegen(nullptr), m_pSpRegen(nullptr)
 {
 
 }
@@ -80,6 +83,9 @@ void ChampionHUD::updateString()
     m_pHpBar->setPercent(igs->getCurrentHpInPercent() * 100);
     m_pManaBar->setPercent(igs->getCurrentMnInPercent() * 100);
     m_pSpBar->setPercent(igs->getCurrentSpInPercent() * 100);
+    m_pHpRegen->setString("+" + ZYSP_SD(statics->getRegenHp(), 1));
+    m_pManaRegen->setString("+" + ZYSP_SD(statics->getRegenMana(), 1));
+    m_pSpRegen->setString("+" + ZYSP_SRF(statics->getRegenSkillPoint(), 2));
 }
 
 void ChampionHUD::initAllElement()
@@ -93,7 +99,7 @@ void ChampionHUD::initAllElement()
     this->addChild(m_pSpBar);
     this->addChild(m_pSpBackground, -1);
     m_pAvatar = ui::Button::create("avatar/champion/char-3.png");
-    this->addChild(m_pAvatar);
+    this->addChild(m_pAvatar, 0);
 
     auto ttf = defaultTTFConfig;
     ttf.fontSize = 16;
@@ -103,10 +109,14 @@ void ChampionHUD::initAllElement()
     m_pChampionName = ZYLabel::createWithTTF(ttf, m_pOwner->getName());
     this->addChild(m_pChampionName, 1);
     m_pAtkDmg = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getAttackDmg(), 2));
+    m_pAtkDmg->setColor(Color3B::BLACK);
+    m_pAtkDmg->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
     this->addChild(m_pAtkDmg, 1);
     m_pMagicDmg = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getMagicDmg(), 2));
     this->addChild(m_pMagicDmg, 1);
     m_pArmor = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getArmor(), 2));
+    m_pArmor->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+    m_pArmor->setColor(Color3B::BLACK);
     this->addChild(m_pArmor, 1);
     m_pMagicRes = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getMagicResistance(), 2));
     this->addChild(m_pMagicRes, 1);
@@ -114,6 +124,24 @@ void ChampionHUD::initAllElement()
     this->addChild(m_pLifeSteal, 1);
     m_pMagicLifeSteal = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getPCMagicLifeSteal(), 2));
     this->addChild(m_pMagicLifeSteal, 1);
+    m_pLife = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getLife(), 2));
+    m_pLife->setColor(Color3B::BLACK);
+    m_pLife->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+    this->addChild(m_pLife, 1);
+    m_pSpeed = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getSpeed(), 2));
+    m_pSpeed->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+    m_pSpeed->setColor(Color3B::BLACK);
+    this->addChild(m_pSpeed, 1);
+
+    m_pArmorIcon = ZYSprite::create(icon_armor_dir);
+    m_pSpeedIcon = ZYSprite::create(icon_speed_dir);
+    m_pAtkIcon = ZYSprite::create(icon_attack_dir);
+    m_pLifeIcon = ZYSprite::create(icon_life_dir);
+
+    this->addChild(m_pAtkIcon, 1);
+    this->addChild(m_pArmor, 1);
+    this->addChild(m_pLife, 1);
+    this->addChild(m_pSpeed, 1);
 
     auto ls = EventListenerTouchOneByOne::create();
     ls->onTouchBegan = CC_CALLBACK_2(ChampionHUD::onTouchBegin, this);
@@ -159,10 +187,28 @@ void ChampionHUD::initAllElement()
     ttf.fontSize = m_pSpBar->getContentSize().height - 4;
     m_pSp = ZYLabel::createWithTTF(ttf, "");
     this->addChild(m_pSp, 1);
-    m_pLife = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getLife(), 2));
-    this->addChild(m_pLife, 1);
-    m_pSpeed = ZYLabel::createWithTTF(ttf, ZYSP_SRF(statics->getSpeed(), 2));
-    this->addChild(m_pSpeed, 1);
+
+    ttf.outlineSize = 1;
+    ttf.fontSize = m_pHpBar->getContentSize().height*0.6;
+    m_pHpRegen = ZYLabel::createWithTTF(ttf, "");
+    if(m_pOwner->getOwner()->isClient()) m_pHpRegen->setColor(Color3B::GREEN);
+    else m_pHpRegen->setColor(Color3B::RED);
+    this->addChild(m_pHpRegen, 1);
+
+    ttf.fontSize = m_pManaBar->getContentSize().height*0.6;
+    m_pManaRegen = ZYLabel::createWithTTF(ttf, "");
+    m_pManaRegen->setColor(Color3B::BLUE);
+    this->addChild(m_pManaRegen, 1);
+
+    ttf.fontSize = m_pSpBar->getContentSize().height*0.6;
+    m_pSpRegen = ZYLabel::createWithTTF(ttf, "");
+    m_pSpRegen->setColor(Color3B::WHITE);
+
+    this->addChild(m_pSpRegen, 1);
+
+    m_pBackground = ZYSprite::create("ui/hud/default.png");
+    m_pBackground->setPosition(m_pBackground->getContentSize()/2);
+    this->addChild(m_pBackground , -1);
 
     SET_SHOW_MORE_BOARD_HELPER(setVisible(false));
     this->scheduleUpdate();
@@ -181,8 +227,6 @@ void ChampionHUD::config()
     m_pDefBox->setPosition(Point(distance*2 + m_pAtkBox->getContentSize().width/2*3, m_pBackgroundBox->getPositionY()));
     m_pDefBoxLabel->setPosition(Point(m_pDefBox->getPositionX(), m_pDefBox->getContentPositionMiddleTop().y - m_pAtkBoxLabel->getContentSize().height/2));
 
-
-
     m_pManaBackground->setPosition(Point(m_pAvatar->getContentSize().width + distance, m_pManaBackground->getContentSize().height/2), Vec2::ANCHOR_MIDDLE_LEFT);
     m_pManaBar->setPosition(m_pManaBackground->getPosition());
     m_pMana->setPosition(m_pManaBar->getPosition());
@@ -192,6 +236,29 @@ void ChampionHUD::config()
     m_pSpBackground->setPosition(Point(m_pHpBackground->getContentPositionMiddleLeft().x, m_pHpBackground->getContentPositionMiddleTop().y + distance + m_pSpBackground->getContentSize().height/2), Vec2::ANCHOR_MIDDLE_LEFT);
     m_pSpBar->setPosition(m_pSpBackground->getPosition());
     m_pSp->setPosition(m_pSpBar->getPosition());
+
+    m_pHpRegen->setPosition(Point(m_pHpBackground->getContentPositionWithNewAnchorPoint(Vec2(0.90f, 0)).x, m_pHpBackground->getPositionY()));
+    m_pManaRegen->setPosition(Point(m_pManaBackground->getContentPositionWithNewAnchorPoint(Vec2(0.90f, 0)).x, m_pManaBackground->getPositionY()));
+    m_pSpRegen->setPosition(Point(m_pSpBackground->getContentPositionWithNewAnchorPoint(Vec2(0.90f, 0)).x, m_pSpBackground->getPositionY()));
+
+    auto size = m_pAvatar->getContentSize();
+    auto hj = size.height/5;
+    auto hw = size.width;
+
+    m_pLifeIcon->setPosition(Point(hw - m_pLifeIcon->getContentSize().width, hj), Vec2::ANCHOR_MIDDLE_BOTTOM);
+    m_pSpeedIcon->setPosition(Point(hw - m_pSpeedIcon->getContentSize().width, hj*2), Vec2::ANCHOR_MIDDLE_BOTTOM);
+    m_pArmorIcon->setPosition(Point(hw - m_pArmorIcon->getContentSize().width, hj*3), Vec2::ANCHOR_MIDDLE_BOTTOM);
+    m_pAtkIcon->setPosition(Point(hw - m_pAtkIcon->getContentSize().width, hj*4), Vec2::ANCHOR_MIDDLE_BOTTOM);
+
+    auto si = m_pSpeedIcon->getContentPositionWithNewAnchorPoint(Vec2(-0.25f, 0.5f));
+    auto ai = m_pAtkIcon->getPosition();
+    auto ri = m_pArmorIcon->getPosition();
+    auto li = m_pLifeIcon->getPosition();
+    m_pAtkDmg->setPosition(Point(si.x, ai.y));
+    m_pArmor->setPosition(Point(si.x, ri.y));
+    m_pLife->setPosition(Point(si.x, li.y));
+    m_pSpeed->setPosition(si);
+
     if(!m_pOwner->getOwner()->isClient()) disable();
 }
 
@@ -244,10 +311,12 @@ void ChampionHUD::disable()
         m_bIsShow = !m_bIsShow;
         this->showMore();
     }
-    SET_STATS_BOARD_HELPER(setVisible(false));
+    //SET_STATS_BOARD_HELPER(setVisible(false));
+    this->setVisible(false);
 }
 
 void ChampionHUD::enable()
 {
-    SET_STATS_BOARD_HELPER(setVisible(true));
+    //SET_STATS_BOARD_HELPER(setVisible(true));
+    this->setVisible(true);
 }

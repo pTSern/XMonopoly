@@ -52,6 +52,8 @@ void SpawnArena::update(float dt)
 void SpawnArena::onLand(ChampionInGame* pChamp)
 {
     SpecialArena::onLand(pChamp);
+    auto target = pChamp->getOwner();
+    target->finishAction();
 }
 
 void SpawnArena::onPass(ChampionInGame* pChamp)

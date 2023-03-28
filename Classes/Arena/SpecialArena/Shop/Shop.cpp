@@ -41,6 +41,8 @@ void ShopArena::update(float dt)
 void ShopArena::onLand(ChampionInGame* pChamp)
 {
     SpecialArena::onLand(pChamp);
+    auto target = pChamp->getOwner();
+    target->finishAction();
 }
 
 void ShopArena::config()

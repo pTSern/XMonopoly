@@ -61,6 +61,14 @@ this->m_pSpBar->__ACTION__;                \
 this->m_pHpBackground->__ACTION__;         \
 this->m_pManaBackground->__ACTION__;       \
 this->m_pSpBackground->__ACTION__;         \
+this->m_pHpRegen->__ACTION__;              \
+this->m_pManaRegen->__ACTION__;            \
+this->m_pSpRegen->__ACTION__;              \
+this->m_pAtkIcon->__ACTION__;              \
+this->m_pSpeedIcon->__ACTION__;            \
+this->m_pArmorIcon->__ACTION__;            \
+this->m_pLifeIcon->__ACTION__;             \
+this->m_pBackground->__ACTION__;           \
 
 class ChampionInGame;
 BEGIN_CREATE_REFCLASS(ChampionHUD, GameObject)
@@ -98,12 +106,16 @@ protected:
     ui::LoadingBar *m_pHpBar, *m_pManaBar, *m_pSpBar;
     ZYSprite *m_pHpBackground, *m_pManaBackground, *m_pSpBackground;
     ZYLabel *m_pHp, *m_pMana, *m_pSp;
+    ZYLabel *m_pHpRegen, *m_pManaRegen, *m_pSpRegen;
     ZYLabel *m_pLife, *m_pSpeed;
 
     ZYSprite *m_pAtkBox, *m_pDefBox;
     ZYLabel *m_pAtkBoxLabel, *m_pDefBoxLabel;
     ZYSprite *m_pBackgroundBox;
     ZYSprite *m_pTinyBox;
+
+    ZYSprite *m_pAtkIcon, *m_pSpeedIcon, *m_pArmorIcon, *m_pLifeIcon;
+    ZYSprite *m_pBackground;
 
     bool m_bIsShow;        ///< Mark if the show-more board is shown or not
 

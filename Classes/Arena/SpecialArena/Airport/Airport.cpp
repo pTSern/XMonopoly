@@ -53,6 +53,8 @@ void AirportArena::update(float dt)
 void AirportArena::onLand(ChampionInGame* pChamp)
 {
     SpecialArena::onLand(pChamp);
+    auto target = pChamp->getOwner();
+    target->finishAction();
 }
 
 void AirportArena::config()

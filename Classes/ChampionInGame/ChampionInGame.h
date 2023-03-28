@@ -145,7 +145,7 @@ public:
     void jumpToNextCoord();
     void endJump();
 
-    void startTurn();
+    virtual void startTurn();
     void enterPreDicePhase();
     void endPreDicePhase();
     bool canEnterPostDice();

@@ -304,10 +304,12 @@ void ChampionInGame::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventT
 void ChampionInGame::startTurn()
 {
     ///) Enable this champion
-    this->enable();
+    //this->enable();
 
     ///) Regen stats
     this->m_pIngameStatics->regen();
+
+    ///) Add check buff/debuff condition here
 
     ///) This champion is on turn and does not finish the turn(end turn)
     this->m_bIsTurn = true;
@@ -349,6 +351,7 @@ void ChampionInGame::endPostDicePhase()
 void ChampionInGame::endTurn()
 {
     ///) This champion is not on turn and finishes the turn
+    CCLOG("CHAMPION END TURN %s", getOwner()->getName().c_str());
     this->m_bIsTurn = false;
     this->m_bIsEndTurn = true;
     this->m_eAction = ChampionAction::IDLE;

@@ -44,9 +44,9 @@ BEGIN_CREATE_REFCLASS(Property, Arena)
 public:
     struct SortProperty
     {
-        inline bool operator() (ChampionInGame* l, ChampionInGame* r)
+        inline bool operator() (Property* l, Property* r)
         {
-            return l->getStatics()->getStatics()->getSpeed() < r->getStatics()->getStatics()->getSpeed();
+            return l->getSellValue() < r->getSellValue();
         }
     };
 public:
@@ -77,6 +77,8 @@ public:
     void acquireProperty(Player* target);
     void removeAllMarkedChild();
     void upgrade();
+    void removeOwner();
+    void selfSell();
 
 protected:
     void showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback);

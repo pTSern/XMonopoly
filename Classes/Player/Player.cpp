@@ -34,9 +34,10 @@ bool Player::init()
     //m_pEventListener->onTouchEnded = CC_CALLBACK_2(Player::endTouch, this);
 
     m_pEconomy = IgEcoMng::create();
-    m_pEconomy->setAmount(500);
+    m_pEconomy->setAmount(2500);
     this->addChild(m_pEconomy);
     m_pEconomy->setPosition(Point(ZYDR_GVS/6));
+    m_pEconomy->disable();
     this->scheduleUpdate();
 
     return true;
@@ -73,18 +74,25 @@ void Player::setSelectObject(GameObject* target, SelectType type)
 
 void Player::switchViewPointChampion(ChampionInGame* target)
 {
-    if(m_bIsClient && target && m_pViewPointChampion != target)
+    if(m_bIsClient && target)
     {
-        if(m_pViewPointChampion)
+        if(m_pViewPointChampion != target)
         {
-            m_pViewPointChampion->disable();
-            m_pViewPointChampion->getOwner()->m_pEconomy->disable();
-            m_pViewPointChampion->setHUD(false);
+            if(m_pViewPointChampion)
+            {
+                m_pViewPointChampion->disable();
+                m_pViewPointChampion->getOwner()->m_pEconomy->disable();
+                m_pViewPointChampion->setHUD(false);
+            }
+            target->enable();
+            target->getOwner()->m_pEconomy->enable();
+            target->setHUD(true);
+            m_pViewPointChampion = target;
         }
-        target->enable();
-        target->getOwner()->m_pEconomy->enable();
-        target->setHUD(true);
-        m_pViewPointChampion = target;
+        else
+        {
+            m_pViewPointChampion->enable();
+        }
     }
 }
 
@@ -128,10 +136,11 @@ void Player::addChampion(ChampionInGame* pChamp)
 void Player::finishAction()
 {
     //m_pControllingChampion->endTurn();
-    if(!m_pControllingChampion->isTurn())
-    {
-        this->m_pControllingChampion->disable();
-    }
+    //if(!m_pControllingChampion->isTurn())
+    //{
+    //    this->m_pControllingChampion->disable();
+    //}
+    CCLOG("%s CALL NEW TURN", getName().c_str());
     GM_GI->calculateNewTurn();
 }
 
@@ -233,12 +242,19 @@ void Player::pay(Player* target, float money)
 
 ///] Protected
 
-void Player::showMessageHelper(const std::string& message, const float& duration)
+void Player::showMessageHelper(const std::string& message, const float& duration, bool isFinish)
 {
     auto config = defaultTTFConfig;
     config.fontSize = 60;
     config.bold = true;
     GM_GI->floatingNotify(message, config, Color3B::WHITE, Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2), duration);
+    if(isFinish)
+    {
+        auto delay = DelayTime::create(duration * 2.25f);
+        auto callback = CallFunc::create(CC_CALLBACK_0(Player::finishAction, this));
+        auto seq = Sequence::create(delay, callback, nullptr);
+        this->runAction(seq);
+    }
 }
 
 void Player::showTheMessageHelper(const std::string& message, Vec2& pos, const float& fontSize)
@@ -408,8 +424,7 @@ void Player::purchaseProperty(Property *property)
     }
     else
     {
-        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO BUY THIS", 3);
-        this->finishAction();
+        this->showMessageHelper("YOU DO NOT HAVE ENOUGH MONEY TO BUY THIS", 1.0f);
     }
 }
 
@@ -425,8 +440,7 @@ void Player::acquireProperty(Property* property)
     }
     else
     {
-        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO REPURCHASE THIS", 3);
-        this->finishAction();
+        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO REPURCHASE THIS", 1.0f);
     }
 }
 
@@ -442,8 +456,7 @@ void Player::upgradeProperty(Property *property)
     }
     else
     {
-        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO UPGRADE THIS", 3);
-        this->finishAction();
+        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO UPGRADE THIS", 1.0f);
     }
 }
 
@@ -454,5 +467,26 @@ void Player::sellPropertyForTax(Property* property)
 
 void Player::autoSellPropertyForTax(Property* property)
 {
+    auto tax = property->getTax();
+    autoSellPropertyForTax(tax);
+}
 
+void Player::autoSellPropertyForTax(float tax)
+{
+    std::sort(m_vOwn.begin(), m_vOwn.end(), Property::SortProperty());
+    m_vOwn[0]->selfSell();
+    m_vOwn.erase(m_vOwn.begin() + 0);
+    if(!doPay(tax))
+    {
+        autoSellPropertyForTax(tax);
+    }
+    else
+    {
+        std::string name = "YOU";
+        if(!m_bIsClient) name = getName();
+        auto mess = name + " DO NOT HAVE ENOUGH MONEY TO PAY THIS TAX, FORCE THIS PLAYER TO SELL THEIR PROPERTY";
+        auto ttf = defaultTTFConfig;
+        ttf.fontSize = 50;
+        showMessageHelper(mess, 2.0f);
+    }
 }

@@ -1,14 +1,14 @@
-//
-// Created by Admin on 3/27/2023.
-//
+#pragma once
 
-#ifndef PROJ_ANDROID_BOTPLAYER_H
-#define PROJ_ANDROID_BOTPLAYER_H
+#include "../../Player.h"
 
+USING_NS_ALL;
 
-class BotPlayer {
+BEGIN_CREATE_REFCLASS(BotPlayer, Player)
 
-};
+public:
+    virtual void purchaseProperty(Property* property);
+    virtual void acquireProperty(Property* property);
+    virtual void upgradeProperty(Property* property);
 
-
-#endif //PROJ_ANDROID_BOTPLAYER_H
+END_CREATE_REFCLASS

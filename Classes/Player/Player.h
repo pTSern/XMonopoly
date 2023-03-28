@@ -97,10 +97,11 @@ public:
     void sellPropertyForTax(Property* property);
 
     void autoSellPropertyForTax(Property* property);
+    void autoSellPropertyForTax(float tax);
 
 protected:
     void showPurchasePromptHelper(const std::string& message, const std::string& message2, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback);
-    void showMessageHelper(const std::string& message, const float& duration);
+    void showMessageHelper(const std::string& message, const float& duration, bool isFinish = true);
     /**
      *
      * @param message

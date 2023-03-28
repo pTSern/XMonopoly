@@ -132,7 +132,7 @@ bool IngameEconomyManager::pay(IngameEconomyManager *target, float money, bool a
 void IngameEconomyManager::receive(float money, bool animate)
 {
     this->m_economy.addMoney(money);
-    if(animate) this->executeIndicator(money, false);
+    if(animate ) this->executeIndicator(money, false);
 }
 
 bool IngameEconomyManager::isPayable(float money)
@@ -152,14 +152,16 @@ bool IngameEconomyManager::pay(float money, bool animate)
 
 void IngameEconomyManager::disable()
 {
-    this->m_pLabel->setVisible(false);
-    this->m_pIcon->setVisible(false);
+    //this->m_pLabel->setVisible(false);
+    //this->m_pIcon->setVisible(false);
+    this->setVisible(false);
 }
 
 void IngameEconomyManager::enable()
 {
-    this->m_pLabel->setVisible(true);
-    this->m_pIcon->setVisible(true);
+    //this->m_pLabel->setVisible(true);
+    //this->m_pIcon->setVisible(true);
+    this->setVisible(true);
 }
 
 ///] Protected

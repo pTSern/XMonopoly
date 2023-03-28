@@ -8,6 +8,8 @@
 #include "Champion/Champion.h"
 #include "ChampionInGame/ChampionInGame.h"
 #include "Player/Player.h"
+#include "ChampionInGame/AI/BotChampion.h"
+#include "Player/Brain/AI/BotPlayer.h"
 #include "ChampionInGame/UI/ChampionUI.h"
 #include "ChampionInGame/UI/ChampionHUD.h"
 #include "Arena/Arena.h"
@@ -36,7 +38,6 @@ bool BattleScene::init()
     if(!Layer::init()) return false;
 
     GM_GI->revoke();
-    ZYDB_GI->transferDataToResourcePath();
 
     auto ttf = defaultTTFConfig;
     ttf.fontSize = 60;
@@ -56,10 +57,6 @@ bool BattleScene::init()
     /// Input Map
     auto map = MapManager::create();
     GM_GI->setMap(map);
-    //MAP_MNG_GI->loadTileMap("TileMaps/map-13.tmx");
-    //MAP_MNG_GI->getTileMap()->setPosition(x->getPositionX(), (ZYDR_GI->getTrueVisibleSize().height + x->getContentPositionMiddleTop().y) /2);
-    //this->addChild(MAP_MNG_GI, 0);
-    //MAP_MNG_GI->generateArenas();
     map->loadTileMap("TileMaps/map-13.tmx");
     map->getTileMap()->setPosition(x->getPositionX(), (ZYDR_GI->getTrueVisibleSize().height + x->getContentPositionMiddleTop().y) /2);
     this->addChild(map, 0);
@@ -73,7 +70,7 @@ bool BattleScene::init()
     auto ui = ChampionUI::createDefault();
     auto sig = SkillInGame::createTest();
     sig->setSkillMechanic(SkillInGame::MoveBySkill);
-    auto sm = SkillManager::createWithSkillInGame(sig,SkillInGame::createTest(), SkillInGame::createTest(), SkillInGame::createTest(), SkillInGame::createTest(), SkillInGame::createTest(), nullptr);
+    auto sm = SkillManager::createWithSkillInGame(sig, nullptr);
     auto cig = ChampionInGame::createWithProperties(champ, ui, dice, sm);
     auto coord = Coordinate(Dir::WS, 0);
     //auto ig = IngameStatics::createTest();
@@ -83,7 +80,6 @@ bool BattleScene::init()
     //MAP_MNG_GI->setClientPlayer(player);
     GM_GI->setClientPlayer(player);
     player->addChampion(cig);
-    player->disable();
     player->setName("PLAYER 1");
     m_vPlayers.push_back(player);
     cig->setPosition(coord);
@@ -93,18 +89,18 @@ bool BattleScene::init()
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
     sig2->setSkillMechanic(SkillInGame::MoveBySkill);
+    sig2->setName("move");
     auto sm2 = SkillManager::createWithSkillInGame(sig2, nullptr);
-    auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
+    auto cig2 = TesterBot::createWithProperties(champ2, ui2, dice2, sm2);
+    //auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
     auto coord2 = Coordinate(Dir::WS, 0);
-    //auto ig2 = IngameStatics::createTest();
-    //cig2->setStatics(ig2);
-    auto player2 = Player::create();
-    player2->setTheColor(Color4F::RED);
+    auto player2 = BotPlayer::create();
+    //auto player2 = Player::create();
     player2->addChampion(cig2);
-    player2->disable();
-    player2->setName("PLAYER 2");
+    //player2->disable();
     m_vPlayers.push_back(player2);
     cig2->setPosition(coord2);
+
 
     for(auto z : m_vPlayers)
     {
@@ -136,3 +132,4 @@ void BattleScene::goToMenu(Ref* sender)
     auto scene = MainMenuScene::createScene();
     CCDR_GI->replaceScene(scene);
 }
+

@@ -69,16 +69,15 @@ void TaxArena::onLand(ChampionInGame* pChamp)
          target->finishAction();
          return;
     }
-
     /**
      *  This target player can not pay this property's tax
      *  Force player to sell their property
      */
-    //if(target->getNetWorth() >= this->getTax())
-    //{
-    //    target->sellPropertyForTax(this);
-    //    return;
-    //}
+    if(target->getNetWorth() >= this->getTax())
+    {
+        target->autoSellPropertyForTax(this->getTax());
+        return;
+    }
 
     target->lose();
 }

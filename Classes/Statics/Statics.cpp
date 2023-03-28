@@ -204,7 +204,7 @@ IngameStatics* IngameStatics::createWithStatics(Statics* pStatics, bool bIsClone
 IngameStatics* IngameStatics::createTest()
 {
     auto ret = new (std::nothrow) IngameStatics();
-    ret->m_pStatics = Statics::createWithProperties(50, 0 ,0,1,1,0,0,0,RegenStatics(100, 20), RegenStatics(20, 2), RegenStatics(1,1));
+    ret->m_pStatics = Statics::createWithProperties(35, 0 ,0,1,1,0,0,0,RegenStatics(100, 5), RegenStatics(20, 2), RegenStatics(1,1));
     ret->fillStatics(100);
     return ret;
 }

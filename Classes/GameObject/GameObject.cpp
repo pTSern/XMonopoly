@@ -21,7 +21,7 @@ void GameObject::setDeputizeTexture(std::string var)
 	if(FILE_CHECKER(var)) this->m_pProperties->setDeputizeTexture(var);
 }
 
-void GameObject::setName(std::string sName)
+void GameObject::setName(const std::string& sName)
 {
 	this->m_pProperties->setName(sName);
 }
