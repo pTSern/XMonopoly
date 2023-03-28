@@ -109,6 +109,7 @@ list(APPEND GAME_SOURCE
         Classes/ChampionInGame/ChampionInGame.cpp
         Classes/ChampionInGame/UI/ChampionUI.cpp
         Classes/ChampionInGame/UI/ChampionHUD.cpp
+        Classes/ChampionInGame/AI/BotChampion.cpp
 
         Classes/Map/Map.cpp
 
@@ -212,6 +213,7 @@ list(APPEND GAME_HEADER
         Classes/ChampionInGame/Extension.h
         Classes/ChampionInGame/UI/ChampionUI.h
         Classes/ChampionInGame/UI/ChampionHUD.h
+        Classes/ChampionInGame/AI/BotChampion.h
 
         Classes/Map/Map.h
 
