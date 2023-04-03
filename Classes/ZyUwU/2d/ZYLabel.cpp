@@ -16,10 +16,25 @@ ZYLabel* ZYLabel::createWithTTF(const std::string& text, const std::string& font
     if(pElement && pElement->cocos2d::Label::initWithTTF(text, fontFile, fontSize, dimensions, hAlignment, vAlignment))
     {
         pElement->autorelease();
+        pElement->setName("ZYLABEL");
         return pElement;
     }
     CC_SAFE_DELETE(pElement);
     return nullptr;
+}
+float ZYLabel::getRotation() const
+{
+    if(_rotationZ_X == _rotationZ_Y)
+    {
+        return Node::getRotation();
+    }
+    else
+        return _rotationZ_X;
+}
+
+void ZYLabel::fixGetRotation()
+{
+    if(_rotationZ_Y != _rotationZ_X) _rotationZ_Y = _rotationZ_X = 0;
 }
 
 ZYLabel* ZYLabel::createWithTTF(const TTFConfig& ttfConfig, const std::string& text,
@@ -30,6 +45,7 @@ ZYLabel* ZYLabel::createWithTTF(const TTFConfig& ttfConfig, const std::string& t
     if (ret && ret->initWithTTF(ttfConfig, text, hAlignment, maxLineWidth))
     {
         ret->autorelease();
+        ret->setName("ZYLABEL");
         return ret;
     }
 

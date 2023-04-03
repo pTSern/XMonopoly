@@ -22,12 +22,13 @@ Skill::~Skill()
 
 //// Static
 
-Skill* Skill::createWithProperties(XProperties *pProperties, SkillStatics *pStatics, SkillCard *card, bool bIsClone, bool bIsClean)
+Skill* Skill::createWithProperties(const std::string& deputizePath, SkillStatics *pStatics, SkillCard *card, bool bIsClone, bool bIsClean)
 {
     auto ret = Skill::create();
-    if(ret && pProperties && pStatics && card)
+    if(ret && pStatics && card)
     {
-        ret->setProperties(pProperties, bIsClone, bIsClean);
+        //ret->setProperties(pProperties, bIsClone, bIsClean);
+        ret->m_sDeputizeTexture = deputizePath;
         ret->setStatics(pStatics, bIsClone, bIsClean);
         ret->setSkillCard(card);
         return ret;

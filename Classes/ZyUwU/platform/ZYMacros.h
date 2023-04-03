@@ -67,11 +67,11 @@ CREATE_GET_FUNC(__GET_FUNC_NAME__, __VAR_TYPE__, __VAR__)         \
 /** @def CREATE_CLONE_SET_FUNC(__FUNC_NAME__, __VAR_TYPE__, __SET_VAR__ )
  *  @des Create a function that can clone and delete the input variable
  *
- *  @pragma __FUNC_NAME__ The function's name
- *  @pragma __VAR_TYPE__ The type of your input variable. THIS ONLY WORK FOR POINTER
- *  @pragma __SET_VAR__ The variable will be replace a new value after call the function
- *  @pragma bIsClone If this is true, the input variable (var) will be clone.
- *  @pragma bIsClean If this is true, the input variable (var) will be clean. Only work if bIsClone = true
+ *  @prama __FUNC_NAME__ The function's name
+ *  @prama __VAR_TYPE__ The type of your input variable. THIS ONLY WORK FOR POINTER
+ *  @prama __SET_VAR__ The variable will be replace a new value after call the function
+ *  @prama bIsClone If this is true, the input variable (var) will be clone.
+ *  @prama bIsClean If this is true, the input variable (var) will be clean. Only work if bIsClone = true
  *
  *  @warning If you don't clone the input, DON'T DELETE IT.
  *  @warning Your input must have clone() function
@@ -127,19 +127,20 @@ static __TYPE__* create(bool bIsAutoRelease = true)        \
 }                                \
 
 
-/** @def BEGIN_CREATE_REFCLASS(__NAME__, __REF_CLASS__)\n
- *  @des Define a new class inherits other class
+/**
+ * @def BEGIN_CREATE_REFCLASS(__NAME__, __REF_CLASS__)
+ * @des Define a new class inherits other class
  *
- *  @pragma __NAME__ this is the new class's name
- *  @pragma __REF_CLASS__ this is the name of class which this class will inherit
+ * @prama __NAME__ this is the new class's name
+ * @prama __REF_CLASS__ this is the name of class which this class will inherit
  *
- * 	@func public: __NAME__() -> Constructor function
- * 	@virutal public: ~__NAME__() -> Destructor function
- * 	@virtual public: bool init() -> Init function, must define it.
- * 	@virtual public: string toString(int nTab) -> Convert this class to string, must define it \n > > > Pragma: nTab The number of tab will be printed on console screen. Default = 2
- * 	@virtual public: void log() -> Write down all this class's information into console, must define it
+ * @func public: __NAME__() -> Constructor function
+ * @virtual public: ~__NAME__() -> Destructor function
+ * @virtual public: bool init() -> Init function, must define it.
+ * @virtual public: string toString(int nTab) -> Convert this class to string, must define it \n > > > Pragma: nTab The number of tab will be printed on console screen. Default = 2
+ * @virtual public: void log() -> Write down all this class's information into console, must define it
  *
- *  @warning Must call END_CREATE_REFCLASS after call this
+ * @warning Must call END_CREATE_REFCLASS after call this
  */
 #define BEGIN_CREATE_REFCLASS(__NAME__, __REF_CLASS__) 	\
 class __NAME__ : public __REF_CLASS__                  	\
@@ -158,18 +159,17 @@ private:                                               	\
 /** @def BEGIN_CREATE_INSTANCE_REFCLASS(__NAME__,__REF_CLASS__)\n
  * 	@des Define a new class have an instance pointer
  *
- * 	@pragma __NAME__ this is the new class's name
- * 	@pragma __REF_CLASS__ this is the name of class which tis class will inherit
+ * 	@prama __NAME__ this is the new class's name
+ * 	@prama __REF_CLASS__ this is the name of class which tis class will inherit
  *
  * 	@func public: __NAME__() -> Constructor function
- * 	@virutal public: ~__NAME__() -> Destructor function
+ * 	@virtual public: ~__NAME__() -> Destructor function
  * 	@virtual public: bool init() -> Init function, must define it.
  * 	@virtual public: string toString(int nTab) -> Convert this class to string, must define it \n > > > Pragma: nTab The number of tab will be printed on console screen. Default = 2
  * 	@virtual public: void log() -> Write down all this class's information into console, must define it
  *
  * 	@warning Must call END_CREATE_INSTANCE_REFCLASS after call this
- * 	@warning Make sp_pInstance = nullptr att source file
- * 	@warning Must define the CREATE() function
+ * 	@warning Declare sp_pInstance = nullptr at the source file
  */
 #define BEGIN_CREATE_INSTANCE_REFCLASS(__NAME__, __REF_CLASS__)                          	\
 class __NAME__ : public __REF_CLASS__                                                    	\
@@ -233,7 +233,7 @@ CCLOG("CALL %s: %s", p_sClassName.c_str(), this->toString().c_str()); \
 
 #define ZY_EZ_DE_LOG \
 do{\
-CCLOG("CALL %s: SELF DESTRUCT > ADDRESS: %p", p_sClassName.c_str(), this);                     \
+CCLOG("CALL %s: SELF DESTRUCT AT ADDRESS: %p", p_sClassName.c_str(), this);                     \
 } while(0)\
 
 
@@ -331,19 +331,36 @@ auto __loc = (ps)->getUniformLocation(name);  \
 } while(false) 
 
 /* Generic macros
-* @namespace nova
+* @namespace zy
 * @{
 */
+
+/**
+ * Generic macros
+ * @namespace zy
+ * @{
+ */
 #ifdef __cplusplus
 	#define NS_ZY_BEGIN namespace zy { 
 	#define NS_ZY_END }
 	#define USING_NS_ZY using namespace zy
-	#define USING_NS_JSON using namespace nlohmann
 
 	#define USING_NS_ALL  \
 		USING_NS_ZY;        \
 		USING_NS_CC;         \
 
 	#define NS_ZY ::zy
+
+	#define USING_NS_JSON using namespace rapidjson
+
+	#define USING_NS_EXT \
+		USING_NS_JSON;   \
+
 #endif
 
+//#define ZY_USING_JSON 0
+//
+//#if ZY_USING_JSON
+//#include "external/json/rapidjson.h"
+//#include "external/json/document.h"
+//#endif

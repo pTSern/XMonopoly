@@ -130,24 +130,24 @@ protected:
 
 protected:
     /// Must declare
-    std::vector<ChampionInGame*> m_vChampions;           ///< array of children champions
-    std::vector<Property*> m_vOwn;                       ///< weak reference to parent champion
+    std::vector<ChampionInGame*> m_vChampions;           ///< array of children champions (children)
+    std::vector<Property*> m_vOwn;                       ///< weak reference to parent champion (ref)
 
     /// Container
-    ChampionInGame* m_pControllingChampion;              ///< weak reference to the is-turn champion
-    ChampionInGame* m_pViewPointChampion;                ///< weak reference to the viewpoint champion
+    ChampionInGame* m_pControllingChampion;              ///< weak reference to the is-turn champion (ref)
+    ChampionInGame* m_pViewPointChampion;                ///< weak reference to the viewpoint champion (ref)
     std::vector<int> m_vRemoveByTagList;                 ///< contain child's tag that will be removed after calling removeAllMarkedChild() func
 
-    GameObject* m_pSelectingObject;                      ///< weak reference to selecting object
+    GameObject* m_pSelectingObject;                      ///< weak reference to selecting object (ref)
     SelectType m_eType;                                  ///< mark the selecting object's type
     TheAction m_eAction;                                 ///< current action of the player
 
     Color4F m_Color;                                     ///< player's color
 
-    IgEcoMng* m_pEconomy;
-    int m_nRepresentNumber;
+    IgEcoMng* m_pEconomy;                                ///< the economy system (child)
+    int m_nRepresentNumber;                              ///< number of the represent champion
 
-    bool m_bIsClient;                                   ///< Mark if this player is client or not
+    bool m_bIsClient;                                    ///< Mark if this player is client or not
 
 
 END_CREATE_REFCLASS

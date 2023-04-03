@@ -1,3 +1,0 @@
-#include "NormalCast.h"
-
-//// Constructor

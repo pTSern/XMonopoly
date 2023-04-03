@@ -10,7 +10,7 @@
  *             DMG being the Damage multiplier\n
  */
 
-//Constructor
+///] Constructor
 
 SkillStatics::SkillStatics() :
 m_fPhysicDmg(0), m_fMagicDmg(0),
@@ -19,11 +19,11 @@ m_cPhysicPie(0), m_cMagicPie(0),
 m_nCoolDown(0), m_nCurrentCoolDown(0),
 m_fMnCost(0), m_fHpCost(0), m_fSpCost(0),
 m_cPhysicCrit(0), m_cMagicCrit(0),
-m_sDescription("")
+m_sDescription()
 {
 }
 
-// Static
+////] Static
 
 SkillStatics* SkillStatics::create()
 {
@@ -37,7 +37,19 @@ SkillStatics* SkillStatics::create()
     return nullptr;
 }
 
-// Protected
+SkillStatics* SkillStatics::getMerge(SkillStatics* target)
+{
+    auto ret = SkillStatics::create();
+    if(ret)
+    {
+        ret->merge(target);
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+///] Protected
 
 bool SkillStatics::init()
 {
@@ -109,4 +121,30 @@ bool SkillStatics::isReady()
     if(m_nCoolDown == 0) return true;
     if(m_nCurrentCoolDown == m_nCoolDown) return true;
     return false;
+}
+
+void SkillStatics::merge(SkillStatics* target)
+{
+    if(target)
+    {
+        this->m_fPhysicDmg = target->m_fPhysicDmg;
+        this->m_fMagicDmg = target->m_fMagicDmg;
+
+        this->m_fPureDmg = target->m_fPureDmg;
+
+        this->m_cPhysicCrit = target->m_cPhysicCrit;
+        this->m_cMagicCrit = target->m_cMagicCrit;
+
+        this->m_nCoolDown = target->m_nCoolDown;
+        this->m_nCurrentCoolDown = target->m_nCurrentCoolDown;
+
+        this->m_cPhysicPie = target->m_cPhysicPie;
+        this->m_cMagicPie = target->m_cMagicPie;
+
+        this->m_fMnCost = target->m_fMnCost;
+        this->m_fHpCost = target->m_fHpCost;
+        this->m_fSpCost = target->m_fSpCost;
+
+        this->m_sDescription = target->m_sDescription;
+    }
 }

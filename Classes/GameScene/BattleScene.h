@@ -18,6 +18,11 @@ public:
     void goToGameOver(Ref* sender);
     void goToMenu(Ref* sender);
 
+    CREATE_SET_FUNC(setPhysicsWorld, PhysicsWorld*, m_pPhysicWorld);
+    bool onContactBegin(PhysicsContact& contact);
+
 protected:
     std::vector<Player*> m_vPlayers;
+    PhysicsWorld* m_pPhysicWorld;
+    EventListenerPhysicsContact* p_pContactListener;
 };

@@ -2,6 +2,7 @@
 #include "Skill/SkillManager/SkillManager.h"
 #include "ChampionInGame/ChampionInGame.h"
 #include "Dice/Dice.h"
+#include "Player/Player.h"
 
 //// Constructor
 
@@ -22,7 +23,8 @@ SkillInGame* SkillInGame::createWithSkill(Skill* skill)
     {
         ret->autorelease();
 
-        ret->m_pProperties = skill->getXProperties();
+        //ret->m_pProperties = skill->getXProperties();
+        ret->m_sDeputizeTexture = skill->getDeputizeTexture();
         ret->m_pSkillStatics = skill->getSkillStatics();
         ret->m_pSkillCard = skill->getSkillCard();
         ret->m_pSkillCard->setOwner(ret);
@@ -72,6 +74,13 @@ void SkillInGame::MoveBySkill(SkillInGame* skill, float dt)
             skill->m_pOwner->getOwner()->jumpTo(skill->m_pOwner->getOwner()->getDice()->getLastestDiceNum());
         }
     }
+}
+
+void SkillInGame::Healing(SkillInGame* skill, float dt)
+{
+    skill->m_pOwner->getOwner()->getStatics()->addHp(20);
+    skill->m_pOwner->getOwner()->endTurn();
+    skill->m_pOwner->getOwner()->getOwner()->finishAction();
 }
 
 //// Virtual

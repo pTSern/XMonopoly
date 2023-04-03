@@ -5,7 +5,8 @@
 Champion::Champion() :
 m_pStatics(nullptr),
 m_pChampionStatics(ChampionStatics::create()),
-m_pIcon(ZYSprite::create(m_pProperties->getDeputizeTexture().c_str()))
+//m_pIcon(ZYSprite::create(m_pProperties->getDeputizeTexture().c_str()))
+m_pIcon(ZYSprite::create(m_sDeputizeTexture))
 {
 
 }
@@ -49,7 +50,8 @@ Champion* Champion::clone()
 
 void Champion::setIcon(std::string sTexture)
 {
-    if(sTexture != m_pProperties->getDeputizeTexture())
+    //if(sTexture != m_pProperties->getDeputizeTexture())
+    if(sTexture != m_sDeputizeTexture)
     {
         setDeputizeTexture(sTexture);
         m_pIcon->replaceSprite(getDeputizeTexture());

@@ -169,35 +169,35 @@ public:
 
 protected:
     /// Container
-    std::vector<ChampionInGame*> m_vChilds;
-    std::vector<ChampionAction> m_vActionMemory;
+    std::vector<ChampionInGame*> m_vChilds;                     ///< the array of champion children (children)
+    std::vector<ChampionAction> m_vActionMemory;                ///< the array of the champion action
 
     /// Must declare
-    IngameStatics* m_pIngameStatics;
-    Dice* m_pDice;
-    Player *m_pOwner;
-    ChampionUI* m_pChampionUI;
-    ChampionHUD* m_pChampionHUD;
-    SkillManager* m_pPreDiceSkillDeck, *m_pPostDiceSkillDeck;
+    IngameStatics* m_pIngameStatics;                            ///< the pointer to the ingame statics
+    Dice* m_pDice;                                              ///< the dice object (child)
+    Player *m_pOwner;                                           ///< weak reference to the owner of this champion
+    ChampionUI* m_pChampionUI;                                  ///< the UI of the champion (child)
+    ChampionHUD* m_pChampionHUD;                                ///< the HUD of the champion (child)
+    SkillManager* m_pPreDiceSkillDeck, *m_pPostDiceSkillDeck;   ///< the skill deck (chilren)
 
     /// Auto declare, has first init value
-    Coordinate m_cCoordinate;
-    ChampionAction m_eAction;
-    ChampionStatus m_eStatus;
-    HeadDir m_eHead;
-    Arena *m_pLandingArena, *m_pMemArena;
-    ChampionTurnPhase m_eTurnPhase;
-    ui::Button *m_pSelfButton;
+    Coordinate m_cCoordinate;                                   ///< the coordinate of the champion
+    ChampionAction m_eAction;                                   ///< the action of the champion
+    ChampionStatus m_eStatus;                                   ///< the status of the champion
+    HeadDir m_eHead;                                            ///< the direction of the champion head
+    Arena *m_pLandingArena, *m_pMemArena;                       ///< weak reference to the landing arena and the last landed arena
+    ChampionTurnPhase m_eTurnPhase;                             ///< the phase of this champion on turn
+    ui::Button *m_pSelfButton;                                  ///< the button is the self-image help the client to switching view point
 
     /// Auto declare, can be nullptr
-    ChampionInGame* m_pParent;
+    ChampionInGame* m_pParent;                                  ///< weak reference to the parent of this champion
 
     ///
-    bool m_bIsRepresentPlayer;
-    bool m_bIsTurn, m_bIsEndTurn;
-    bool m_bIsAction;
+    bool m_bIsRepresentPlayer;                                  ///< mark this champion is represent the player or not
+    bool m_bIsTurn, m_bIsEndTurn;                               ///< mark this champion is on turn an is end turn
+    bool m_bIsAction;                                           ///< mark if this champion is doing action or not
 
 private:
-    int p_nJumpTime, p_nCurrentJump;                ///< This only use for storing data to use all jumpTo() function
+    int p_nJumpTime, p_nCurrentJump;                            ///< This only use for storing data to use all jumpTo() function
 
 END_CREATE_REFCLASS

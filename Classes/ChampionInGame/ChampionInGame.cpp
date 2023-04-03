@@ -91,8 +91,9 @@ ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp , Champion
 
 void ChampionInGame::config()
 {
-      m_pChampionUI->setPosition(Point(this->getIcon()->getPosition().x, this->getIcon()->getContentPositionMiddleTop().y + m_pChampionUI->getContentSize().height));
-      m_pSelfButton->setPosition(m_pIcon->getPosition());
+    m_pChampionUI->setPosition(Point(this->getIcon()->getPosition().x, this->getIcon()->getContentPositionMiddleTop().y + m_pChampionUI->getContentSize().height));
+    m_pSelfButton->setPosition(m_pIcon->getPosition());
+    m_pPhysicBody->setPositionOffset(m_pIcon->getPosition());
 }
 
 bool ChampionInGame::init()
@@ -152,6 +153,7 @@ void ChampionInGame::update(float dt)
 bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
 {
     if(!pUI || !pDice || !vSkillDeck || !Champion::init()) return false;
+    this->setName("CHAMPION IN GAME");
 
     this->setDice(pDice);
     this->setUI(pUI);
@@ -185,6 +187,14 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
      *
      */
     this->m_pIngameStatics = IngameStatics::createTest();
+
+    m_pPhysicBody = PhysicsBody::createBox(m_pIcon->getContentSize());
+    m_pPhysicBody->setDynamic(false);
+    m_pPhysicBody->setGravityEnable(false);
+    auto p = GM_GI->getBitMask();
+    CCLOG("BIT MASK: %d", p);
+    m_pPhysicBody->setContactTestBitmask(p);
+    this->setPhysicsBody(m_pPhysicBody);
 
     this->scheduleUpdate();
     return true;

@@ -28,10 +28,13 @@ public:
     void endGame(bool bIsClient);
     void setRunningScene(Scene* var , Layer* layer,ui::Widget::ccWidgetTouchCallback callback);
     void floatingNotify(const std::string& message, const TTFConfig& ttf, const Color3B& color, const Point& position, const float& duration = 1.0f, bool isLock = false);
+    void floatingNotify(const std::string& message);
     void setClientPlayer(Player* target);
+    void generateMap(const std::string& tileMap);
 
     CREATE_GET_FUNC(getClientPlayer, Player*, m_pClient);
     CREATE_SET_GET_FUNC(setMap, getMap, MapManager*, m_pMap);
+    int getBitMask();
     //CREATE_GET_FUNC(getClientUI, PlayerUI*, m_pClientUI);
 
 protected:
@@ -50,5 +53,6 @@ protected:
 
 private:
     bool p_bLockEndGame;
+    int p_nBitmask;
 
 END_CREATE_INSTANCE_REFCLASS;

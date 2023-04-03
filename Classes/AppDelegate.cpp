@@ -27,7 +27,7 @@
 #include "GameScene/BattleScene.h"
 #include "ZyUwU/data-manager/ZYDatabase.h"
 
-// #define USE_AUDIO_ENGINE 1
+//#define USE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE
 #include "audio/include/AudioEngine.h"
@@ -78,7 +78,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     // turn on display FPS
-    director->setDisplayStats(true);
+    director->setDisplayStats(false);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0f / 144);

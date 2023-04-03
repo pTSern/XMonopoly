@@ -29,14 +29,14 @@ public:
     };
 
 public:
-    static Skill* createWithProperties(XProperties *pProperties, SkillStatics *pStatics, SkillCard *card = SkillCard::createDefault(), bool bIsClone = true, bool bIsClean = false);
+    static Skill* createWithProperties(const std::string& deputizePath, SkillStatics *pStatics, SkillCard *card = SkillCard::createDefault(), bool bIsClone = true, bool bIsClean = false);
 
 public:
     virtual void update(float dt);
     virtual ~Skill();
 
 public:
-    CREATE_CLONE_SET_FUNC(setProperties, XProperties, m_pProperties);
+    //CREATE_CLONE_SET_FUNC(setProperties, XProperties, m_pProperties);
     CREATE_CLONE_SET_FUNC(setStatics, SkillStatics, m_pSkillStatics);
 
     CREATE_SET_GET_FUNC(setSkillCard, getSkillCard, SkillCard*, m_pSkillCard);
@@ -45,7 +45,7 @@ public:
     CREATE_SET_GET_FUNC(setNeedSelect, getNeedSelect, bool, m_bIsNeedSelect);
 
     CREATE_GET_FUNC(getSkillStatics, SkillStatics*, m_pSkillStatics);
-    CREATE_GET_FUNC(getXProperties, XProperties*, m_pProperties);
+    //CREATE_GET_FUNC(getXProperties, XProperties*, m_pProperties);
     //CREATE_GET_FUNC(getTarget, TargetType*, m_pTargets);
     CREATE_GET_FUNC(getTarget, TargetType, m_eTarget);
 

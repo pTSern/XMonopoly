@@ -3,32 +3,39 @@
 //// Constructor
 
 GameObject::GameObject() :
-m_pProperties(XProperties::create())
+//m_pProperties(XProperties::create())
+m_pPhysicBody(nullptr),
+m_sDeputizeTexture()
 {
 }
 
 GameObject::~GameObject()
 {
 	GameObject::destructLog();
-	CC_SAFE_DELETE(m_pProperties);
+	//CC_SAFE_DELETE(m_pProperties);
 }
 
 
 //// Public
 
-void GameObject::setDeputizeTexture(std::string var)
-{
-	if(FILE_CHECKER(var)) this->m_pProperties->setDeputizeTexture(var);
-}
+//void GameObject::setDeputizeTexture(std::string var)
+//{
+//	if(FILE_CHECKER(var)) this->m_pProperties->setDeputizeTexture(var);
+//}
+//
+//void GameObject::setName(const std::string& sName)
+//{
+//	this->m_pProperties->setName(sName);
+//}
+//
+//void GameObject::setPriority(int nPriority)
+//{
+//	this->m_pProperties->setPriority(nPriority);
+//}
 
-void GameObject::setName(const std::string& sName)
+void GameObject::setDeputizeTexture(const std::string& path)
 {
-	this->m_pProperties->setName(sName);
-}
-
-void GameObject::setPriority(int nPriority)
-{
-	this->m_pProperties->setPriority(nPriority);
+	this->m_sDeputizeTexture = path;
 }
 
 //Virtual
@@ -58,7 +65,7 @@ std::string GameObject::toString(int nTab)
 	std::string ts;
 	std::string tab = ZY_SP_TAB(nTab);
 	ts += (tab + " + Reference Count: " + ZYSP_NTS(getReferenceCount()));
-	ts += (tab + " > XProperties: " + m_pProperties->toString(nTab+1));
+	//ts += (tab + " > XProperties: " + m_pProperties->toString(nTab+1));
 	return ts;
 }
 

@@ -19,6 +19,7 @@ public:
 
 public: // Other callback func
     static void MoveBySkill(SkillInGame* skill, float dt);
+    static void Healing(SkillInGame* skill, float dt);
 
 public: // Virtual func
     virtual void config();

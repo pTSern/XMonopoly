@@ -8,6 +8,7 @@ USING_NS_ALL;
 class SkillStatics {
 public:
     static SkillStatics* create();
+    static SkillStatics* getMerge(SkillStatics* target);
 
 public:
     SkillStatics *clone();
@@ -56,6 +57,7 @@ public:
     inline void setMagicCritRate(float fAmount) { this->m_cMagicCrit.setRate(fAmount); }
     bool isReady();
     void castSkill();
+    void merge(SkillStatics* target);
 
 protected:
     SkillStatics();

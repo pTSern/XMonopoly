@@ -31,6 +31,7 @@ public:
     void downgrade(int level = 1);
     float getSellValue();
     float getIncomeValue();
+    void reset();
 
 protected:
     int m_nCurrentLevel, m_nMinLevel, m_nMaxLevel;      ///< The min and the max level can be upgrade

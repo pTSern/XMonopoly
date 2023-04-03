@@ -23,17 +23,22 @@ public:
 	virtual bool init();
 
 public:
-	virtual void setName(const std::string& sName) override;
-	void setPriority(int nPriority);
-	void setDeputizeTexture(std::string var);
+	//virtual void setName(const std::string& sName) override;
+	//void setPriority(int nPriority);
+	//void setDeputizeTexture(std::string var);
 
-	CREATE_GET_FUNC(getName, std::string, this->m_pProperties->getName());
-	CREATE_GET_FUNC(getPriority, int, this->m_pProperties->getPriority());
-protected:
-	CREATE_GET_FUNC(getDeputizeTexture, std::string, this->m_pProperties->getDeputizeTexture());
+	//CREATE_GET_FUNC(getName, std::string, this->m_pProperties->getName());
+	//CREATE_GET_FUNC(getPriority, int, this->m_pProperties->getPriority());
+	void setDeputizeTexture(const std::string& path);
+	//CREATE_GET_FUNC(getDeputizeTexture, std::string, this->m_pProperties->getDeputizeTexture());
+	CREATE_GET_FUNC(getDeputizeTexture, std::string, m_sDeputizeTexture)
+
 
 protected:
-	XProperties *m_pProperties;
+	//XProperties *m_pProperties;
+	std::string m_sDeputizeTexture;
+	PhysicsBody *m_pPhysicBody;
+
 private:
 	std::string p_sClassName = "GameObject";
 };

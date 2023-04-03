@@ -24,6 +24,7 @@ ZYSprite* ZYSprite::create(const std::string& pFileName, bool bIsScale)
 	if (pElement && pElement->Sprite::initWithFile(pFileName))
 	{
 		pElement->autorelease();
+		pElement->setName("ZYSPRITE");
 		if(bIsScale) pElement->setScale();
 		return pElement;
 	}
@@ -37,6 +38,7 @@ ZYSprite* ZYSprite::create(const char* pFileName, bool bIsScale)
 	if (pElement && pElement->Sprite::initWithFile(pFileName))
 	{
 		pElement->autorelease();
+		pElement->setName("ZYSPRITE");
 		if(bIsScale) pElement->setScale();
 		return pElement;
 	}
@@ -49,6 +51,7 @@ ZYSprite* ZYSprite::create(const std::string& filename, const Rect& rect, bool b
 	if(pRet && pRet->Sprite::initWithFile(filename, rect))
 	{
 		pRet->autorelease();
+		pRet->setName("ZYSPRITE");
 		if(bIsScale) pRet->setScale();
 		return pRet;
 	}
@@ -62,6 +65,7 @@ ZYSprite* ZYSprite::create(cocos2d::Texture2D *p)
 	if(pE && pE->initWithTexture(p))
 	{
 		pE->autorelease();
+		pE->setName("ZYSPRITE");
 		pE->config();
 		return pE;
 	}

@@ -44,6 +44,8 @@ public:
      * @note see what can be printed in toString(int) function
      */
     virtual void log();
+    virtual float getRotation() const;
+    void fixGetRotation();
     /**
      * Convert all this Label properties to string
      *

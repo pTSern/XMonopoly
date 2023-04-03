@@ -15,7 +15,6 @@
 #include "Arena/Arena.h"
 #include "Skill/SkillManager/SkillManager.h"
 #include "Skill/SkillInGame/SkillInGame.h"
-#include "Skill/SkillInGame/MoveBy/SkillMoveBy.h"
 
 #include "GameMaster/GameMaster.h"
 
@@ -23,9 +22,12 @@
 
 Scene* BattleScene::createScene()
 {
-    auto scene = Scene::create();
+    auto scene = Scene::createWithPhysics();
+    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //auto scene = Scene::create();
 
     auto layer = BattleScene::create();
+    layer->setPhysicsWorld(scene->getPhysicsWorld());
     scene->addChild(layer);
     GM_GI->setRunningScene(scene, layer,CC_CALLBACK_1(BattleScene::goToMenu, layer));
     return scene;
@@ -62,6 +64,10 @@ bool BattleScene::init()
     this->addChild(map, 0);
     map->generateArenas();
 
+    p_pContactListener = EventListenerPhysicsContact::create();
+    p_pContactListener->onContactBegin = CC_CALLBACK_1(BattleScene::onContactBegin, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(p_pContactListener, this);
+
     /// Add schedule update
     this->scheduleUpdate();
 
@@ -70,7 +76,9 @@ bool BattleScene::init()
     auto ui = ChampionUI::createDefault();
     auto sig = SkillInGame::createTest();
     sig->setSkillMechanic(SkillInGame::MoveBySkill);
-    auto sm = SkillManager::createWithSkillInGame(sig, nullptr);
+    auto heal = SkillInGame::createTest();
+    heal->setSkillMechanic(SkillInGame::Healing);
+    auto sm = SkillManager::createWithSkillInGame(sig, heal, nullptr);
     auto cig = ChampionInGame::createWithProperties(champ, ui, dice, sm);
     auto coord = Coordinate(Dir::WS, 0);
     //auto ig = IngameStatics::createTest();
@@ -83,6 +91,7 @@ bool BattleScene::init()
     player->setName("PLAYER 1");
     m_vPlayers.push_back(player);
     cig->setPosition(coord);
+    cig->getStatics()->setCurrentHp(50);
 
     auto dice2 = Dice::createWithProperties("dice/128-red.png");
     auto champ2 = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
@@ -112,6 +121,7 @@ bool BattleScene::init()
     GM_GI->addChampList(player2->getChampChildren());
     GM_GI->calculateNewTurn();
 
+    //getEventDispatcher()->addEventListenerWithSceneGraphPriority(p_pContactListener, this);
     return true;
 }
 
@@ -133,3 +143,9 @@ void BattleScene::goToMenu(Ref* sender)
     CCDR_GI->replaceScene(scene);
 }
 
+bool BattleScene::onContactBegin(PhysicsContact& contact)
+{
+    auto pNodeA = contact.getShapeA()->getBody()->getNode();
+    auto pNodeB = contact.getShapeB()->getBody()->getNode();
+    return true;
+}

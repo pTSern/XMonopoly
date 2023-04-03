@@ -2,6 +2,7 @@
 #include "ChampionInGame/ChampionInGame.h"
 #include "Player/Player.h"
 #include "Player/UI/PlayerUI.h"
+#include "Map/Map.h"
 
 GameMaster* GameMaster::sp_pInstance = nullptr;
 
@@ -33,10 +34,10 @@ void GameMaster::revoke()
     m_pRunningScene = nullptr;
     m_pBattleLayer = nullptr;
     p_bLockEndGame = false;
+    p_nBitmask = 0;
 
-    m_pMap = nullptr;
+    CC_SAFE_RELEASE_NULL(m_pMap);
     this->scheduleUpdate();
-
 }
 
 //// Public
@@ -50,6 +51,20 @@ bool GameMaster::init()
     this->addChild(m_pMarkIsTurnChampion_DOWN);
     this->scheduleUpdate();
     return true;
+}
+void GameMaster::generateMap(const std::string& tileMap)
+{
+    m_pMap = MapManager::create();
+    m_pMap->loadTileMap(tileMap);
+    m_pMap->setPosition(Point(ZYDR_TGVS.width/2, (ZYDR_TGVS.height + m_pMap->getContentSize().height/2)/2));
+    addChild(m_pMap);
+    m_pMap->generateArenas();
+}
+
+int GameMaster::getBitMask()
+{
+    p_nBitmask ++;
+    return p_nBitmask;
 }
 
 void GameMaster::setClientPlayer(Player* target)
@@ -187,3 +202,9 @@ void GameMaster::floatingNotify(const std::string& message, const TTFConfig& ttf
     }
 }
 
+void GameMaster::floatingNotify(const std::string& message)
+{
+    auto ttf = defaultTTFConfig;
+    ttf.fontSize = 50;
+    floatingNotify(message, ttf, Color3B::BLACK, ZYDR_TGVS/2);
+}

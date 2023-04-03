@@ -60,6 +60,11 @@ float PropertyEconomy::getIncomeValue()
     return m_price.getAmount() * (m_fBaseIncomeMulti + ((m_nCurrentLevel - 1) * m_fIncomeIncrement));
 }
 
+void PropertyEconomy::reset()
+{
+    this->m_nCurrentLevel = m_nMinLevel;
+}
+
 ///////[ Property
 
 //// Factory Registry
@@ -377,6 +382,7 @@ void Property::removeAllMarkedChild()
 void Property::removeOwner()
 {
     m_pOwner = nullptr;
+    m_pEconomy->reset();
     revokeRect();
 }
 

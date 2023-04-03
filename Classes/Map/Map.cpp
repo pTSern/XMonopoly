@@ -31,6 +31,7 @@ p_hospital(Dir::WS, 0)
 bool MapManager::init()
 {
 	if(!Node::init()) return false;
+	this->setName("MAP MANAGER");
 	auto ls = EventListenerTouchOneByOne::create();
 	ls->onTouchBegan = CC_CALLBACK_2(MapManager::onTouch, this);
 	ls->onTouchEnded = CC_CALLBACK_2(MapManager::endTouch, this);
@@ -106,6 +107,12 @@ void MapManager::loadTileMap(std::string sMapName)
 	//auto button = ui::Button::create("NULL/null.png");
 	//button->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, button);
 	//this->addChild(button);
+	if(_physicsBody)
+	{
+		_physicsBody->removeAllShapes();
+		_physicsBody->removeFromWorld();
+	}
+	this->setRotation(0);
 }
 
 void MapManager::setScale(cocos2d::Point cScale)
