@@ -121,14 +121,8 @@ list(APPEND GAME_SOURCE
         Classes/Skill/SkillCard/SkillCard.cpp
         Classes/Skill/SkillStatics/SkillStatics.cpp
         Classes/Skill/SkillInGame/SkillInGame.cpp
-        Classes/Skill/SkillInGame/MoveBy/SkillMoveBy.cpp
         Classes/Skill/SkillManager/SkillManager.cpp
-        Classes/Skill/SkillType/SkillType.cpp
-        Classes/Skill/TargetType/TargetType.cpp
-        Classes/Skill/TargetType/NoTarget/NoTarget.cpp
-        Classes/Skill/TargetType/NoTarget/Toggle/Toggle.cpp
-        Classes/Skill/TargetType/NoTarget/NormalCast/NormalCast.cpp
-        Classes/Skill/TargetType/Factory/TargetTypeFactory.cpp
+        Classes/Skill/Mechanic/Mechanic.cpp
 
         Classes/GameEffect/Buff/Buff.cpp
         Classes/GameEffect/Debuff/Debuff.cpp
@@ -224,19 +218,11 @@ list(APPEND GAME_HEADER
 
         Classes/Skill/Skill.h
         Classes/Skill/Condition/Condition.h
-        Classes/Skill/SkillType/SkillType.h
-        Classes/Skill/SummonType/SummonType.h
-        Classes/Skill/TargetType/TargetType.h
-        Classes/Skill/TriggerType/TriggerType.h
         Classes/Skill/SkillCard/SkillCard.h
         Classes/Skill/SkillStatics/SkillStatics.h
         Classes/Skill/SkillInGame/SkillInGame.h
-        Classes/Skill/SkillInGame/MoveBy/SkillMoveBy.h
         Classes/Skill/SkillManager/SkillManager.h
-        Classes/Skill/TargetType/NoTarget/NoTarget.h
-        Classes/Skill/TargetType/NoTarget/Toggle/Toggle.h
-        Classes/Skill/TargetType/NoTarget/NormalCast/NormalCast.h
-        Classes/Skill/TargetType/Factory/TargetTypeFactory.h
+        Classes/Skill/Mechanic/Mechanic.h
 
         Classes/GameEffect/Buff/Buff.h
         Classes/GameEffect/Debuff/Debuff.h
