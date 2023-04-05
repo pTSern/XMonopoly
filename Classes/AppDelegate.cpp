@@ -26,6 +26,7 @@
 #include "GameScene/MainMenu.h"
 #include "GameScene/BattleScene.h"
 #include "ZyUwU/data-manager/ZYDatabase.h"
+#include "GameScene/SceneTransition.h"
 
 //#define USE_AUDIO_ENGINE 1
 
@@ -120,7 +121,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = MainMenuScene::createScene();
-
+    //TransitionSceneFactory::getInstance()->transitionScene("MAIN_MENU");
     // run
     director->runWithScene(scene);
     return true;

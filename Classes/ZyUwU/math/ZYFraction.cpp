@@ -107,6 +107,10 @@ Fraction Fraction::fastShortCut(int nNumerator, int nDenominator)
 
     return scF;
 }
+float Fraction::fastPercent(float numerator)
+{
+    return numerator / 100;
+}
 
 void Fraction::add(Fraction& f1, Fraction& f2, Fraction *dst, bool bIsShortCut)
 {

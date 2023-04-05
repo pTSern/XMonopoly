@@ -47,6 +47,7 @@ public:
     CREATE_GET_FUNC(getBottomPoint, Point, m_Bottom);
     CREATE_GET_FUNC(getRectColor, Color4F, m_cColor);
     CREATE_GET_FUNC(getType, Type, m_eType);
+    CREATE_GET_FUNC(getCentralPoint, Point, m_Left.getMidpoint(m_Right));
 
     void setRectColor(Color4F color);
 

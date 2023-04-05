@@ -13,7 +13,6 @@ public:
     virtual bool init();
 
     void goToPvP(Ref* pSender);
-    virtual void onEnter();
 
     ZY_CREATE_FUNC(MainMenuScene);
 

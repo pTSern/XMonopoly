@@ -29,6 +29,7 @@ public:
 	virtual void setPosition(const cocos2d::Vec2& pos) override;
 	virtual void setPosition(const float xx, const float yy) override;
 	virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
+	virtual ~ZYSprite();
 
 	virtual const Vec2& getAnchorPoint() const override
 	{
@@ -93,7 +94,6 @@ protected:
 
 private:
 	ZYSprite();
-	virtual ~ZYSprite();
 	FILE_CHECKER_ZYFUNC(ZYSprite);
 	std::string p_sClassName = "ZYSprite";
 };

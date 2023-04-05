@@ -208,3 +208,46 @@ void GameMaster::floatingNotify(const std::string& message)
     ttf.fontSize = 50;
     floatingNotify(message, ttf, Color3B::BLACK, ZYDR_TGVS/2);
 }
+
+float GameMaster::magicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
+{
+    float mr = defender->getMagicResistance() - attacker->getMagicPieInNum();
+    float mrToDc = Fraction::fastPercent(MRFB - (MRFF * mr)/(MRFB + MRFF * abs(mr)));
+    // Total magic resistance in decimal (0.xxx)
+    float totalMrInDc = mrToDc * (1 - attacker->getTheMagicPiercing().getPcAmount());
+    // Run gacha if this crit
+
+    bool isCrit = critStar(pos, attacker->getMagicCritRate());
+    // Run crit
+
+    // Total magic damage
+    float totalMd = (isCrit*attacker->getMagicCritDmgMul() + 1) * attacker->getMagicDmg();
+    float causeDmg = (1 - totalMrInDc) * totalMd;
+
+    return causeDmg;
+}
+
+float GameMaster::physicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
+{
+
+}
+
+float GameMaster::totalDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
+{
+
+}
+
+bool GameMaster::critStar(Point pos, float chance)
+{
+    if(ZYGC_GI->runGacha(chance))
+    {
+        this->critStar(pos);
+        return true;
+    }
+    return false;
+}
+
+void GameMaster::critStar(Point pos)
+{
+
+}

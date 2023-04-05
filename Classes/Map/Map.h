@@ -63,8 +63,15 @@ public:
 	CREATE_GET_FUNC(getTrueWorldSize, Size, p_tWorld);
 	CREATE_GET_FUNC(getArenas, std::vector<Arena*>, p_vArenas);
 	CREATE_GET_FUNC(getHospitalCoord, Coordinate, p_hospital);
+    CREATE_GET_FUNC(getNCorner, Coordinate, p_NCorner);
+    CREATE_GET_FUNC(getWCorner, Coordinate, p_WCorner);
+    CREATE_GET_FUNC(getECorner, Coordinate, p_ECorner);
+    CREATE_GET_FUNC(getSCorner, Coordinate, p_SCorner);
+	CREATE_GET_FUNC(getArenaNumber, int, p_vArenas.size());
 	Arena* getArenaByCoord(Coordinate coord);
+	Point getPointByCoord(Coordinate coord);
 	//void setClientPlayer(Player* target);
+	void findCorner(ValueMap obj, Coordinate coord);
 
 	/**
 	* Check if input position is contact to a collision object
@@ -105,5 +112,6 @@ private:
     std::vector<Arena*> p_vArenas;							///< array of Arena in the map
 
 	Coordinate p_hospital;
+    Coordinate p_NCorner, p_WCorner, p_ECorner, p_SCorner;
 
 END_CREATE_INSTANCE_REFCLASS;

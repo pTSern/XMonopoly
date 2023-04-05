@@ -87,7 +87,7 @@ ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp , Champion
     return nullptr;
 }
 
-//Virtual
+///] Virtual
 
 void ChampionInGame::config()
 {
@@ -148,7 +148,17 @@ void ChampionInGame::update(float dt)
     this->autoFlip();
 }
 
-//Public
+void ChampionInGame::contactTo(PhysicsContact& contact, GameObject* target)
+{
+    CCLOG("%s Contact to %s", getName().c_str(), target->getName().c_str());
+}
+
+void ChampionInGame::contactBy(PhysicsContact& contact, GameObject* target)
+{
+    CCLOG("%s Contact by %s", getName().c_str(), target->getName().c_str());
+}
+
+///] Public
 
 bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
 {
@@ -270,12 +280,16 @@ void ChampionInGame::attack(std::vector<ChampionInGame*>& vChampions)
 {
     for(auto &x : vChampions)
     {
-        x->getStatics()->reduceHp(this->getStatics()->getStatics()->getAttackDmg());
         x->beAttacked(this);
     }
 }
 
 void ChampionInGame::beAttacked(ChampionInGame* attacker)
+{
+    this->getStatics()->reduceHp(attacker->getStatics()->getStatics()->getAttackDmg());
+}
+
+void ChampionInGame::beAttacked(SkillStatics *pStatics, ChampionInGame* attacker)
 {
 }
 

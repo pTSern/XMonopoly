@@ -17,8 +17,11 @@
 #include "Skill/SkillInGame/SkillInGame.h"
 
 #include "GameMaster/GameMaster.h"
+#include "SceneTransition.h"
 
 //// Static
+
+static SceneRegister<BattleScene> s_register("BATTLE");
 
 Scene* BattleScene::createScene()
 {
@@ -92,6 +95,7 @@ bool BattleScene::init()
     m_vPlayers.push_back(player);
     cig->setPosition(coord);
     cig->getStatics()->setCurrentHp(50);
+    cig->setName("CHAMP A");
 
     auto dice2 = Dice::createWithProperties("dice/128-red.png");
     auto champ2 = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
@@ -109,7 +113,9 @@ bool BattleScene::init()
     //player2->disable();
     m_vPlayers.push_back(player2);
     cig2->setPosition(coord2);
+    cig2->setName("CHAMP B");
 
+    map->log();
 
     for(auto z : m_vPlayers)
     {
@@ -122,6 +128,24 @@ bool BattleScene::init()
     GM_GI->calculateNewTurn();
 
     //getEventDispatcher()->addEventListenerWithSceneGraphPriority(p_pContactListener, this);
+
+    //SpriteFrameCache::getInstance()->addSpriteFramesWithFile("champion/samurai.png");
+    //auto values = ValueMap();
+    //for(int i = 0; i <= 28; i++)
+    //{
+    //    auto frameName = StringUtils::format("samurai_%02.png", i);
+    //    auto frameRect = Rect(0,0, 168,168);
+
+    //    ValueMap x;
+    //    x["x"] = Value(frameRect.getMinX());
+    //    x["y"] = Value(frameRect.getMinY());
+    //    x["width"] = Value(frameRect.size.width);
+    //    x["height"] = Value(frameRect.size.height);
+    //    values[frameName] = x;
+    //}
+
+    //auto fileUtils = FileUtils::getInstance();
+    //auto filePath = "champion/samurai.plist";
     return true;
 }
 
@@ -141,11 +165,19 @@ void BattleScene::goToMenu(Ref* sender)
 {
     auto scene = MainMenuScene::createScene();
     CCDR_GI->replaceScene(scene);
+    //TransitionSceneFactory::getInstance()->transitionScene("MAIN_MENU");
 }
 
 bool BattleScene::onContactBegin(PhysicsContact& contact)
 {
     auto pNodeA = contact.getShapeA()->getBody()->getNode();
     auto pNodeB = contact.getShapeB()->getBody()->getNode();
+    auto pGameObjectA = dynamic_cast<GameObject*>(pNodeA);
+    auto pGameObjectB = dynamic_cast<GameObject*>(pNodeB);
+    if(pGameObjectA && pGameObjectB)
+    {
+        pGameObjectA->contactTo(contact, pGameObjectB);
+        pGameObjectB->contactBy(contact, pGameObjectA);
+    }
     return true;
 }

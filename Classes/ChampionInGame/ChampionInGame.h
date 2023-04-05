@@ -5,6 +5,7 @@
 #include "../Champion/Champion.h"
 #include "../Support/Coordinate.h"
 #include "Extension.h"
+#include "Skill/SkillInGame/SkillInGame.h"
 
 USING_NS_ALL;
 
@@ -72,6 +73,8 @@ public:
     virtual void setPosition(cocos2d::Vec2 pos);
     virtual Point getPosition();
     virtual void config();
+    virtual void contactTo(PhysicsContact& contact, GameObject* target) override;
+    virtual void contactBy(PhysicsContact& contact, GameObject* target) override;
 
 public:
     void setOwner(Player *pOwner, bool bIsRepresent);
@@ -122,6 +125,7 @@ public:
     //// Attack
     void attack(std::vector<ChampionInGame*>& vChampions);
     void beAttacked(ChampionInGame* attacker);
+    void beAttacked(SkillStatics *pStatics, ChampionInGame* attacker);
 
     /// Self-Button
     bool onTouch(cocos2d::Touch *touch, cocos2d::Event *event);

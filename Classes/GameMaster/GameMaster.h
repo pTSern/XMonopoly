@@ -4,6 +4,9 @@
 #include "Support/GameConstant.h"
 #include "ui/UIButton.h"
 
+#include "Statics/Statics.h"
+#include "Skill/SkillStatics/SkillStatics.h"
+
 USING_NS_ALL;
 
 #define GM_GI GameMaster::getInstance()
@@ -32,10 +35,17 @@ public:
     void setClientPlayer(Player* target);
     void generateMap(const std::string& tileMap);
 
+    void critStar(Point pos);
+    bool critStar(Point pos, float chance);
+
     CREATE_GET_FUNC(getClientPlayer, Player*, m_pClient);
     CREATE_SET_GET_FUNC(setMap, getMap, MapManager*, m_pMap);
     int getBitMask();
     //CREATE_GET_FUNC(getClientUI, PlayerUI*, m_pClientUI);
+
+    float magicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
+    float physicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
+    float totalDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
 
 protected:
     ZYSprite* m_pMarkIsTurnChampion_UP, * m_pMarkIsTurnChampion_DOWN;

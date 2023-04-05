@@ -21,9 +21,10 @@
 MapManager::MapManager() :
 p_pTileMap(nullptr),
 p_pArenaGroup(nullptr),
-p_hospital(Dir::WS, 0)
+p_hospital(Dir::UK, 0),
+p_NCorner(Dir::UK, 0), p_WCorner(Dir::UK, 0), p_ECorner(Dir::UK, 0), p_SCorner(Dir::UK, 0)
 {
-    p_vArenas.reserve(2);
+p_vArenas.reserve(2);
 }
 
 //Public
@@ -166,9 +167,9 @@ std::string MapManager::toString(int nTab)
 	std::string tab1 = ZY_SP_TAB(nTab + 1)
 
 	std::string layerToString;
-	for (auto it = p_mLayers.begin(); it != p_mLayers.end(); it++)
+	for (auto &x : p_mLayers)
 	{
-		layerToString += (tab1 + " > " + it->second->getLayerName());
+		layerToString += (tab1 + " > " + x.second->getLayerName());
 	}
 
 	ts += (tab + " + Position: " + ZYSP_VTS(p_pTileMap->getPosition()));
@@ -180,6 +181,10 @@ std::string MapManager::toString(int nTab)
 	ts += (tab + " + Angle Vertical: " + ZYSP_NTS(p_fAngleVertical) + " (" + ZYSP_NTS(ZY_SUPPORT_GI->radToDegree(p_fAngleVertical)) + ")");
 	ts += (tab + " + Object Tile Size: " + ZYSP_STS(p_objectTileSize) + "- True Object Tile Size: " + ZYSP_STS(p_tObjectTile));
 	ts += (tab + " + Object World Size: " + ZYSP_STS(p_world) + "- True World Size: " + ZYSP_STS(p_tWorld));
+    ts += (tab + " + North Corner: " + p_NCorner.toString(nTab + 1));
+    ts += (tab + " + West Corner: " + p_WCorner.toString(nTab + 1));
+    ts += (tab + " + South Corner: " + p_SCorner.toString(nTab + 1));
+    ts += (tab + " + East Corner: " + p_ECorner.toString(nTab + 1));
 
 	return ts;
 }
@@ -241,6 +246,33 @@ void MapManager::generateArenas()
 	}
 }
 
+void MapManager::findCorner(ValueMap obj, Coordinate coord)
+{
+	if(obj.find("corner") == obj.end()) return;
+    if(p_WCorner.getDir() == Dir::UK && obj.at("corner").asString() == "W")
+    {
+        p_WCorner = coord;
+        return;
+    }
+
+    if(p_SCorner.getDir() == Dir::UK && obj.at("corner").asString() == "S")
+    {
+        p_SCorner = coord;
+        return;
+    }
+
+    if(p_NCorner.getDir() == Dir::UK && obj.at("corner").asString() == "N")
+    {
+        p_NCorner = coord;
+        return;
+    }
+
+    if(p_ECorner.getDir() == Dir::UK && obj.at("corner").asString() == "E")
+    {
+        p_ECorner = coord;
+        return;
+    }
+}
 
 void MapManager::generatePropertyArenas(ValueMap obj)
 {
@@ -255,6 +287,8 @@ void MapManager::generatePropertyArenas(ValueMap obj)
 	float imPerLv = obj.at("income_multiple_increment").asFloat();
 	int minLv = obj.at("min_level").asInt();
 	int maxLv = obj.at("max_level").asInt();
+
+    findCorner(obj, coord);
 
 	auto property = Property::createWithProperties(name, coord, size, point, price, minLv, maxLv, sm, im, smPerLv, imPerLv);
 	if(property)
@@ -317,6 +351,8 @@ void MapManager::createTaxArena(ValueMap obj)
 	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
 	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
 
+    findCorner(obj, coord);
+
 	auto tax = obj.at("tax").asFloat();
 
 	auto ta = TaxArena::createFullPath(name, coord, size, point, tax);
@@ -333,6 +369,8 @@ void MapManager::createHospitalArena(ValueMap obj)
 	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
 	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
 	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
+
+    findCorner(obj, coord);
 
 	auto fee = obj.at("fee_per_hp").asFloat();
 
@@ -353,6 +391,8 @@ void MapManager::createShopArena(ValueMap obj)
 	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
 	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
 
+    findCorner(obj, coord);
+
 	auto sa = SpecialArenaFactory::getInstance()->create(name, name, coord, size, point);
 	if(sa)
 	{
@@ -370,6 +410,8 @@ void MapManager::createAirPortArena(ValueMap obj)
 
 	auto price = obj.at("price_per_arena").asFloat();
 
+    findCorner(obj, coord);
+
 	auto ta = AirportArena::createFullPath(name, coord, size, point, price);
 	if(ta)
 	{
@@ -384,6 +426,8 @@ void MapManager::createSpawnArena(ValueMap obj)
 	Coordinate coord((Dir)obj.at("dir").asInt(), obj.at("index").asInt());
 	Size size = getTrueObjectSize(obj.at("width").asFloat(), obj.at("height").asFloat());
 	Point point = getTrueObjectPoint(obj.at("x").asFloat(), obj.at("y").asFloat());
+
+    findCorner(obj, coord);
 
 	auto bonus = obj.at("bonus").asFloat();
 
@@ -458,4 +502,9 @@ bool MapManager::endTouch(Touch *touch, Event *event)
 Arena* MapManager::getArenaByCoord(Coordinate coord)
 {
 	return p_vArenas[coord.g_nIndex];
+}
+
+Point MapManager::getPointByCoord(Coordinate coord)
+{
+	return getArenaByCoord(coord)->getCentralPoint();
 }

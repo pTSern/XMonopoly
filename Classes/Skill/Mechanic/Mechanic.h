@@ -4,6 +4,8 @@
 #include "Skill/SkillInGame/SkillInGame.h"
 #include "ChampionInGame/ChampionInGame.h"
 #include "Skill/SkillManager/SkillManager.h"
+#include "GameMaster/GameMaster.h"
+#include "Map/Map.h"
 
 struct SkillRequirement
 {
@@ -37,27 +39,44 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////
 
-BEGIN_CREATE_REFCLASS(Projectile, GameObject)
+class Projectile : public GameObject
+{
+#define INFINITE_TARGET -1
+public:
+    static Projectile* createPiercingProjectile(const std::string& texture, ChampionInGame* caster, int distance, HeadDir dir);
+    static Projectile* createHitNumberProjectile(const std::string& texture, ChampionInGame* caster, int distance, int numberTarget, HeadDir dir);
+    static Projectile* createSingleTargetProjectile(const std::string& texture, ChampionInGame* caster, int distance, HeadDir dir);
 
 public:
-    enum class ProjectileType
-    {
-        END_POINT,
-        NUMBER
-    };
-
-public:
+    Projectile();
     virtual ~Projectile();
+    virtual bool init();
+    virtual void log();
+    virtual std::string toString(int nTab = 2);
     virtual void update(float dt);
+    virtual void contactTo(PhysicsContact& contact, GameObject* target) override;
+    virtual void contactBy(PhysicsContact& contact, GameObject* target) override;
+
+protected:
+    bool initWithProperties(const std::string& texture, ChampionInGame* caster, int distance, int targetNum, HeadDir dir);
+    void autoPathFinder();
+    void autoDestruct();
+    void initAction();
 
 protected:
     int m_nMoveDistance;
     SkillStatics *m_pAddition;
-    int m_nStartPoint;
+    Point m_startPoint;
+    int m_nStartPoint, m_nEndPoint;
     HeadDir m_eDir;
-    ProjectileType m_eType;
 
-END_CREATE_REFCLASS
+    int m_nHitTarget, m_nNumberTarget;
+    int m_nLoop;
+    ZYSprite* m_pProjectile;
+
+private:
+    const std::string p_sClassName = "Projectile";
+};
 
 ////////////////////////////////////////////////////////////////////////
 

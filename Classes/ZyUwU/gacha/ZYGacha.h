@@ -3,7 +3,6 @@
 #include "ZyUwU/math/ZYFraction.h"
 #include "ZyUwU/platform/ZYMacros.h"
 
-
 #include "cocos2d.h"
 
 NS_ZY_BEGIN
@@ -26,6 +25,7 @@ END_CREATE_REFCLASS;
 
 
 
+#define ZYGC_GI zy::ZYGacha::getInstance()
 
 BEGIN_CREATE_INSTANCE_REFCLASS(ZYGacha, cocos2d::Ref)
 
@@ -34,8 +34,8 @@ public:
     /**
      * Test the lucky
      *
-     * @praama fRate: the change to be success
-     * @pragma bIsPercent: set TRUE if the input is decimal (0.05)\n
+     * @prama fRate: the change to be success
+     * @prama bIsPercent: set TRUE if the input is decimal (0.05)\n
      *                         FALSE if the input is not decimal (5%)
      * @return true: success\n
      *         false: fail

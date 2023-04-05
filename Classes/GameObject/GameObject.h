@@ -21,6 +21,8 @@ public:
 	virtual void destructLog();
 	virtual std::string toString(int nTab = 2);
 	virtual bool init();
+	virtual void contactTo(PhysicsContact& contact, GameObject* target);
+	virtual void contactBy(PhysicsContact& contact, GameObject* target);
 
 public:
 	//virtual void setName(const std::string& sName) override;
@@ -32,7 +34,6 @@ public:
 	void setDeputizeTexture(const std::string& path);
 	//CREATE_GET_FUNC(getDeputizeTexture, std::string, this->m_pProperties->getDeputizeTexture());
 	CREATE_GET_FUNC(getDeputizeTexture, std::string, m_sDeputizeTexture)
-
 
 protected:
 	//XProperties *m_pProperties;

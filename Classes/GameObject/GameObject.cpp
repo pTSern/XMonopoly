@@ -69,6 +69,15 @@ std::string GameObject::toString(int nTab)
 	return ts;
 }
 
+void GameObject::contactTo(PhysicsContact& contact, GameObject* target)
+{
+	if(m_pPhysicBody) CCLOG("Call %s: CT BETTER OVERRIDE ME!", p_sClassName.c_str());
+}
+
+void GameObject::contactBy(PhysicsContact& contact, GameObject* target)
+{
+	if(m_pPhysicBody) CCLOG("Call %s: CB BETTER OVERRIDE ME!", p_sClassName.c_str());
+}
 
 
 

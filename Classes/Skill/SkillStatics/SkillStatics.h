@@ -39,6 +39,9 @@ public:
     CREATE_GET_FUNC(getMagicCritRate, float, m_cMagicCrit.getRate());
     CREATE_GET_FUNC(getMagicCritDmgMul, float, m_cMagicCrit.getDmgMultiple());
 
+    CREATE_SET_GET_FUNC(setPhysicPieInNum, getPhysicPieInNum, float, m_fPhysicPie);
+    CREATE_SET_GET_FUNC(setMagicPieInNum, getMagicPieInNum, float, m_fMagicPie);
+
     CREATE_SET_GET_FUNC(setDescription, getDescription, std::string, m_sDescription);
 
     inline void setPhysicPiercing(PercentStatics cPhysicPie) { this->m_cPhysicPie = cPhysicPie; }
@@ -68,6 +71,7 @@ protected:
     float m_fPhysicDmg, m_fMagicDmg;
     float m_fPureDmg;
     PercentStatics m_cPhysicPie, m_cMagicPie;
+    float m_fPhysicPie, m_fMagicPie;
     int m_nCoolDown, m_nCurrentCoolDown;
     float m_fMnCost, m_fHpCost, m_fSpCost;
     CritStatics m_cPhysicCrit, m_cMagicCrit;

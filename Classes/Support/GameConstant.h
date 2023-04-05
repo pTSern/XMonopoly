@@ -35,3 +35,17 @@ static const std::string special_arena_tax_key("TAX");
 static const std::string special_arena_hospital_key("HOSPITAL");
 static const std::string special_arena_shop_key("SHOP");
 static const std::string special_arena_airport_key("AIRPORT");
+
+static const std::string EVENT_FINISH_LOADED("event_loaded");
+
+static const float magic_res_formula_base(1);
+static const float magic_res_formula_factory(0.05f);
+
+#define MRFB magic_res_formula_base
+#define MRFF magic_res_formula_factory
+
+static const float physic_res_formula_base(1);
+static const float physic_res_formula_factory(0.05f);
+
+#define PRFB physic_res_formula_base
+#define PRFF physic_res_formula_factory

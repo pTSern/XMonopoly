@@ -46,6 +46,7 @@ public:
      */
     static Fraction fastShortCut(int nNumerator, int nDenominator);
     static Fraction clone(Fraction cCLone, bool bIsShortCut = true);
+    static float fastPercent(float numerator);
 
     /**
      * Get the fraction in decimal

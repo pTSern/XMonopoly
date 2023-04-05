@@ -152,7 +152,7 @@ public:                                              	\
     virtual void log();                                 \
     __NAME__();                                         \
 private:                                               	\
-	std::string p_sClassName = #__NAME__;               \
+	const std::string p_sClassName = #__NAME__;         \
 
 #define END_CREATE_REFCLASS };
 
@@ -195,7 +195,7 @@ public:                                                                         
 	__NAME__();                                                                          	\
 private:                                                                                 	\
 	static __NAME__* sp_pInstance;                                                       	\
-	std::string p_sClassName = #__NAME__;               \
+	const std::string p_sClassName = #__NAME__;         \
 
 #define END_CREATE_INSTANCE_REFCLASS };
 
