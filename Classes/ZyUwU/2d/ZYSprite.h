@@ -20,6 +20,7 @@ public:
 	static ZYSprite* create(const char* pFileName, bool bIsScale = true);
 	static ZYSprite* create(const std::string& filename, const Rect& rect, bool bIsScale = true);
 	static ZYSprite* create(cocos2d::Texture2D *p);
+	static ZYSprite* create(ZYSprite* target);
 
 public:
 	CREATE_GET_FUNC(getMemoryPosition, cocos2d::Point, m_cMemoryPosition);

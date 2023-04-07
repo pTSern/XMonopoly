@@ -96,6 +96,7 @@ public:
     CREATE_GET_FUNC(isRepresentPlayer, bool, m_bIsRepresentPlayer);
     CREATE_GET_FUNC(isDeath, bool, m_eStatus == ChampionStatus::DEATH);
     CREATE_GET_FUNC(getAvatar, ZYSprite*, m_pAvatar);
+    CREATE_GET_FUNC(getIcon, ZYSprite*, m_pIcon);
 
     bool isValidTurn();
 
@@ -109,6 +110,9 @@ public:
     void onDeath();
     void onDying();
     void respawn();
+
+    void initAnimation();
+    int numberFrames(const std::string& path, const std::string& key);
 
     void setLandingArena(Arena *pArena);
     void reloadDataFromMemory(int nRound);

@@ -26,7 +26,7 @@ static SceneRegister<BattleScene> s_register("BATTLE");
 Scene* BattleScene::createScene()
 {
     auto scene = Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     //auto scene = Scene::create();
 
     auto layer = BattleScene::create();
@@ -75,7 +75,7 @@ bool BattleScene::init()
     this->scheduleUpdate();
 
     auto dice = Dice::createWithProperties("dice/128.png");
-    auto champ = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
+    auto champ = Champion::createWithProperties("champion/zed.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui = ChampionUI::createDefault();
     auto sig = SkillInGame::createTest();
     sig->setSkillMechanic(SkillInGame::MoveBySkill);
@@ -98,7 +98,7 @@ bool BattleScene::init()
     cig->setName("CHAMP A");
 
     auto dice2 = Dice::createWithProperties("dice/128-red.png");
-    auto champ2 = Champion::createWithProperties("champion/char-3.png", Statics::createWithProperties(), ChampionStatics::create());
+    auto champ2 = Champion::createWithProperties("champion/zed.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
     sig2->setSkillMechanic(SkillInGame::MoveBySkill);
@@ -114,8 +114,6 @@ bool BattleScene::init()
     m_vPlayers.push_back(player2);
     cig2->setPosition(coord2);
     cig2->setName("CHAMP B");
-
-    map->log();
 
     for(auto z : m_vPlayers)
     {

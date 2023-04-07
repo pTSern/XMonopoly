@@ -103,7 +103,6 @@ void Projectile::contactTo(PhysicsContact& contact, GameObject* target)
     auto champ = dynamic_cast<ChampionInGame*>(target);
     if(champ)
     {
-        champ->g
     }
 }
 

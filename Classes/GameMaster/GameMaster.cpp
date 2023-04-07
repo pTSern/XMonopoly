@@ -4,6 +4,9 @@
 #include "Player/UI/PlayerUI.h"
 #include "Map/Map.h"
 
+#include "Statics/Statics.h"
+//#include "Skill/SkillStatics/SkillStatics.h"
+
 GameMaster* GameMaster::sp_pInstance = nullptr;
 
 //// Constructor
@@ -13,7 +16,8 @@ m_pIsTurnChampion(nullptr),
 m_pMarkIsTurnChampion_UP(nullptr), m_pMarkIsTurnChampion_DOWN(nullptr),
 m_nChampionIsTurnIndex(-1), m_nRound(0),
 m_pRunningScene(nullptr), m_pBattleLayer(nullptr),
-m_pClient(nullptr), m_pMap(nullptr), p_bLockEndGame(false)
+m_pClient(nullptr), m_pMap(nullptr), p_bLockEndGame(false),
+m_pClientUI(nullptr), p_nBitmask(0)
 {
 
 }
@@ -229,12 +233,49 @@ float GameMaster::magicDmgCalculator(Statics* defender, SkillStatics* attacker, 
 
 float GameMaster::physicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
 {
+    float ar = defender->getArmor() - attacker->getPhysicPieInNum();
+    float arToDc = Fraction::fastPercent(PRFB - (PRFF * ar)/(PRFB + PRFF * abs(ar)));
+    // Total armor resistance in decimal (0.xxx)
+    float totalArInDc = arToDc * (1 - attacker->getThePhysicPiercing().getPcAmount());
+    // Run gacha if this crit
 
+    bool isCrit = critStar(pos, attacker->getPhysicCritRate());
+    // Run crit
+
+    // Total magic damage
+    float totalMd = (isCrit*attacker->getPhysicCritDmgMul() + 1) * attacker->getPhysicDmg();
+    float causeDmg = (1 - totalArInDc) * totalMd;
+
+    return causeDmg;
 }
 
 float GameMaster::totalDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
 {
+    return magicDmgCalculator(defender, attacker, pos) + physicDmgCalculator(defender, attacker, pos);
+}
 
+void GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender)
+{
+    auto dim = LayerColor::create(Color4B::BLACK);
+    m_pBattleLayer->addChild(dim);
+    dim->setGlobalZOrder(5);
+    dim->setOpacity(dim->getOpacity()/2);
+
+    auto atk = attacker->getIcon()->clone();
+    m_pBattleLayer->addChild(atk, 10);
+    atk->setPosition(Point(ZYDR_TGVS.width/4*3, ZYDR_TGVS.height/2));
+    auto def = defender->getIcon()->clone();
+    m_pBattleLayer->addChild(def, 10);
+    def->setPosition(Point(ZYDR_TGVS.width/4, ZYDR_TGVS.height/2));
+    auto delay = DelayTime::create(2.0f);
+    auto x = def->getPosition();
+    auto rm = RemoveSelf::create(true);
+    auto mt = MoveTo::create(0.5f, Point( x.x + atk->getContentSize().width/2,x.y));
+    auto sq = Sequence::create(delay, rm, nullptr);
+    auto seq = Sequence::create(mt, rm->clone(), nullptr);
+    atk->runAction(seq);
+    def->runAction(sq);
+    dim->runAction(sq->clone());
 }
 
 bool GameMaster::critStar(Point pos, float chance)

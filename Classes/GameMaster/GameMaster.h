@@ -4,9 +4,6 @@
 #include "Support/GameConstant.h"
 #include "ui/UIButton.h"
 
-#include "Statics/Statics.h"
-#include "Skill/SkillStatics/SkillStatics.h"
-
 USING_NS_ALL;
 
 #define GM_GI GameMaster::getInstance()
@@ -16,6 +13,8 @@ class ChampionInGame;
 class Player;
 class MapManager;
 class PlayerUI;
+class Statics;
+class SkillStatics;
 BEGIN_CREATE_INSTANCE_REFCLASS(GameMaster, Node)
 
 public:
@@ -34,6 +33,8 @@ public:
     void floatingNotify(const std::string& message);
     void setClientPlayer(Player* target);
     void generateMap(const std::string& tileMap);
+
+    void attackScene(ChampionInGame* attacker, ChampionInGame* defender);
 
     void critStar(Point pos);
     bool critStar(Point pos, float chance);

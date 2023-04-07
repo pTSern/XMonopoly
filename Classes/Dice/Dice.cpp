@@ -98,11 +98,13 @@ void Dice::log()
 int Dice::rollDice()
 {
     auto dice = random(1, 6);
+    dice = 3;
     m_vDiceMemory.push_back(dice);
 
     m_centerRect.origin.x = diceSize.width * (dice - 1);
     m_pDice->setTextureRect(m_centerRect);
     //CCLOG("DICE NUM: %d", dice);
+
 
     //// Disable Roll button
     this->m_pButton->setVisible(false);

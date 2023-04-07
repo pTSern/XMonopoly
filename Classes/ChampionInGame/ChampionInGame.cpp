@@ -183,7 +183,7 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     this->addChild(m_pIcon);
 
     m_pSelfButton = ui::Button::create(m_pIcon->getResourceName());
-
+    //this->m_pSelfButton->setOpacity(0);
 
     this->addChild(m_pSelfButton, 1);
 
@@ -207,6 +207,7 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     this->setPhysicsBody(m_pPhysicBody);
 
     this->scheduleUpdate();
+    initAnimation();
     return true;
 }
 
@@ -286,6 +287,8 @@ void ChampionInGame::attack(std::vector<ChampionInGame*>& vChampions)
 
 void ChampionInGame::beAttacked(ChampionInGame* attacker)
 {
+    //TEST
+    GM_GI->attackScene(attacker, this);
     this->getStatics()->reduceHp(attacker->getStatics()->getStatics()->getAttackDmg());
 }
 
@@ -536,4 +539,53 @@ void ChampionInGame::setHUD(bool var)
 bool ChampionInGame::isValidTurn()
 {
     return m_bIsEndTurn;
+}
+
+void ChampionInGame::initAnimation()
+{
+    auto path = m_pIcon->getResourceName();
+    //Remove ".png"
+    auto path_name = (path.substr(9, path.length() - 13) + "_idle");
+    auto ani_path = "champion/ani/" + path_name += ".png";
+    auto ani_plist = "champion/ani/" + path_name += ".plist";
+
+    auto cache = SpriteFrameCache::getInstance();
+    cache->addSpriteFramesWithFile(ani_plist);
+
+    //auto ani_cache = AnimationCache::getInstance();
+    //ani_cache->addAnimationsWithFile(ani_plist);
+    //auto ani = Animate::create(ani_cache->getAnimation("run"));
+    //m_pIcon->runAction(RepeatForever::create(ani));
+
+    int num = numberFrames(ani_plist, path_name);
+
+    Vector<SpriteFrame*> frames;
+    for (int i = 0; i <= num; i++) {
+        std::string frameName = StringUtils::format((path_name + "_%d.png").c_str(), i);
+        auto frame = cache->getSpriteFrameByName(frameName);
+        frames.pushBack(frame);
+    }
+
+    float frameDelay = 0.1f;
+    auto animation = Animation::createWithSpriteFrames(frames, frameDelay);
+    auto animate = Animate::create(animation);
+    auto repeat = RepeatForever::create(animate);
+
+    m_pIcon->runAction(repeat);
+}
+
+int ChampionInGame::numberFrames(const std::string& path, const std::string& key)
+{
+    const std::string fullPath = FileUtils::getInstance()->fullPathForFilename(path);
+    ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(path);
+    int numFrames = 0;
+    ValueMap& framesDict = dict["frames"].asValueMap();
+    for (auto iter = framesDict.begin(); iter != framesDict.end(); ++iter) {
+        std::string skey = iter->first;
+        if (skey.find(key) == 0) {
+            numFrames++;
+        }
+    }
+
+    return numFrames-1;
 }
