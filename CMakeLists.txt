@@ -86,6 +86,8 @@ list(APPEND GAME_SOURCE
         Classes/GameScene/ShopScene.cpp
         Classes/GameScene/MarketScene.cpp
         Classes/GameScene/GameOver.cpp
+        Classes/GameScene/LoadingScene.cpp
+        Classes/GameScene/SceneTransition.cpp
 
         Classes/LogManager/LogManager.cpp
 
@@ -187,6 +189,8 @@ list(APPEND GAME_HEADER
         Classes/GameScene/ShopScene.h
         Classes/GameScene/MarketScene.h
         Classes/GameScene/GameOver.h
+        Classes/GameScene/LoadingScene.h
+        Classes/GameScene/SceneTransition.h
 
         Classes/Dice/Dice.h
 
