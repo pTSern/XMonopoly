@@ -52,3 +52,5 @@ static const float physic_res_formula_factory(0.05f);
 
 static const float animation_dilation_each_frame(0.125f);
 static const float animation_move_time(0.25f);
+
+static const std::string champion_animation_dir("champion/ani/");

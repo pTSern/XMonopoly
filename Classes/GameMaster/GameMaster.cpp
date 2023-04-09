@@ -3,8 +3,14 @@
 #include "Player/Player.h"
 #include "Player/UI/PlayerUI.h"
 #include "Map/Map.h"
-
 #include "Statics/Statics.h"
+
+#include "external/json/document.h"
+#include "external/json/writer.h"
+#include "external/json/stringbuffer.h"
+
+using namespace rapidjson;
+
 //#include "Skill/SkillStatics/SkillStatics.h"
 
 GameMaster* GameMaster::sp_pInstance = nullptr;
@@ -232,6 +238,10 @@ float GameMaster::totalDmgCalculator(Statics* defender, SkillStatics* attacker, 
 
 float GameMaster::attackScene(ChampionInGame* attacker, std::vector<ChampionInGame*>& defenders)
 {
+    if(defenders.empty())
+    {
+        return 0;
+    }
     float total_delay = 0;
     Vector<FiniteTimeAction*> vec;
     for(auto&x : defenders)
@@ -250,9 +260,11 @@ float GameMaster::attackScene(ChampionInGame* attacker, std::vector<ChampionInGa
 float GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender, bool isPreCalculate)
 {
     auto path = attacker->getIcon()->getResourceName();
-    auto path_name = (path.substr(9, path.length() - 13) + "_attack");
-    auto ani_path = "champion/ani/" + path_name + ".png";
-    auto ani_plist = "champion/ani/" + path_name + ".plist";
+    auto name = path.substr(9, path.length() - 13);
+    auto path_name = name + "_attack";
+    auto half_path = champion_animation_dir + std::string(path_name);
+    auto ani_path = half_path + ".png";
+    auto ani_plist = half_path + ".plist";
 
     int num = numberFrames(ani_plist, path_name);
     auto total_delay = (num + 1) * animation_dilation_each_frame + animation_move_time;
@@ -300,15 +312,31 @@ float GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender
                                     def->replaceTexture(ani_def_path);
                                });
 
-    auto sq = Sequence::create(DelayTime::create(animation_move_time + animation_dilation_each_frame), cb, DelayTime::create((num) * animation_dilation_each_frame), rm,  nullptr);
-    auto saq = Sequence::create(delay, rm->clone(), nullptr);
-    auto seq = Sequence::create(mt, animate, rm->clone(), nullptr);
+    auto index = getAttackIndexInAnimation(name);
+    auto dim_sq = Sequence::create(DelayTime::create(animation_move_time + animation_dilation_each_frame), DelayTime::create((num) * animation_dilation_each_frame), rm,  nullptr);
+    auto def_sq = Sequence::create(DelayTime::create(animation_move_time + animation_dilation_each_frame*index), cb, DelayTime::create((num - index + 1) * animation_dilation_each_frame), rm->clone(), nullptr);
+    auto atk_sq = Sequence::create(mt, animate, rm->clone(), nullptr);
 
-    atk->runAction(seq);
-    def->runAction(sq);
-    dim->runAction(saq);
+    atk->runAction(atk_sq);
+    def->runAction(def_sq);
+    dim->runAction(dim_sq);
 
     return total_delay;
+}
+
+const int GameMaster::getAttackIndexInAnimation(const std::string& name)
+{
+    auto path = champion_animation_dir + std::string(name) + ".json";
+    auto data = CCFU_GI->getStringFromFile(path);
+    Document doc;
+    doc.Parse(data.c_str());
+    if(doc.HasParseError())
+    {
+        CCLOG("ERROR");
+        return 1;
+    }
+    const rapidjson::Value& value = doc[name.c_str()];
+    return value["attack_index"].GetInt();
 }
 
 bool GameMaster::critStar(Point pos, float chance)

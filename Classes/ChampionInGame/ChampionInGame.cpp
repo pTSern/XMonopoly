@@ -293,10 +293,10 @@ void ChampionInGame::applyEffectToSelf(std::vector<GameEffect*> vEffects)
 void ChampionInGame::attack(std::vector<ChampionInGame*>& vChampions)
 {
     auto delay = GM_GI->attackScene(this, vChampions);
-    for(auto &x : vChampions)
-    {
-        x->beAttacked(this);
-    }
+    //for(auto &x : vChampions)
+    //{
+    //    x->beAttacked(this);
+    //}
     auto seq = Sequence::create(DelayTime::create(delay),
                                 CallFunc::create(
                                         [&]()
@@ -315,6 +315,11 @@ void ChampionInGame::beAttacked(ChampionInGame* attacker)
 
 void ChampionInGame::beAttacked(SkillStatics *pStatics, ChampionInGame* attacker)
 {
+}
+
+void ChampionInGame::reduceHp(float amount)
+{
+    this->getStatics()->reduceHp(amount);
 }
 
 void ChampionInGame::setOwner(Player *pOwner, bool bIsRepresent)

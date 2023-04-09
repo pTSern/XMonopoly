@@ -1,8 +1,106 @@
 #include "SkillInGame.h"
+
+#include <utility>
 #include "Skill/SkillManager/SkillManager.h"
 #include "ChampionInGame/ChampionInGame.h"
 #include "Dice/Dice.h"
 #include "Player/Player.h"
+
+/////////////////////////////////////////////////////////////////////
+
+///] Constructor
+
+SkillStaticsAddition::SkillStaticsAddition(const float amount, const float percent, std::string& name) :
+g_fAmount(amount), g_fPercentOfAmount(percent), g_sName(name)
+{
+
+}
+
+SkillStaticsAddition::SkillStaticsAddition(const float amount, std::string& name) :
+g_fAmount(amount), g_fPercentOfAmount(1), g_sName(name)
+{
+
+}
+
+SkillStaticsAddition::SkillStaticsAddition(const SkillStaticsAddition& other)
+{
+    *this = other;
+}
+
+///] Static
+
+const SkillStaticsAddition SkillStaticsAddition::NULL_VALUE(-1.0f, -1.0f, (std::string &)"");
+
+///] Operator
+
+inline SkillStaticsAddition::operator bool() const
+{
+    if(g_fAmount < 0 || g_fPercentOfAmount < 0)
+    {
+        return false;
+    }
+    return true;
+}
+
+SkillStaticsAddition& SkillStaticsAddition::operator=(const SkillStaticsAddition& other)
+{
+    if(this == &other)
+    {
+        return *this;
+    }
+
+    this->g_fAmount = other.g_fAmount;
+    this->g_fPercentOfAmount = other.g_fPercentOfAmount;
+    this->g_sName = other.g_sName;
+
+    return *this;
+}
+
+/////////////////////////////////////////////////////////////////////
+
+AdditionStats* AdditionStats::createWithData(const SkillStaticsAddition* data, ...)
+{
+    va_list args;
+    va_start(args, data);
+
+    auto ret = AdditionStats::createWithDataList(data, args);
+
+    va_end(args);
+    return ret;
+}
+
+AdditionStats* AdditionStats::createWithDataList(const SkillStaticsAddition* data, va_list args)
+{
+    std::vector<const SkillStaticsAddition*> list;
+
+    if(data)
+    {
+        list.push_back(data);
+        auto var = va_arg(args, const SkillStaticsAddition*);
+        while(var)
+        {
+            list.push_back(var);
+            var = va_arg(args, const SkillStaticsAddition*);
+        }
+    }
+
+    return AdditionStats::createWithVector(list);
+}
+
+AdditionStats* AdditionStats::createWithVector(std::vector<const SkillStaticsAddition*>& vector)
+{
+    auto ret = new (std::nothrow) AdditionStats();
+
+    if(ret)
+    {
+        ret->m_vList = vector;
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////
 
 //// Constructor
 

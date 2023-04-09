@@ -36,6 +36,7 @@ public:
 
     float attackScene(ChampionInGame* attacker, ChampionInGame* defender, bool isPreCalculate = false);
     float attackScene(ChampionInGame* attacker, std::vector<ChampionInGame*>& defenders);
+    const int getAttackIndexInAnimation(const std::string& name);
 
     void critStar(Point pos);
     bool critStar(Point pos, float chance);

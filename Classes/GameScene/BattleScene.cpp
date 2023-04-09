@@ -90,10 +90,10 @@ bool BattleScene::init()
     //player2->disable();
     cig2->setPosition(coord2);
     cig2->setName("CHAMP B");
-    cig2->getStatics()->getStatics()->setSpeed(100);
+    cig2->getStatics()->getStatics()->setSpeed(1);
 
     auto dice = Dice::createWithProperties("dice/128.png");
-    auto champ = Champion::createWithProperties("champion/zed.png", Statics::createWithProperties(), ChampionStatics::create());
+    auto champ = Champion::createWithProperties("champion/duelist.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui = ChampionUI::createDefault();
     auto sig = SkillInGame::createTest();
     sig->setSkillMechanic(SkillInGame::MoveBySkill);
@@ -112,6 +112,7 @@ bool BattleScene::init()
     player->setName("PLAYER 1");
     cig->setPosition(coord);
     cig->setName("CHAMP A");
+    cig->getStatics()->getStatics()->setSpeed(0);
 
     m_vPlayers.push_back(player2);
     m_vPlayers.push_back(player);

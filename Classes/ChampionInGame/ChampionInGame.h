@@ -15,12 +15,6 @@ enum class HeadDir
     BEHIND = -1
 };
 
-enum class MoveType
-{
-    MOVE_TO,
-    MOVE_BY
-};
-
 class Player;
 class Arena;
 class GameEffect;
@@ -67,12 +61,12 @@ public:
     };
 
 public:
-    virtual void update(float dt);
+    virtual void update(float dt) override;
     virtual void setPosition(Coordinate& coord);
     virtual void setPosition(Arena* pArena);
     virtual void setPosition(cocos2d::Vec2 pos);
     virtual Point getPosition();
-    virtual void config();
+    virtual void config() override;
     virtual void contactTo(PhysicsContact& contact, GameObject* target) override;
     virtual void contactBy(PhysicsContact& contact, GameObject* target) override;
 
@@ -131,6 +125,7 @@ public:
     void attack(std::vector<ChampionInGame*>& vChampions);
     void beAttacked(ChampionInGame* attacker);
     void beAttacked(SkillStatics *pStatics, ChampionInGame* attacker);
+    void reduceHp(float amount);
 
     /// Self-Button
     bool onTouch(cocos2d::Touch *touch, cocos2d::Event *event);
