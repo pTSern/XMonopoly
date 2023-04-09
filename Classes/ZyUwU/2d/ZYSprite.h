@@ -8,6 +8,9 @@
 #include "ZYShaderHelper.h"
 #include "ZYSupport2D.h"
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#include "ZyUwU/platform/android/ZYPlatformDefine-android.h"
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 USING_NS_CC;
 
 NS_ZY_BEGIN

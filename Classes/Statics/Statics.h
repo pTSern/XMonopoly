@@ -134,17 +134,21 @@ public:
     CREATE_GET_FUNC(getCurrentSpInPercent, float, m_fCurrentSp/m_pStatics->getMaxSkillPoint());
     CREATE_GET_FUNC(isAlive, bool, m_fCurrentHp > 0);
 
-    CREATE_ADD_FUNC(addHp, m_fCurrentHp);
     CREATE_ADD_FUNC(addMana, m_fCurrentMana);
     CREATE_ADD_FUNC(addSp, m_fCurrentSp);
+    void addHp(float amount);
 
-    CREATE_REDUCE_FUNC(reduceHp, m_fCurrentHp);
     CREATE_REDUCE_FUNC(reduceMana, m_fCurrentMana);
     CREATE_REDUCE_FUNC(reduceSp, m_fCurrentSp);
+    void reduceHp(float var);
 
     bool reduceLife(int num = 1);
     void addLife(int num = 1);
     void regen(float multiple = 0);
+
+    void reduceHpEqualToPercentOfMaxHp(float percent, bool isDecimal = false);
+    void reduceManaEqualToPercentOfMaxMana(float percent, bool isDecimal = false);
+    void reduceSpEqualToPercentOfMaxSp(float percent, bool isDecimal = false);
 
     bool doRespawn(const float percent = 100);
 
@@ -152,5 +156,8 @@ protected:
     Statics *m_pStatics;
     float m_fCurrentHp, m_fCurrentMana, m_fCurrentSp;
     int m_nCurrentLife;
+
+private:
+    bool p_bStopHealing;
 
 END_CREATE_REFCLASS

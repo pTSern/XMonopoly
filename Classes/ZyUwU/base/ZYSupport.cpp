@@ -1,5 +1,6 @@
 #include "ZYSupport.h"
 #include "ZyUwU/2d/ZYLabel.h"
+#include "ZYDirector.h"
 
 NS_ZY_BEGIN
 
@@ -114,7 +115,41 @@ void ZYSupport::fitStringInSize(zy::ZYLabel* pLabel, std::string text, cocos2d::
     }
     if(isRerun) fitStringInSize(pLabel, str, borderSize, nMinFontSize);
 }
-//Virtual
+
+void ZYSupport::floatingNotify(Node* target, const std::string& message, const TTFConfig& ttf, const Color3B& color, const Point& position, const int& order, const float& duration, bool isLock)
+{
+    if(target)
+    {
+        auto dim_layer = LayerColor::create(Color4B::BLACK);
+        target->addChild(dim_layer, order);
+        dim_layer->setOpacity(dim_layer->getOpacity()/2);
+
+        auto label = ZYLabel::createWithTTF(ttf, message, TextHAlignment::CENTER, ZYDR_TGVS.width/4*3);
+        label->setColor(color);
+        label->setPosition(position);
+        target->addChild(label, order + 1);
+
+        const float _duration = 0.75f;
+
+        if(!isLock)
+        {
+            label->setScale(0);                 ///< Make the label to be very small
+
+            ///v Create actions for label
+            auto scale_to = ScaleTo::create(_duration, 1.0f);   ///< Scale to 1 - the true size
+            auto delay = DelayTime::create(duration);
+            auto fade = FadeOut::create(_duration/3);
+            auto remove = RemoveSelf::create(true);
+            auto label_seq = Sequence::create(scale_to, delay, fade, remove, nullptr);
+            auto dim_seq = Sequence::create(DelayTime::create(duration + _duration*2), remove->clone(), nullptr);
+            ///^ End create actions
+
+            label->runAction(label_seq);
+            dim_layer->runAction(dim_seq);
+        }
+    }
+}
+///] Virtual
 
 bool ZYSupport::init()
 {
@@ -131,7 +166,8 @@ void ZYSupport::log()
 {
 
 }
-//protected
+
+///] protected
 
 const Color3B& ZYSupport::convert4FTo3B(const Color4F& color)
 {

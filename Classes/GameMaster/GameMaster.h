@@ -34,10 +34,13 @@ public:
     void setClientPlayer(Player* target);
     void generateMap(const std::string& tileMap);
 
-    void attackScene(ChampionInGame* attacker, ChampionInGame* defender);
+    float attackScene(ChampionInGame* attacker, ChampionInGame* defender, bool isPreCalculate = false);
+    float attackScene(ChampionInGame* attacker, std::vector<ChampionInGame*>& defenders);
 
     void critStar(Point pos);
     bool critStar(Point pos, float chance);
+
+    int numberFrames(const std::string& path, const std::string& key);
 
     CREATE_GET_FUNC(getClientPlayer, Player*, m_pClient);
     CREATE_SET_GET_FUNC(setMap, getMap, MapManager*, m_pMap);

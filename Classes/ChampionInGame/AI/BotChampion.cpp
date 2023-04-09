@@ -65,9 +65,12 @@ std::string TesterBot::toString(int nTab)
 
 void TesterBot::startTurn()
 {
-    ChampionInGame::startTurn();
+    if(this->m_eStatus != ChampionStatus::DEATH)
+    {
+        ChampionInGame::startTurn();
 
-    chooseSkill();
+        chooseSkill();
+    }
 }
 
 void TesterBot::chooseSkill()

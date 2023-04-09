@@ -49,3 +49,6 @@ static const float physic_res_formula_factory(0.05f);
 
 #define PRFB physic_res_formula_base
 #define PRFF physic_res_formula_factory
+
+static const float animation_dilation_each_frame(0.125f);
+static const float animation_move_time(0.25f);

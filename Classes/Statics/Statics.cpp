@@ -180,7 +180,8 @@ IngameStatics::IngameStatics() :
 m_pStatics(nullptr),
 m_fCurrentHp(1),
 m_fCurrentSp(1),
-m_fCurrentMana(1)
+m_fCurrentMana(1),
+p_bStopHealing(false)
 {
 
 }
@@ -251,6 +252,7 @@ void IngameStatics::addLife(int num)
 
 void IngameStatics::regen(const float multiple)
 {
+    if(p_bStopHealing) return;
     this->m_fCurrentHp += m_pStatics->getRegenHp() * (1.0f + multiple);
     this->m_fCurrentSp += m_pStatics->getRegenSkillPoint() * (1.0f + multiple);
     this->m_fCurrentMana += m_pStatics->getRegenMana() * (1.0f + multiple);
@@ -262,6 +264,7 @@ bool IngameStatics::doRespawn(float percent)
     if(reduceLife())
     {
         this->fillStatics(percent);
+        p_bStopHealing = false;
         return true;
     }
     return false;
@@ -301,7 +304,51 @@ IngameStatics* IngameStatics::clone()
 
 }
 
-//Virtual
+void IngameStatics::reduceHp(float var)
+{
+    this->m_fCurrentHp -= var;
+    if(m_fCurrentHp <= 0)
+    {
+        this->m_fCurrentHp = 0;
+        p_bStopHealing = true;
+    }
+}
+
+void IngameStatics::addHp(float amount)
+{
+    if(p_bStopHealing) return;
+    m_fCurrentHp += amount;
+    autoValid();
+}
+
+void IngameStatics::reduceHpEqualToPercentOfMaxHp(float percent, bool isDecimal)
+{
+    if(percent < 0) percent = 0;
+    auto decimal = percent;
+    if(!isDecimal) decimal = zy::Fraction::fastPercent(decimal);
+
+    reduceHp(decimal * m_pStatics->getMaxHp());
+}
+
+void IngameStatics::reduceManaEqualToPercentOfMaxMana(float percent, bool isDecimal)
+{
+    if(percent < 0) percent = 0;
+    auto decimal = percent;
+    if(!isDecimal) decimal = zy::Fraction::fastPercent(decimal);
+
+    reduceMana(decimal * m_pStatics->getMaxMana());
+}
+
+void IngameStatics::reduceSpEqualToPercentOfMaxSp(float percent, bool isDecimal)
+{
+    if(percent < 0) percent = 0;
+    auto decimal = percent;
+    if(!isDecimal) decimal = zy::Fraction::fastPercent(decimal);
+
+    reduceSp(decimal * m_pStatics->getMaxSkillPoint());
+}
+
+///] Virtual
 
 bool IngameStatics::init()
 {

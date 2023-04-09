@@ -221,16 +221,16 @@ bool ZYSprite::replaceTexture(cocos2d::Texture2D *pTexture)
 
 bool ZYSprite::replaceTexture(const std::string& sPath)
 {
-	if(!cocos2d::FileUtils::getInstance()->isFileExist(sPath)) return false;
-	auto p = ZYSprite::create(sPath.c_str());
+	ZY_ASSERT_BREAK(CC_FILEUTILS_GI->isFileExist(sPath), false);
+	auto p = ZYSprite::create(sPath);
 	return this->replaceTexture(p);
 }
 
 bool ZYSprite::replaceSprite(const std::string& sPath)
 {
-	if(!cocos2d::FileUtils::getInstance()->isFileExist(sPath)) return false;
+	ZY_ASSERT_BREAK(CC_FILEUTILS_GI->isFileExist(sPath), false);
 	auto ret = ZYSprite::create(sPath.c_str());
-	return replaceSprite(ret);
+	return replaceSprite(ret->getTexture());
 }
 
 bool ZYSprite::replaceSprite(ZYSprite *pSprite)

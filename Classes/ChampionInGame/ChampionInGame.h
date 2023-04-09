@@ -62,7 +62,7 @@ public:
     {
         inline bool operator() (ChampionInGame* l, ChampionInGame* r)
         {
-            return l->getStatics()->getStatics()->getSpeed() < r->getStatics()->getStatics()->getSpeed();
+            return l->getStatics()->getStatics()->getSpeed() > r->getStatics()->getStatics()->getSpeed();
         }
     };
 
@@ -97,6 +97,7 @@ public:
     CREATE_GET_FUNC(isDeath, bool, m_eStatus == ChampionStatus::DEATH);
     CREATE_GET_FUNC(getAvatar, ZYSprite*, m_pAvatar);
     CREATE_GET_FUNC(getIcon, ZYSprite*, m_pIcon);
+    CREATE_GET_FUNC(isFlip, bool, m_cCoordinate.g_bIsFlip);
 
     bool isValidTurn();
 
@@ -112,7 +113,6 @@ public:
     void respawn();
 
     void initAnimation();
-    int numberFrames(const std::string& path, const std::string& key);
 
     void setLandingArena(Arena *pArena);
     void reloadDataFromMemory(int nRound);
@@ -122,6 +122,7 @@ public:
     std::string toStringHelper(int nTab = 2, bool bIsShowParent = true);
 
     void onLand(bool attack = true);
+    void landOnArena();
     void endLand();
 
     void applyEffectToSelf(std::vector<GameEffect*> vEffects);
@@ -204,6 +205,8 @@ protected:
     bool m_bIsRepresentPlayer;                                  ///< mark this champion is represent the player or not
     bool m_bIsTurn, m_bIsEndTurn;                               ///< mark this champion is on turn an is end turn
     bool m_bIsAction;                                           ///< mark if this champion is doing action or not
+
+    ZYSprite* m_pAnimate;
 
 private:
     int p_nJumpTime, p_nCurrentJump;                            ///< This only use for storing data to use all jumpTo() function

@@ -125,7 +125,7 @@ void GameMaster::update(float dt)
 
 void GameMaster::calculateNewTurn()
 {
-    //std::sort(m_vList.begin(), m_vList.end(), ChampionInGame::SortChampion());
+    std::sort(m_vList.begin(), m_vList.end(), ChampionInGame::SortChampion());
     CCLOG("CALL CALCULATE NEW TURN");
     int next_index = 0;
     if(m_nChampionIsTurnIndex + 1 <= m_vList.size() - 1)
@@ -177,33 +177,9 @@ void GameMaster::endGame(bool bIsClient)
         p_bLockEndGame = true;
     }
 }
-
 void GameMaster::floatingNotify(const std::string& message, const TTFConfig& ttf, const Color3B& color, const Point& position, const float& duration, bool isLock)
 {
-    if(m_pBattleLayer)
-    {
-        auto dim = LayerColor::create(Color4B::BLACK);
-        m_pBattleLayer->addChild(dim);
-        dim->setGlobalZOrder(5);
-        dim->setOpacity(dim->getOpacity()/2);
-        auto label = ZYLabel::createWithTTF(ttf, message, TextHAlignment::CENTER, ZYDR_TGVS.width/4*3);
-        m_pBattleLayer->addChild(label);
-        label->setGlobalZOrder(6);
-        label->setColor(color);
-        label->setPosition(position);
-        if(!isLock)
-        {
-            label->setScale(0);
-            auto scaleTo = ScaleTo::create(0.75f, 1.0f);
-            auto delay = DelayTime::create(duration);
-            auto fade = FadeOut::create(0.25f);
-            auto remove = RemoveSelf::create();
-            auto sequence = Sequence::create(scaleTo, delay, fade, remove, nullptr);
-            label->runAction(sequence);
-            auto seq = Sequence::create(DelayTime::create(duration + 1.5f), remove->clone(), nullptr);
-            dim->runAction(seq);
-        }
-    }
+    ZYSP_GI->floatingNotify(m_pBattleLayer, message, ttf, color, position, 5, duration, isLock);
 }
 
 void GameMaster::floatingNotify(const std::string& message)
@@ -254,28 +230,85 @@ float GameMaster::totalDmgCalculator(Statics* defender, SkillStatics* attacker, 
     return magicDmgCalculator(defender, attacker, pos) + physicDmgCalculator(defender, attacker, pos);
 }
 
-void GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender)
+float GameMaster::attackScene(ChampionInGame* attacker, std::vector<ChampionInGame*>& defenders)
 {
-    auto dim = LayerColor::create(Color4B::BLACK);
-    m_pBattleLayer->addChild(dim);
-    dim->setGlobalZOrder(5);
-    dim->setOpacity(dim->getOpacity()/2);
+    float total_delay = 0;
+    Vector<FiniteTimeAction*> vec;
+    for(auto&x : defenders)
+    {
+        auto delay = attackScene(attacker, x, true);
+        total_delay += delay;
+        vec.pushBack(Sequence::create(CallFunc::create([&, attacker, x](){
+            attackScene(attacker, x);
+        }), DelayTime::create(delay), nullptr));
+    }
+    auto seq = Sequence::create(vec);
+    runAction(seq);
+    return total_delay;
+}
 
-    auto atk = attacker->getIcon()->clone();
-    m_pBattleLayer->addChild(atk, 10);
-    atk->setPosition(Point(ZYDR_TGVS.width/4*3, ZYDR_TGVS.height/2));
+float GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender, bool isPreCalculate)
+{
+    auto path = attacker->getIcon()->getResourceName();
+    auto path_name = (path.substr(9, path.length() - 13) + "_attack");
+    auto ani_path = "champion/ani/" + path_name + ".png";
+    auto ani_plist = "champion/ani/" + path_name + ".plist";
+
+    int num = numberFrames(ani_plist, path_name);
+    auto total_delay = (num + 1) * animation_dilation_each_frame + animation_move_time;
+
+    if(isPreCalculate) return total_delay;
+
+    auto def_path = defender->getIcon()->getResourceName();
+    auto def_name = (def_path.substr(9, def_path.length() -13) + "_def");
+    auto ani_def_path = "champion/ani/" + def_name += ".png";
+
+    auto dim = LayerColor::create(Color4B::BLACK);
+    m_pBattleLayer->addChild(dim, 9);
+    dim->setOpacity(225);
+
+    auto atk =  ZYSprite::create(path);
+    atk->setFlippedX(true);
+    m_pBattleLayer->addChild(atk, 11);
+
     auto def = defender->getIcon()->clone();
     m_pBattleLayer->addChild(def, 10);
-    def->setPosition(Point(ZYDR_TGVS.width/4, ZYDR_TGVS.height/2));
-    auto delay = DelayTime::create(2.0f);
-    auto x = def->getPosition();
+
+    auto cache = SpriteFrameCache::getInstance();
+    cache->addSpriteFramesWithFile(ani_plist);
+
+    Vector<SpriteFrame*> frames;
+    for (int i = 0; i <= num; i++) {
+        std::string frameName = StringUtils::format((path_name + "_%d.png").c_str(), i);
+        auto frame = cache->getSpriteFrameByName(frameName);
+        frames.pushBack(frame);
+    }
+
+    auto animation = Animation::createWithSpriteFrames(frames, animation_dilation_each_frame);
+    auto animate = Animate::create(animation);
+
+    def->setPosition(Point(ZYDR_TGVS.width/3, ZYDR_TGVS.height/2));
+    auto targetPos = Point( def->getContentPositionMiddleRight().x + atk->getContentSize().width/2,def->getPositionY());
+    atk->setPosition(Point(ZYDR_TGVS.width/3*2, ZYDR_TGVS.height/2));
+
+    auto delay = DelayTime::create(total_delay);
     auto rm = RemoveSelf::create(true);
-    auto mt = MoveTo::create(0.5f, Point( x.x + atk->getContentSize().width/2,x.y));
-    auto sq = Sequence::create(delay, rm, nullptr);
-    auto seq = Sequence::create(mt, rm->clone(), nullptr);
+    auto mt = MoveTo::create(animation_move_time, targetPos);
+
+    auto cb = CallFunc::create([&, ani_def_path, def]()
+                               {
+                                    def->replaceTexture(ani_def_path);
+                               });
+
+    auto sq = Sequence::create(DelayTime::create(animation_move_time + animation_dilation_each_frame), cb, DelayTime::create((num) * animation_dilation_each_frame), rm,  nullptr);
+    auto saq = Sequence::create(delay, rm->clone(), nullptr);
+    auto seq = Sequence::create(mt, animate, rm->clone(), nullptr);
+
     atk->runAction(seq);
     def->runAction(sq);
-    dim->runAction(sq->clone());
+    dim->runAction(saq);
+
+    return total_delay;
 }
 
 bool GameMaster::critStar(Point pos, float chance)
@@ -291,4 +324,20 @@ bool GameMaster::critStar(Point pos, float chance)
 void GameMaster::critStar(Point pos)
 {
 
+}
+
+int GameMaster::numberFrames(const std::string& path, const std::string& key)
+{
+    const std::string fullPath = FileUtils::getInstance()->fullPathForFilename(path);
+    ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(path);
+    int numFrames = 0;
+    ValueMap& framesDict = dict["frames"].asValueMap();
+    for (auto iter = framesDict.begin(); iter != framesDict.end(); ++iter) {
+        std::string skey = iter->first;
+        if (skey.find(key) == 0) {
+            numFrames++;
+        }
+    }
+
+    return numFrames-1;
 }

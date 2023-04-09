@@ -117,6 +117,7 @@ public:
     void enable();
     void unSelectable();
     void selectable();
+    void autoFix();
 
 protected:
     bool initWithProperties(std::string sIconSprite, std::string sShapeSprite, std::string sNameSprite,

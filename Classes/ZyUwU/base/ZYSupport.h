@@ -10,6 +10,7 @@ USING_NS_CC;
 NS_ZY_BEGIN
 
 #define ZY_SUPPORT_GI zy::ZYSupport::getInstance()
+#define ZYSP_GI ZY_SUPPORT_GI
 
 #define ZY_SP_NUMBER_TO_STRING(__NUM__) zy::ZYSupport::getInstance()->numberToString(__NUM__)
 #define ZYSP_NTS(__NUM__) ZY_SP_NUMBER_TO_STRING(__NUM__)
@@ -38,6 +39,13 @@ NS_ZY_BEGIN
 #define ZY_SP_SMART_ROUNDING_FLOAT(__NUM__, __LENGTH__) ZY_SUPPORT_GI->smartRoundingFloat(__NUM__, __LENGTH__)
 #define ZYSP_SRF(__NUM__, __LENGTH__) ZY_SP_SMART_ROUNDING_FLOAT(__NUM__, __LENGTH__)
 
+#define ZY_SP_FLOATING_NOTIFY(__TARGET_NODE__, __MESSAGE__, __TTFCONFIG__, __COLOR3B__, __POINT__, __ORDER__, __DURATION__)/ \
+ZYSP_GI->floatingNotify(__TARGET_NODE__, __MESSAGE__, __TTFCONFIG__, __COLOR3B__, __POINT__, __ORDER__, __DURATION__)        \
+
+#define ZYSP_FN(__TARGET_NODE__, __MESSAGE__, __TTFCONFIG__, __COLOR3B__, __POINT__, __ORDER__, __DURATION__)       \
+ZY_SP_FLOATING_NOTIFY(__TARGET_NODE__, __MESSAGE__, __TTFCONFIG__, __COLOR3B__, __POINT__, __ORDER__, __DURATION__) \
+
+
 #define PI 3.14159265359
 
 class ZYLabel;
@@ -52,6 +60,9 @@ public:
     std::string tabString(int nTab = 2);
     std::string smartRoundingFloat(float num, int length);
     void fitStringInSize(zy::ZYLabel* pLabel, std::string str, cocos2d::Size borderSize, int nMinFontSize = 14);
+
+public:
+    void floatingNotify(Node* target, const std::string& message, const TTFConfig& ttf, const Color3B& color, const Point& position, const int& order = 1, const float& duration = 1.5f, bool isLock = false);
 
 public:
     bool isInt(float fNum);

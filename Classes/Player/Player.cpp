@@ -36,7 +36,7 @@ bool Player::init()
     m_pEconomy = IgEcoMng::create();
     m_pEconomy->setAmount(2500);
     this->addChild(m_pEconomy);
-    m_pEconomy->setPosition(Point(ZYDR_GVS/6));
+    m_pEconomy->setPosition(Point(ZYDR_GVS/7));
     m_pEconomy->disable();
     this->scheduleUpdate();
 
@@ -275,7 +275,7 @@ ZYSprite* Player::showMessageWithBackgroundHelper(const std::string& message)
     auto background = ZYSprite::create(sr_background);
     background->setPosition(ZYDR_TGVS/2);
     this->markChildToRemove(background, 66);
-    this->addChild(background);
+    this->addChild(background );
     background->setGlobalZOrder(4);
 
     auto config = defaultTTFConfig;
@@ -284,19 +284,33 @@ ZYSprite* Player::showMessageWithBackgroundHelper(const std::string& message)
     auto label = ZYLabel::createWithTTF(config, message, TextHAlignment::CENTER, ZYDR_TGVS.width/2);
     label->setColor(Color3B::BLACK);
     this->markChildToRemove(label, 77);
-    label->setPosition(background->getContentPositionWithNewAnchorPoint(Vec2(0.5, 0.5 - 0.5*Fraction::toFloat(1,6))));
+    label->setPosition(background->getContentPositionWithNewAnchorPoint(Vec2(0.5, 1 - Fraction::toFloat(11,16))));
     this->addChild(label, 1);
     label->setGlobalZOrder(5);
 
     return background;
 }
 
-void Player::showPurchasePromptHelper(const std::string& message, const std::string& message2, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback)
+void Player::showPurchasePromptHelper(const std::string& message, const std::string& message2, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback, Color3B color)
 {
     //this->showMessageHelper(message);
     const auto bg = this->showMessageWithBackgroundHelper(message);
 
-    const auto yyV = 0.5 - 0.5*Fraction::toFloat(3, 6);
+    const auto yy = 1 - Fraction::toFloat(6, 16);
+
+    auto house = ZYSprite::create("ui/button/self_remove/house.png");
+    this->markChildToRemove(house, 66);
+    this->addChild(house );
+    house->setGlobalZOrder(5);
+    auto house_front = ZYSprite::create("ui/button/self_remove/front.png");
+    house_front->setColor(color);
+    house_front->setGlobalZOrder(5);
+    this->markChildToRemove(house_front, 66);
+    this->addChild(house_front);
+    house->setPosition(bg->getContentPositionWithNewAnchorPoint(Vec2(0.5, yy)));
+    house_front->setPosition(house->getPosition());
+
+    const auto yyV = 1 - Fraction::toFloat(13, 16);
     auto yes = this->createPurchaseButton("YES", 88, bg->getContentPositionWithNewAnchorPoint(Vec2(0.25, yyV)));
     yes->addTouchEventListener(yesCallBack);
 
@@ -308,7 +322,7 @@ void Player::showPurchasePromptHelper(const std::string& message, const std::str
     this->addChild(no );
     yes->setGlobalZOrder(6);
 
-    auto pos = bg->getContentPositionWithNewAnchorPoint(Vec2(0.5, 0.5-0.5*Fraction::toFloat(5,6)));
+    auto pos = bg->getContentPositionWithNewAnchorPoint(Vec2(0.5, 1 - Fraction::toFloat(15,16)));
     this->showTheMessageHelper(message2, pos, 30);
 }
 
@@ -436,7 +450,8 @@ void Player::acquireProperty(Property* property)
         const std::string str = "Repurchase property for: " + ZYSP_SD(sell_value, 1) + "K";
         const std::string rm = "Remaining balance: " + ZYSP_SD(this->m_pEconomy->getAmount() - sell_value, 1) + "K";
         this->showPurchasePromptHelper(str, rm ,CC_CALLBACK_2(Player::onAcquireButtonPressed, this, true, property),
-                                       CC_CALLBACK_2(Player::onAcquireButtonPressed, this, false, property));
+                                       CC_CALLBACK_2(Player::onAcquireButtonPressed, this, false, property),
+                                       ZYSP_3BT4F(property->getOwner()->getTheColor()));
     }
     else
     {
@@ -452,7 +467,8 @@ void Player::upgradeProperty(Property *property)
         const std::string str = "UPGRADE THIS PROPERTY FOR " + ZYSP_SD(upgrade_value, 1) + "K";
         const std::string rm = "Remaining balance: " + ZYSP_SD(this->m_pEconomy->getAmount() - upgrade_value, 1) + "K";
         this->showPurchasePromptHelper(str, rm, CC_CALLBACK_2(Player::onUpgradeButtonPressed, this, true, property),
-                                       CC_CALLBACK_2(Player::onUpgradeButtonPressed, this, false, property));
+                                       CC_CALLBACK_2(Player::onUpgradeButtonPressed, this, false, property),
+                                       ZYSP_3BT4F(getTheColor()));
     }
     else
     {

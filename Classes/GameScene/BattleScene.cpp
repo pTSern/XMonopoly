@@ -74,6 +74,24 @@ bool BattleScene::init()
     /// Add schedule update
     this->scheduleUpdate();
 
+    auto dice2 = Dice::createWithProperties("dice/128-red.png");
+    auto champ2 = Champion::createWithProperties("champion/samurai.png", Statics::createWithProperties(), ChampionStatics::create());
+    auto ui2 = ChampionUI::createDefault();
+    auto sig2 = SkillInGame::createTest();
+    sig2->setSkillMechanic(SkillInGame::MoveBySkill);
+    sig2->setName("move");
+    auto sm2 = SkillManager::createWithSkillInGame(sig2, nullptr);
+    auto cig2 = TesterBot::createWithProperties(champ2, ui2, dice2, sm2);
+    //auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
+    auto coord2 = Coordinate(Dir::WS, 0);
+    auto player2 = BotPlayer::create();
+    //auto player2 = Player::create();
+    player2->addChampion(cig2);
+    //player2->disable();
+    cig2->setPosition(coord2);
+    cig2->setName("CHAMP B");
+    cig2->getStatics()->getStatics()->setSpeed(100);
+
     auto dice = Dice::createWithProperties("dice/128.png");
     auto champ = Champion::createWithProperties("champion/zed.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui = ChampionUI::createDefault();
@@ -92,28 +110,11 @@ bool BattleScene::init()
     GM_GI->setClientPlayer(player);
     player->addChampion(cig);
     player->setName("PLAYER 1");
-    m_vPlayers.push_back(player);
     cig->setPosition(coord);
-    cig->getStatics()->setCurrentHp(50);
     cig->setName("CHAMP A");
 
-    auto dice2 = Dice::createWithProperties("dice/128-red.png");
-    auto champ2 = Champion::createWithProperties("champion/zed.png", Statics::createWithProperties(), ChampionStatics::create());
-    auto ui2 = ChampionUI::createDefault();
-    auto sig2 = SkillInGame::createTest();
-    sig2->setSkillMechanic(SkillInGame::MoveBySkill);
-    sig2->setName("move");
-    auto sm2 = SkillManager::createWithSkillInGame(sig2, nullptr);
-    auto cig2 = TesterBot::createWithProperties(champ2, ui2, dice2, sm2);
-    //auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
-    auto coord2 = Coordinate(Dir::WS, 0);
-    auto player2 = BotPlayer::create();
-    //auto player2 = Player::create();
-    player2->addChampion(cig2);
-    //player2->disable();
     m_vPlayers.push_back(player2);
-    cig2->setPosition(coord2);
-    cig2->setName("CHAMP B");
+    m_vPlayers.push_back(player);
 
     for(auto z : m_vPlayers)
     {

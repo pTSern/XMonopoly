@@ -94,6 +94,8 @@ void ChampionInGame::config()
     m_pChampionUI->setPosition(Point(this->getIcon()->getPosition().x, this->getIcon()->getContentPositionMiddleTop().y + m_pChampionUI->getContentSize().height));
     m_pSelfButton->setPosition(m_pIcon->getPosition());
     m_pPhysicBody->setPositionOffset(m_pIcon->getPosition());
+    auto y = m_pIcon->getPositionY();
+    m_pAnimate->setPosition(Point(m_pIcon->getPositionX(), m_pIcon->getContentSize().height/4 + y));
 }
 
 bool ChampionInGame::init()
@@ -165,6 +167,9 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     if(!pUI || !pDice || !vSkillDeck || !Champion::init()) return false;
     this->setName("CHAMPION IN GAME");
 
+    //m_pIcon->setOpacity(0);
+    m_pIcon->setVisible(false);
+
     this->setDice(pDice);
     this->setUI(pUI);
     this->setPreDiceSkillDeck(vSkillDeck);
@@ -183,7 +188,7 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     this->addChild(m_pIcon);
 
     m_pSelfButton = ui::Button::create(m_pIcon->getResourceName());
-    //this->m_pSelfButton->setOpacity(0);
+    this->m_pSelfButton->setOpacity(0);
 
     this->addChild(m_pSelfButton, 1);
 
@@ -259,8 +264,16 @@ void ChampionInGame::onLand(bool attack)
         auto v = m_pLandingArena->getChampionInArena();
         this->attack(v);
     }
+    else
+    {
+        this->m_pLandingArena->addChampion(this, attack);
+        this->m_cCoordinate = m_pLandingArena->getCoordinate();
+    }
+}
 
-    this->m_pLandingArena->addChampion(this, attack);
+void ChampionInGame::landOnArena()
+{
+    this->m_pLandingArena->addChampion(this, true);
     this->m_cCoordinate = m_pLandingArena->getCoordinate();
 }
 
@@ -279,16 +292,24 @@ void ChampionInGame::applyEffectToSelf(std::vector<GameEffect*> vEffects)
 
 void ChampionInGame::attack(std::vector<ChampionInGame*>& vChampions)
 {
+    auto delay = GM_GI->attackScene(this, vChampions);
     for(auto &x : vChampions)
     {
         x->beAttacked(this);
     }
+    auto seq = Sequence::create(DelayTime::create(delay),
+                                CallFunc::create(
+                                        [&]()
+                                        {
+                                            landOnArena();
+                                        }
+                                        ), nullptr);
+    runAction(seq);
 }
 
 void ChampionInGame::beAttacked(ChampionInGame* attacker)
 {
     //TEST
-    GM_GI->attackScene(attacker, this);
     this->getStatics()->reduceHp(attacker->getStatics()->getStatics()->getAttackDmg());
 }
 
@@ -322,14 +343,20 @@ bool ChampionInGame::endTouch(Touch* touch, Event* event)
 
 void ChampionInGame::run(cocos2d::Ref* pSender, cocos2d::ui::Widget::TouchEventType type)
 {
-    if(type ==  ui::Widget::TouchEventType::ENDED)
+    if(type == ui::Widget::TouchEventType::BEGAN)
+    {
+        m_pSelfButton->setOpacity(125);
+    }
+    else if(type ==  ui::Widget::TouchEventType::ENDED)
     {
         GM_GI->getClientPlayer()->setSelectObject(this, Player::SelectType::CHAMPION);
+        m_pSelfButton->setOpacity(0);
     }
 }
 
 void ChampionInGame::startTurn()
 {
+    ///v This condition to force the bot to stop start turn
     ///) Enable this champion
     //this->enable();
 
@@ -410,6 +437,8 @@ void ChampionInGame::onDeath()
 {
     /// replace sprite to death image
     this->m_pIcon->replaceSprite("champion/death.png");
+    this->m_pIcon->setVisible(true);
+    this->m_pAnimate->setVisible(false);
     this->m_pSelfButton->setVisible(false);
     this->m_eStatus = ChampionStatus::DEATH;
     this->m_pOwner->checkLoseCondition();
@@ -439,6 +468,7 @@ void ChampionInGame::respawn()
 void ChampionInGame::autoFlip()
 {
     this->m_pIcon->setFlippedX(m_cCoordinate.g_bIsFlip);
+    this->m_pAnimate->setFlippedX(m_cCoordinate.g_bIsFlip);
     this->m_pSelfButton->setFlippedX(m_cCoordinate.g_bIsFlip);
 }
 
@@ -463,11 +493,16 @@ void ChampionInGame::jumpToNextCoord()
 void ChampionInGame::jumpTo(Point pos)
 {
     m_eAction = ChampionAction::MOVING;
+    ///v Target point
     auto target = Point(pos.x, pos.y + m_pIcon->getContentSize().height/2);
+    ///v Jump distance
     auto distance = this->getPosition().distance(target);
+    ///v Start create actions
     auto jump = JumpTo::create(distance/400, target, this->m_pIcon->getContentSize().height/2, 1);
     auto callback = CallFunc::create(CC_CALLBACK_0(ChampionInGame::endJump, this));
     auto seq = Sequence::create(jump, callback, nullptr);
+    ///^ End create actions
+
     this->m_pIcon->runAction(seq);
     //this->m_pSelfButton->runAction(seq->clone());
 }
@@ -483,6 +518,7 @@ void ChampionInGame::jumpTo(Arena *arena)
     this->m_pLandingArena = arena;
     this->jumpTo(arena->getMoveAblePosition());
 }
+
 void ChampionInGame::endJump()
 {
     auto attack = false;
@@ -544,10 +580,12 @@ bool ChampionInGame::isValidTurn()
 void ChampionInGame::initAnimation()
 {
     auto path = m_pIcon->getResourceName();
+    m_pAnimate = m_pIcon->clone();
+    this->addChild(m_pAnimate, 1);
     //Remove ".png"
     auto path_name = (path.substr(9, path.length() - 13) + "_idle");
-    auto ani_path = "champion/ani/" + path_name += ".png";
-    auto ani_plist = "champion/ani/" + path_name += ".plist";
+    auto ani_path = "champion/ani/" + path_name + ".png";
+    auto ani_plist = "champion/ani/" + path_name + ".plist";
 
     auto cache = SpriteFrameCache::getInstance();
     cache->addSpriteFramesWithFile(ani_plist);
@@ -557,7 +595,7 @@ void ChampionInGame::initAnimation()
     //auto ani = Animate::create(ani_cache->getAnimation("run"));
     //m_pIcon->runAction(RepeatForever::create(ani));
 
-    int num = numberFrames(ani_plist, path_name);
+    int num = GM_GI->numberFrames(ani_plist, path_name);
 
     Vector<SpriteFrame*> frames;
     for (int i = 0; i <= num; i++) {
@@ -571,21 +609,5 @@ void ChampionInGame::initAnimation()
     auto animate = Animate::create(animation);
     auto repeat = RepeatForever::create(animate);
 
-    m_pIcon->runAction(repeat);
-}
-
-int ChampionInGame::numberFrames(const std::string& path, const std::string& key)
-{
-    const std::string fullPath = FileUtils::getInstance()->fullPathForFilename(path);
-    ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(path);
-    int numFrames = 0;
-    ValueMap& framesDict = dict["frames"].asValueMap();
-    for (auto iter = framesDict.begin(); iter != framesDict.end(); ++iter) {
-        std::string skey = iter->first;
-        if (skey.find(key) == 0) {
-            numFrames++;
-        }
-    }
-
-    return numFrames-1;
+    m_pAnimate->runAction(repeat);
 }

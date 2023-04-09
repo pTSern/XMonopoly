@@ -86,6 +86,16 @@ void SkillCard::update(float dt)
     {
         this->selectable();
     }
+    autoFix();
+}
+
+void SkillCard::autoFix()
+{
+    if(p_pShapeSprite->getPosition().y < 0)
+    {
+        p_bSelected = false;
+        setPosition(Point(p_pShapeSprite->getPositionX(), getShapeSize().height/3));
+    }
 }
 
 bool SkillCard::init()

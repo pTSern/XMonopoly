@@ -100,7 +100,7 @@ public:
     void autoSellPropertyForTax(float tax);
 
 protected:
-    void showPurchasePromptHelper(const std::string& message, const std::string& message2, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback);
+    void showPurchasePromptHelper(const std::string& message, const std::string& message2, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback, Color3B color = Color3B::WHITE);
     void showMessageHelper(const std::string& message, const float& duration, bool isFinish = true);
     /**
      *
