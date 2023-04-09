@@ -1,0 +1,2 @@
+let g:spacevim_tags_command = 'ctags -R --exclude=build'
+let g:spacevim_jump_split = 1
