@@ -47,10 +47,15 @@ inline __RETURN_TYPE__ __FUNC_NAME__()                                     	\
     return __RETURN_VAR__;                                           		\
 }                                                                          	\
 
-
 #define CREATE_SET_GET_FUNC(__SET_FUNC_NAME__, __GET_FUNC_NAME__, __VAR_TYPE__, __VAR__) \
 CREATE_SET_FUNC(__SET_FUNC_NAME__, __VAR_TYPE__, __VAR__)		  \
 CREATE_GET_FUNC(__GET_FUNC_NAME__, __VAR_TYPE__, __VAR__)         \
+
+#define GET_SET_VARIABLE( __VAR_TYPE__, __VAR_NAME__) 									  \
+protected:                                           								      \
+	__VAR_TYPE__ __VAR_NAME__;                          								  \
+public:                                              								      \
+	CREATE_SET_GET_FUNC(set_##__VAR_NAME__, get_##__VAR_NAME__, __VAR_TYPE__, __VAR_NAME__) \
 
 /**	@def CREATE_CLONE_GET_FUNC(__GET_FUNC_NAME__, __RETURN_TYPE__, __RETURN_VAR__)
  *
@@ -329,11 +334,6 @@ auto * __v = value;                           \
 auto __loc = (ps)->getUniformLocation(name);  \
 (ps)->setTexture(__loc, idx, __v);  \
 } while(false) 
-
-/* Generic macros
-* @namespace zy
-* @{
-*/
 
 /**
  * Generic macros
