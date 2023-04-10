@@ -77,6 +77,16 @@ ZYSprite* ZYSprite::create(cocos2d::Texture2D *p)
 
 //virtual
 
+float ZYSprite::getRotation() const
+{
+	if(_rotationZ_X == _rotationZ_Y)
+	{
+		return Node::getRotation();
+	}
+	else
+		return _rotationZ_X;
+}
+
 void ZYSprite::setPosition(const cocos2d::Vec2 &pos, cocos2d::Vec2 newAnchor)
 {
 	auto cDA = getDifferentAnchorPoint(newAnchor);

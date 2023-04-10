@@ -52,6 +52,8 @@ public:
     float physicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
     float totalDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
 
+    CREATE_SET_GET_FUNC(setMaxCoordIndex, getMaxCoordIndex, int, m_nMaxCoordIndex);
+
 protected:
     ZYSprite* m_pMarkIsTurnChampion_UP, * m_pMarkIsTurnChampion_DOWN;
     ChampionInGame* m_pIsTurnChampion;
@@ -63,6 +65,7 @@ protected:
     ui::Widget::ccWidgetTouchCallback m_pEndGameCallback;
     Player* m_pClient;
     MapManager* m_pMap;
+    int m_nMaxCoordIndex;
 
     PlayerUI* m_pClientUI;
 

@@ -1,4 +1,5 @@
 #include "Coordinate.h"
+#include "GameMaster/GameMaster.h"
 
 //Constructor
 
@@ -9,7 +10,11 @@ g_nIndex(nIndex), g_eDir(eDir)
     if((int)g_eDir < 0) g_bIsFlip = false;
 }
 
-//Public
+///] Static
+
+Coordinate Coordinate::UNKNOWN(Dir::UK, -1);
+
+///] Public
 
 void Coordinate::log()
 {
@@ -29,6 +34,37 @@ std::string Coordinate::toString(int nTab)
 void Coordinate::nextIndex()
 {
     g_nIndex++;
+    if(g_nIndex > GM_GI->getMaxCoordIndex())
+    {
+        g_nIndex -= (GM_GI->getMaxCoordIndex() + 1);
+    }
 }
 
-//Operator
+void Coordinate::prevIndex()
+{
+    g_nIndex--;
+    if(g_nIndex < 0)
+    {
+        g_nIndex += (GM_GI->getMaxCoordIndex() + 1);
+    }
+}
+
+void Coordinate::moveIndex(int dir)
+{
+    if(dir < 0)
+    {
+        prevIndex();
+    } else
+    {
+        nextIndex();
+    }
+}
+
+///] Operator
+
+bool Coordinate::operator==(Coordinate& target)
+{
+    if(&target == this) return true;
+    if(target.g_eDir == this->g_eDir && target.g_nIndex == this->g_nIndex) return true;
+    return false;
+}

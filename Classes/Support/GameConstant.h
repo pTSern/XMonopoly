@@ -54,3 +54,9 @@ static const float animation_dilation_each_frame(0.125f);
 static const float animation_move_time(0.25f);
 
 static const std::string champion_animation_dir("champion/ani/");
+
+
+static const float projectile_move_time(0.25f);
+
+static const std::string property_icon("ui/button/self_remove/icon.png");
+static const std::string property_front_icon("ui/button/self_remove/icon_front.png");

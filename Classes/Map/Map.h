@@ -70,8 +70,12 @@ public:
 	CREATE_GET_FUNC(getArenaNumber, int, p_vArenas.size());
 	Arena* getArenaByCoord(Coordinate coord);
 	Point getPointByCoord(Coordinate coord);
+	Coordinate getCoordByPoint(Point point);
 	//void setClientPlayer(Player* target);
+	bool isPointInArena(Point pos, Arena *arena);
+	Arena* isPointInAnyArena(Point pos);
 	void findCorner(ValueMap obj, Coordinate coord);
+	bool isCorner(Coordinate coord);
 
 	/**
 	* Check if input position is contact to a collision object

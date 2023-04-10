@@ -31,6 +31,10 @@ public:
 
 public:
     bool isZero() const;
+    inline float getValue() const
+    {
+        return g_fAmount * g_fPercentOfAmount;
+    }
 
 public:
     float g_fAmount = 0.0f;

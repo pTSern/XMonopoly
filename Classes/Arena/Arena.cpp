@@ -87,6 +87,7 @@ bool Arena::initWithProperties(const std::string& sTitle, Coordinate &coord, Siz
 {
     this->setRectPoint(left, rectSize);
     m_pRect = DrawNode::create();
+    m_pRect->setOpacity(50);
 
     TTFConfig ttfConfig(globalFont, 20, GlyphCollection::DYNAMIC,nullptr,false , 0, false, true);
     m_pTitle = ZYLabel::createWithTTF(ttfConfig, sTitle);
@@ -239,7 +240,14 @@ void Arena::setRectPoint(float xx, float yy, float width, float height)
 void Arena::drawRect()
 {
     if(!m_pRect) m_pRect = DrawNode::create();
-    m_pRect->drawRect(m_Left, m_Top, m_Right, m_Bottom, m_cColor);
+    Vec2 vertices[] = {
+            this->getLeftPoint(),
+            this->getTopPoint(),
+            this->getRightPoint(),
+            this->getBottomPoint()
+    };
+    //m_pRect->drawRect(m_Left, m_Top, m_Right, m_Bottom, m_cColor);
+    m_pRect->drawSolidPoly(vertices, 4, m_cColor);
 }
 
 void Arena::revokeRect()

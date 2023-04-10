@@ -26,7 +26,7 @@ static SceneRegister<BattleScene> s_register("BATTLE");
 Scene* BattleScene::createScene()
 {
     auto scene = Scene::createWithPhysics();
-    //scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     //auto scene = Scene::create();
 
     auto layer = BattleScene::create();

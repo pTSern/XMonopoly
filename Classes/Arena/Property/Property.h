@@ -74,22 +74,30 @@ public:
 
 /////// PURCHASE
 public:
-    void purchaseProperty(Player* target);
-    void acquireProperty(Player* target);
+    //void purchaseProperty(Player* target);
+    //void acquireProperty(Player* target);
     void removeAllMarkedChild();
     void upgrade();
+    void priceTitleControl();
     void removeOwner();
     void selfSell();
 
-protected:
-    void showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback);
-    void showMessageHelper(const std::string& message);
-    void showMessageHelper(const std::string& message, const float duration);
-    void cancelPurchase(Player* target);
-    void confirmPurchase(Player* target);
+    void beingPurchase(Player* owner);
+    void beingAcquire(Player* owner);
 
-    ui::Button* createPurchaseButton(const std::string& title, int tag, const Point& pos);
-    void onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Player* target);
+    void showIcon();
+    void hideIcon();
+    void recolorIcon(Color3B color);
+
+protected:
+    //void showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback);
+    //void showMessageHelper(const std::string& message);
+    //void showMessageHelper(const std::string& message, const float duration);
+    //void cancelPurchase(Player* target);
+    //void confirmPurchase(Player* target);
+
+    //ui::Button* createPurchaseButton(const std::string& title, int tag, const Point& pos);
+    //void onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Player* target);
 
     std::vector<int> m_vRemoveByTagList;                 ///< contain child's tag that will be removed after calling removeAllMarkedChild() func
 
@@ -99,4 +107,5 @@ protected:
     ZYLabel* m_pPriceLabel;
     PropertyEconomy* m_pEconomy;
 
+    ZYSprite* m_pIcon, *m_pFrontIcon;
 END_CREATE_REFCLASS

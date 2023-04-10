@@ -241,8 +241,10 @@ void MapManager::generateArenas()
 			}
 		}
 
-		//// Sort Arena
+		///v Sort Arena
 		std::sort(p_vArenas.begin(), p_vArenas.end(), Arena::SortArena());
+		///v Set max index
+		GM_GI->setMaxCoordIndex(p_vArenas.size() - 1);
 	}
 }
 
@@ -272,6 +274,15 @@ void MapManager::findCorner(ValueMap obj, Coordinate coord)
         p_ECorner = coord;
         return;
     }
+}
+
+bool MapManager::isCorner(Coordinate coord)
+{
+	if(coord == p_NCorner || coord == p_WCorner || coord == p_ECorner || coord == p_SCorner)
+	{
+		return true;
+	}
+	return false;
 }
 
 void MapManager::generatePropertyArenas(ValueMap obj)
@@ -444,25 +455,48 @@ bool MapManager::onTouch(Touch *touch, Event *event)
 	return true;
 }
 
+bool MapManager::isPointInArena(Point pos, Arena *arena)
+{
+	if(SmartAlgorithm::isPointInside4Point(arena->getLeftPoint(),
+										   arena->getTopPoint(),
+										   arena->getRightPoint(),
+										   arena->getBottomPoint(),
+										   pos))
+	{
+		return true;
+	}
+	return false;
+}
+
+Arena* MapManager::isPointInAnyArena(Point pos)
+{
+	for(auto &x : p_vArenas)
+	{
+		if(isPointInArena(pos, x))
+		{
+			return x;
+		}
+	}
+	return nullptr;
+}
+
+Coordinate MapManager::getCoordByPoint(Point pos)
+{
+	auto target = isPointInAnyArena(pos);
+	if(target)
+	{
+		return target->getCoordinate();
+	}
+	return Coordinate::UNKNOWN;
+}
+
 bool MapManager::endTouch(Touch *touch, Event *event)
 {
 	auto anchorPoint = this->getTileMap()->getPosition();
 	auto touchPoint = touch->getLocation();
-	for(int i = 0; i < p_vArenas.size(); i++)
-	{
-		if(SmartAlgorithm::isPointInside4Point(p_vArenas[i]->getLeftPoint(),
-											   p_vArenas[i]->getTopPoint(),
-											   p_vArenas[i]->getRightPoint(),
-											   p_vArenas[i]->getBottomPoint(),
-											   touchPoint))
-		{
-			//p_pClientPlayer->setSelectObject(p_vArenas[i]);
-			//p_pClientPlayer->setSelectType(Player::SelectType::ARENA);
-			GM_GI->getClientPlayer()->setSelectObject(p_vArenas[i], Player::SelectType::ARENA);
-			return true;
-		}
-		GM_GI->getClientPlayer()->setSelectObject(nullptr, Player::SelectType::NONE);
-	}
+	auto target = isPointInAnyArena(touchPoint);
+
+	GM_GI->getClientPlayer()->setSelectObject(target, Player::SelectType::NONE);
 
 	//p_pClientPlayer->setSelectObject(nullptr);
 	//p_pClientPlayer->setSelectType(Player::SelectType::NONE);

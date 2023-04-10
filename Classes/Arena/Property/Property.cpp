@@ -63,6 +63,7 @@ float PropertyEconomy::getIncomeValue()
 void PropertyEconomy::reset()
 {
     this->m_nCurrentLevel = m_nMinLevel;
+    m_price.setAmount(0);
 }
 
 ///////[ Property
@@ -75,14 +76,15 @@ void PropertyEconomy::reset()
 Property::Property() :
 m_pEconomy(nullptr),
 m_pOwner(nullptr),
-m_pPriceLabel(nullptr)
+m_pPriceLabel(nullptr),
+m_pIcon(nullptr), m_pFrontIcon(nullptr)
 {
 
 }
 
-//// Public
+///] Public
 
-//Virtual
+///] Virtual
 
 bool Property::init()
 {
@@ -109,8 +111,17 @@ std::string Property::toString(int nTab)
 void Property::update(float dt)
 {
     Arena::update(dt);
-    if(m_pEconomy->getPrice() >= 0 && m_pOwner) {
+    priceTitleControl();
+}
+
+void Property::priceTitleControl()
+{
+    if(m_pEconomy->getPrice() > 0 && m_pOwner) {
         m_pPriceLabel->setString(ZYSP_SD(getTax(), 1) + "K");
+    }
+    else
+    {
+        m_pPriceLabel->setString("");
     }
 }
 
@@ -181,6 +192,13 @@ void Property::config()
 {
     Arena::config();
 
+    m_pIcon = ZYSprite::create(property_icon);
+    this->addChild(m_pIcon, 2);
+    m_pFrontIcon = ZYSprite::create(property_front_icon);
+    this->addChild(m_pFrontIcon, 3);
+
+    hideIcon();
+
     m_bIsBuyAble = true;
 
     int x = 1;
@@ -202,28 +220,37 @@ void Property::config()
     {
         // -2
         case Dir::NW:
-            m_pTitle->setPosition(Point(mid.x - size.width*2, mid.y + size.height*2));
+            m_pTitle->setPosition(Point(mid.x - size.width*1.75, mid.y + size.height*1.75));
             m_pPriceLabel->setPosition(mid.x - size.width*0.5, mid.y + size.height*0.5);
+            m_pIcon->setPosition(Point(mid.x - size.width*3.5, mid.y + size.height*3.5));
+            m_pIcon->setFlippedX(true);
+            m_pFrontIcon->setFlippedX(true);
             break;
         // 2
         case Dir::WS:
-            m_pTitle->setPosition(mid2 + size*2);
+            m_pTitle->setPosition(mid2 + size*1.75);
             m_pPriceLabel->setPosition(mid2 + size*0.5);
+            m_pIcon->setPosition(mid2 + size*3.5);
             break;
         // 1
         case Dir::NE:
-            m_pTitle->setPosition(mid2 + size*2);
+            m_pTitle->setPosition(mid2 + size*1.75);
             m_pPriceLabel->setPosition(mid2 + size*0.5);
+            m_pIcon->setPosition(mid2 + size*3.5);
             break;
         // -1
         case Dir::ES:
-            m_pTitle->setPosition(Point(mid.x - size.width*2, mid.y + size.height*2));
+            m_pTitle->setPosition(Point(mid.x - size.width*1.75, mid.y + size.height*1.75));
             m_pPriceLabel->setPosition(mid.x - size.width*0.5, mid.y + size.height*0.5);
+            m_pIcon->setPosition(Point(mid.x - size.width*3.5, mid.y + size.height*3.5));
+            m_pIcon->setFlippedX(true);
+            m_pFrontIcon->setFlippedX(true);
             break;
         default:
             break;
     }
 
+    m_pFrontIcon->setPosition(m_pIcon->getPosition());
     this->addChild(m_pPriceLabel);
 
     this->m_eType = Type::PROPERTY;
@@ -246,24 +273,24 @@ bool Property::initWithProperties(const std::string& sTitle, Coordinate &coord, 
     return true;
 }
 
-void Property::purchaseProperty(Player *target)
-{
-    if(target->getEconomy()->isPayable(this->getPrice()))
-    {
-        const std::string str = "WOULD YOU LIKE TO BUY THIS\nPROPERTY FOR " + ZYSP_SD(this->getPrice(), 1) + "K";
-        this->showPurchasePromptHelper(str, CC_CALLBACK_2(Property::onPurchaseButtonPressed, this, true, target), CC_CALLBACK_2(Property::onPurchaseButtonPressed, this, false, target));
-    }
-    else
-    {
-        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO BUY THIS", 3);
-        target->finishAction();
-    }
-}
-
-void Property::acquireProperty(Player* target)
-{
-    target->finishAction();
-}
+//void Property::purchaseProperty(Player *target)
+//{
+//    if(target->getEconomy()->isPayable(this->getPrice()))
+//    {
+//        const std::string str = "WOULD YOU LIKE TO BUY THIS\nPROPERTY FOR " + ZYSP_SD(this->getPrice(), 1) + "K";
+//        this->showPurchasePromptHelper(str, CC_CALLBACK_2(Property::onPurchaseButtonPressed, this, true, target), CC_CALLBACK_2(Property::onPurchaseButtonPressed, this, false, target));
+//    }
+//    else
+//    {
+//        this->showMessageHelper("YOU DON NOT HAVE ENOUGH MONEY TO BUY THIS", 3);
+//        target->finishAction();
+//    }
+//}
+//
+//void Property::acquireProperty(Player* target)
+//{
+//    target->finishAction();
+//}
 
 void Property::upgrade()
 {
@@ -289,86 +316,86 @@ auto ret = new (std::nothrow) Property();
 
 ///] Protected
 
-void Property::showMessageHelper(const std::string& message)
-{
-    auto label = ZYLabel::createWithTTF(message, globalFont, 50);
-    label->setTag(77);
-    this->m_vRemoveByTagList.emplace_back(label->getTag());
-    label->setColor(Color3B::BLUE);
-    label->setGlobalZOrder(5);
-    label->setHorizontalAlignment(TextHAlignment::CENTER);
-    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
-    this->addChild(label);
-}
-
-void Property::showMessageHelper(const std::string& message, const float duration)
-{
-    auto label = ZYLabel::createWithTTF(message, globalFont, 50);
-    label->setColor(Color3B::BLUE);
-    label->setHorizontalAlignment(TextHAlignment::CENTER);
-    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
-    label->setGlobalZOrder(5);
-    this->addChild(label);
-
-    auto fade_out = FadeOut::create(duration);
-    auto remove = RemoveSelf::create(true);
-    auto se = Sequence::create(fade_out, remove, nullptr);
-    label->runAction(se);
-}
-
-void Property::showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback)
-{
-    this->showMessageHelper(message);
-
-    auto yes = this->createPurchaseButton("YES", 88, ZYDR_TGVS/4);
-    yes->setGlobalZOrder(5);
-    yes->addTouchEventListener(yesCallBack);
-
-    auto no = this->createPurchaseButton("NO", 99, Point(ZYDR_TGVS.width/4*3, ZYDR_TGVS.height/4));
-    no->setGlobalZOrder(5);
-    no->addTouchEventListener(noCallback);
-
-    this->addChild(yes, 5);
-    this->addChild(no, 5);
-}
-
-ui::Button* Property::createPurchaseButton(const std::string& title, int tag, const Point& pos)
-{
-    auto button = ui::Button::create("button/n.png", "button/p.png");
-    button->setTitleText(title);
-    button->setPosition(pos);
-    button->setTag(tag);
-    this->m_vRemoveByTagList.emplace_back(tag);
-    return button;
-}
-
-void Property::onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Player* target)
-{
-    if(type == ui::Widget::TouchEventType::ENDED)
-    {
-        if(bIsYes) confirmPurchase(target);
-        else cancelPurchase(target);
-    }
-}
-
-void Property::cancelPurchase(Player* target)
-{
-    this->removeAllMarkedChild();
-    target->finishAction();
-}
-
-void Property::confirmPurchase(Player* target)
-{
-    target->getEconomy()->pay(this->getPrice());
-    target->addOwnedProperty(this);
-
-    this->setOwner(target);
-    this->addDrawRectOrder();
-    this->setRectColor(target->getTheColor());
-
-    this->removeAllMarkedChild();
-    target->finishAction();
-}
+//void Property::showMessageHelper(const std::string& message)
+//{
+//    auto label = ZYLabel::createWithTTF(message, globalFont, 50);
+//    label->setTag(77);
+//    this->m_vRemoveByTagList.emplace_back(label->getTag());
+//    label->setColor(Color3B::BLUE);
+//    label->setGlobalZOrder(5);
+//    label->setHorizontalAlignment(TextHAlignment::CENTER);
+//    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
+//    this->addChild(label);
+//}
+//
+//void Property::showMessageHelper(const std::string& message, const float duration)
+//{
+//    auto label = ZYLabel::createWithTTF(message, globalFont, 50);
+//    label->setColor(Color3B::BLUE);
+//    label->setHorizontalAlignment(TextHAlignment::CENTER);
+//    label->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/3*2));
+//    label->setGlobalZOrder(5);
+//    this->addChild(label);
+//
+//    auto fade_out = FadeOut::create(duration);
+//    auto remove = RemoveSelf::create(true);
+//    auto se = Sequence::create(fade_out, remove, nullptr);
+//    label->runAction(se);
+//}
+//
+//void Property::showPurchasePromptHelper(const std::string& message, const ui::Widget::ccWidgetTouchCallback& yesCallBack, const ui::Widget::ccWidgetTouchCallback& noCallback)
+//{
+//    this->showMessageHelper(message);
+//
+//    auto yes = this->createPurchaseButton("YES", 88, ZYDR_TGVS/4);
+//    yes->setGlobalZOrder(5);
+//    yes->addTouchEventListener(yesCallBack);
+//
+//    auto no = this->createPurchaseButton("NO", 99, Point(ZYDR_TGVS.width/4*3, ZYDR_TGVS.height/4));
+//    no->setGlobalZOrder(5);
+//    no->addTouchEventListener(noCallback);
+//
+//    this->addChild(yes, 5);
+//    this->addChild(no, 5);
+//}
+//
+//ui::Button* Property::createPurchaseButton(const std::string& title, int tag, const Point& pos)
+//{
+//    auto button = ui::Button::create("button/n.png", "button/p.png");
+//    button->setTitleText(title);
+//    button->setPosition(pos);
+//    button->setTag(tag);
+//    this->m_vRemoveByTagList.emplace_back(tag);
+//    return button;
+//}
+//
+//void Property::onPurchaseButtonPressed(Ref* pSender, ui::Widget::TouchEventType type, bool bIsYes, Player* target)
+//{
+//    if(type == ui::Widget::TouchEventType::ENDED)
+//    {
+//        if(bIsYes) confirmPurchase(target);
+//        else cancelPurchase(target);
+//    }
+//}
+//
+//void Property::cancelPurchase(Player* target)
+//{
+//    this->removeAllMarkedChild();
+//    target->finishAction();
+//}
+//
+//void Property::confirmPurchase(Player* target)
+//{
+//    target->getEconomy()->pay(this->getPrice());
+//    target->addOwnedProperty(this);
+//
+//    this->setOwner(target);
+//    this->addDrawRectOrder();
+//    this->setRectColor(target->getTheColor());
+//
+//    this->removeAllMarkedChild();
+//    target->finishAction();
+//}
 
 void Property::removeAllMarkedChild()
 {
@@ -383,11 +410,43 @@ void Property::removeOwner()
 {
     m_pOwner = nullptr;
     m_pEconomy->reset();
-    revokeRect();
+    //revokeRect();
+    hideIcon();
 }
 
 void Property::selfSell()
 {
     m_pOwner->receiveMoney(getSellValue());
     removeOwner();
+}
+
+void Property::beingPurchase(Player* owner)
+{
+    this->setOwner(owner);
+    this->showIcon();
+    this->recolorIcon(ZYSP_3BT4F(owner->getTheColor()));
+}
+
+void Property::beingAcquire(Player* owner)
+{
+    this->m_pOwner->removeOwnedProperty(this);
+    this->setOwner(owner);
+    this->recolorIcon(ZYSP_3BT4F(owner->getTheColor()));
+}
+
+void Property::recolorIcon(Color3B color)
+{
+    m_pFrontIcon->setColor(color);
+}
+
+void Property::hideIcon()
+{
+    m_pIcon->setVisible(false);
+    m_pFrontIcon->setVisible(false);
+}
+
+void Property::showIcon()
+{
+    m_pIcon->setVisible(true);
+    m_pFrontIcon->setVisible(true);
 }

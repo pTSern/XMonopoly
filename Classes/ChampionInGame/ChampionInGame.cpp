@@ -7,6 +7,7 @@
 #include "Player/Player.h"
 #include "GameMaster/GameMaster.h"
 
+
 ///Constructor
 
 ChampionInGame::ChampionInGame() :
@@ -152,12 +153,12 @@ void ChampionInGame::update(float dt)
 
 void ChampionInGame::contactTo(PhysicsContact& contact, GameObject* target)
 {
-    CCLOG("%s Contact to %s", getName().c_str(), target->getName().c_str());
+    //CCLOG("%s Contact to %s", getName().c_str(), target->getName().c_str());
 }
 
 void ChampionInGame::contactBy(PhysicsContact& contact, GameObject* target)
 {
-    CCLOG("%s Contact by %s", getName().c_str(), target->getName().c_str());
+    //CCLOG("%s Contact by %s", getName().c_str(), target->getName().c_str());
 }
 
 ///] Public
@@ -206,9 +207,7 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     m_pPhysicBody = PhysicsBody::createBox(m_pIcon->getContentSize());
     m_pPhysicBody->setDynamic(false);
     m_pPhysicBody->setGravityEnable(false);
-    auto p = GM_GI->getBitMask();
-    CCLOG("BIT MASK: %d", p);
-    m_pPhysicBody->setContactTestBitmask(p);
+    m_pPhysicBody->setContactTestBitmask(GM_GI->getBitMask());
     this->setPhysicsBody(m_pPhysicBody);
 
     this->scheduleUpdate();
@@ -486,12 +485,13 @@ void ChampionInGame::jumpTo(int num)
 
 void ChampionInGame::jumpToNextCoord()
 {
-    this->m_cCoordinate.g_nIndex += 1;
+    //this->m_cCoordinate.g_nIndex += 1;
+    m_cCoordinate.nextIndex();
     this->p_nCurrentJump ++;
-    if(m_cCoordinate.g_nIndex >= GM_GI->getMap()->getArenas().size())
-    {
-        m_cCoordinate.g_nIndex-=(GM_GI->getMap()->getArenas().size());
-    }
+    //if(m_cCoordinate.g_nIndex >= GM_GI->getMap()->getArenas().size())
+    //{
+    //    m_cCoordinate.g_nIndex-=(GM_GI->getMap()->getArenas().size());
+    //}
     this->jumpTo(m_cCoordinate);
 }
 

@@ -6,6 +6,7 @@
 #include "Dice/Dice.h"
 #include "Player/Player.h"
 
+#include "Skill/Mechanic/Mechanic.h"
 /////////////////////////////////////////////////////////////////////
 
 ///] Constructor
@@ -224,7 +225,11 @@ void SkillInGame::MoveBySkill(SkillInGame* skill, float dt)
 
 void SkillInGame::Healing(SkillInGame* skill, float dt)
 {
-    skill->m_pOwner->getOwner()->getStatics()->addHp(20);
+    //skill->m_pOwner->getOwner()->getStatics()->addHp(20);
+    //skill->m_pOwner->getOwner()->endTurn();
+    //skill->m_pOwner->getOwner()->getOwner()->finishAction();
+    auto pj = Projectile::createSingleTargetProjectile("projectile/arrow.png", skill->getOwner()->getOwner(), 50, HeadDir::BEHIND);
+    skill->addChild(pj);
     skill->m_pOwner->getOwner()->endTurn();
     skill->m_pOwner->getOwner()->getOwner()->finishAction();
 }
@@ -371,65 +376,140 @@ void SkillInGame::additionStats(STRUCT_AS *physicDmg,
                                 STRUCT_AS *physicCritMulti,
                                 STRUCT_AS *magicCritMulti)
 {
+    additionPhysicDamage(physicDmg);
+    additionMagicDamage(magicDmg);
+    additionPureDamage(pureDmg);
 
+    additionPhysicPiercingPercent(physicPier);
+    additionMagicPiercingPercent(magicPier);
+
+    additionPhysicPiercingNumber(physicPierNum);
+    additionMagicPiercingNumber(magicPierNum);
+
+    additionPhysicCritRate(physicCritRate);
+    additionMagicCritRate(magicCritRate);
+
+    additionPhysicCritMultiple(physicCritMulti);
+    additionMagicCritMultiple(magicCritMulti);
 }
 
 void SkillInGame::additionPhysicDamage(STRUCT_AS *value)
 {
+    if(!value) return;
     if(value->isZero()) return;
     auto v = value->getStatsVector();
-    for(auto &x : v)
+    for(auto *x : v)
     {
-
+        m_pSkillStatics->addPhysicDmg(x->getValue());
     }
 }
 
 void SkillInGame::additionMagicDamage(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addMagicDmg(x->getValue());
+    }
 }
 
 void SkillInGame::additionPureDamage(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addPureDmg(x->getValue());
+    }
 }
 
 void SkillInGame::additionPhysicPiercingPercent(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addPhysicPiercingPercent(x->getValue());
+    }
 }
 
 void SkillInGame::additionMagicPiercingPercent(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addMagicPiercingPercent(x->getValue());
+    }
 }
 
 void SkillInGame::additionPhysicPiercingNumber(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addPhysicPiercingNumber(x->getValue());
+    }
 }
 
 void SkillInGame::additionMagicPiercingNumber(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addMagicPiercingNumber(x->getValue());
+    }
 }
 
 void SkillInGame::additionPhysicCritRate(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addPhysicCritRate(x->getValue());
+    }
 }
 
 void SkillInGame::additionMagicCritRate(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addMagicCritRate(x->getValue());
+    }
 }
 
 void SkillInGame::additionPhysicCritMultiple(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addPhysicCritMultiple(x->getValue());
+    }
 }
 
 void SkillInGame::additionMagicCritMultiple(STRUCT_AS *value)
 {
-
+    if(!value) return;
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto *x : v)
+    {
+        m_pSkillStatics->addMagicCritMultiple(x->getValue());
+    }
 }

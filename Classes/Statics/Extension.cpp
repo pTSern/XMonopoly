@@ -1,6 +1,8 @@
 #include "Extension.h"
 
-// PERCENT STATICS
+/////v PERCENT STATICS
+
+///] Public
 
 PercentStatics::PercentStatics(float fAmount)
 {
@@ -15,6 +17,17 @@ std::string PercentStatics::toString(int nTab)
     ts += (tab + " + Amount in percent: " + ZY_SP_NUMBER_TO_STRING(this->getPcAmount()) + "%");
 
     return ts;
+}
+
+void PercentStatics::addAmount(float fAmount)
+{
+    m_fAmount += fAmount;
+}
+
+void PercentStatics::reduceAmount(float fAmount)
+{
+    m_fAmount -= fAmount;
+    if(m_fAmount < 0) m_fAmount = 0;
 }
 
 //// REGEN STATICS

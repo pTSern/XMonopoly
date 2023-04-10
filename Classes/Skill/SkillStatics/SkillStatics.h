@@ -11,13 +11,13 @@ class SkillStatics
 private:
 
 #define CREATE_ADD_FUNC_SS(__NAME__, __TYPE__, __VAR__) \
-inline void __NAME__(__TYPE__& var)                     \
+inline void __NAME__(__TYPE__ var)                     \
 {                                                       \
     __VAR__ += var;                                     \
 }                                                       \
 
 #define CREATE_REDUCE_FUNC_SS(__NAME__, __TYPE__, __VAR__) \
-inline void __NAME__(__TYPE__& var)                        \
+inline void __NAME__(__TYPE__ var)                        \
 {                                                          \
     __VAR__ -= var;                                        \
     if(__VAR__ < 0) __VAR__ = 0;                           \
@@ -86,6 +86,61 @@ public:
 
 public:
     CREATE_ADD_REDUCE_FUNC_SS(addPhysicDmg, reducePhysicDmg, float, m_fPhysicDmg);
+    CREATE_ADD_REDUCE_FUNC_SS(addMagicDmg, reduceMagicDmg, float, m_fPhysicDmg);
+    CREATE_ADD_REDUCE_FUNC_SS(addPureDmg, reducePureDmg, float, m_fPureDmg);
+
+    inline void addPhysicPiercingPercent(float amount)
+    {
+        m_cPhysicPie.addAmount(amount);
+    }
+    inline void reducePhysicPiercingPercent(float amount)
+    {
+        m_cPhysicPie.reduceAmount(amount);
+    }
+    inline void addMagicPiercingPercent(float amount)
+    {
+        m_cMagicPie.addAmount(amount);
+    }
+    inline void reduceMagicPiercingPercent(float amount)
+    {
+        m_cMagicPie.reduceAmount(amount);
+    }
+
+    CREATE_ADD_REDUCE_FUNC_SS(addPhysicPiercingNumber, reducePhysicPiercingNumber, float, m_fPhysicPie);
+    CREATE_ADD_REDUCE_FUNC_SS(addMagicPiercingNumber, reduceMagicPiercingNumber, float, m_fMagicPie);
+
+    inline void addPhysicCritRate(float amount)
+    {
+        m_cPhysicCrit.addRate(amount);
+    }
+    inline void reducePhysicCritRate(float amount)
+    {
+        m_cPhysicCrit.reduceRate(amount);
+    }
+    inline void addMagicCritRate(float amount)
+    {
+        m_cMagicCrit.addRate(amount);
+    }
+    inline void reduceMagicCritRate(float amount)
+    {
+        m_cMagicCrit.reduceRate(amount);
+    }
+    inline void addPhysicCritMultiple(float amount)
+    {
+        m_cPhysicCrit.addMultiple(amount);
+    }
+    inline void addMagicCritMultiple(float amount)
+    {
+        m_cMagicCrit.addMultiple(amount);
+    }
+    inline void reducePhysicCritMultiple(float amount)
+    {
+        m_cPhysicCrit.reduceMultiple(amount);
+    }
+    inline void reduceMagicCritMultiple(float amount)
+    {
+        m_cMagicCrit.reduceMultiple(amount);
+    }
 
 protected:
     SkillStatics();

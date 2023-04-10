@@ -355,9 +355,10 @@ void Player::confirmPurchase(Property* property)
 {
     m_pEconomy->pay(property->getPrice());
     m_vOwn.push_back(property);
-    property->setOwner(this);
-    property->addDrawRectOrder();
-    property->setRectColor(m_Color);
+    //property->setOwner(this);
+    //property->addDrawRectOrder();
+    //property->setRectColor(m_Color);
+    property->beingPurchase(this);
     this->removeAllMarkedChild();
     this->finishAction();
 }
@@ -381,10 +382,11 @@ void Player::confirmAcquire(Property* property)
 {
     const auto target = property->getOwner();
     this->doPay(target, property->getSellValue());
-    target->removeOwnedProperty(property);
+    //target->removeOwnedProperty(property);
     this->m_vOwn.push_back(property);
-    property->setOwner(this);
-    property->setRectColor(m_Color);
+    //property->setOwner(this);
+    //property->setRectColor(m_Color);
+    property->beingAcquire(this);
     this->removeAllMarkedChild();
     this->finishAction();
 }

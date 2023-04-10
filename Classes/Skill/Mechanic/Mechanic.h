@@ -6,6 +6,7 @@
 #include "Skill/SkillManager/SkillManager.h"
 #include "GameMaster/GameMaster.h"
 #include "Map/Map.h"
+#include "Support/GameConstant.h"
 
 struct SkillRequirement
 {
@@ -17,7 +18,7 @@ public:
     int g_nTargetNum;                      ///< the number of target
 };
 
-class SkillMechanic
+class SkillMechanic : public Node
 {
 public:
     virtual void callback(float dt) = 0;
@@ -59,20 +60,37 @@ public:
 
 protected:
     bool initWithProperties(const std::string& texture, ChampionInGame* caster, int distance, int targetNum, HeadDir dir);
-    void autoPathFinder();
-    void autoDestruct();
-    void initAction();
+    void initPhysicBody();
+    void initSprite(const std::string& texture);
+
+    void destruct();
+    void collideTargetChecker();
+
+    void flyTo(Point pos);
+    void flyTo(Coordinate coord);
+    void flyToNextCoord();
+    void endFly();
+    void flyTo(Arena* arena);
+
+    void autoRotate();
+    void updatePhysicBody();
+    void hitTarget(ChampionInGame* target);
+
 
 protected:
     int m_nMoveDistance;
-    SkillStatics *m_pAddition;
-    Point m_startPoint;
-    int m_nStartPoint, m_nEndPoint;
+    //int m_nStartPoint, m_nEndPoint;
     HeadDir m_eDir;
 
     int m_nHitTarget, m_nNumberTarget;
-    int m_nLoop;
+    int m_nFlewTime;
+    Coordinate m_coord;
     ZYSprite* m_pProjectile;
+
+    Point m_differentVec2;
+
+    bool m_bIsFinish;
+    ChampionInGame* m_pCaster;
 
 private:
     const std::string p_sClassName = "Projectile";
@@ -93,7 +111,11 @@ protected:
     virtual ~ShootProjectile();
 
 protected:
-    std::vector<Projectile*> m_vProjectiles;
+    int m_nProjectileNum;
+    int m_nCreatedNum;
+    float m_fDelayEachTimeCreateProjectile;
+
+    std::string m_sProjectileTexture;
 };
 
 class Toggle : public SkillMechanic
