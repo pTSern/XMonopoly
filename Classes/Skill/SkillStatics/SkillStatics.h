@@ -5,7 +5,29 @@
 USING_NS_ALL;
 
 //BEGIN_CREATE_REFCLASS(SkillStatics, cocos2d::Ref)
-class SkillStatics {
+
+class SkillStatics
+{
+private:
+
+#define CREATE_ADD_FUNC_SS(__NAME__, __TYPE__, __VAR__) \
+inline void __NAME__(__TYPE__& var)                     \
+{                                                       \
+    __VAR__ += var;                                     \
+}                                                       \
+
+#define CREATE_REDUCE_FUNC_SS(__NAME__, __TYPE__, __VAR__) \
+inline void __NAME__(__TYPE__& var)                        \
+{                                                          \
+    __VAR__ -= var;                                        \
+    if(__VAR__ < 0) __VAR__ = 0;                           \
+}                                                          \
+
+#define CREATE_ADD_REDUCE_FUNC_SS(__ADD_NAME__, __REDUCE_NAME__, __TYPE__, __VAR__) \
+CREATE_ADD_FUNC_SS(__ADD_NAME__, __TYPE__, __VAR__)                                 \
+CREATE_REDUCE_FUNC_SS(__REDUCE_NAME__, __TYPE__, __VAR__)                           \
+
+
 public:
     static SkillStatics* create();
     static SkillStatics* getMerge(SkillStatics* target);
@@ -61,6 +83,9 @@ public:
     bool isReady();
     void castSkill();
     void merge(SkillStatics* target);
+
+public:
+    CREATE_ADD_REDUCE_FUNC_SS(addPhysicDmg, reducePhysicDmg, float, m_fPhysicDmg);
 
 protected:
     SkillStatics();

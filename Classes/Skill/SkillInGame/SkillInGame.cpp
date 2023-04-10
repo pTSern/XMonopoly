@@ -29,7 +29,35 @@ SkillStaticsAddition::SkillStaticsAddition(const SkillStaticsAddition& other)
 
 ///] Static
 
-const SkillStaticsAddition SkillStaticsAddition::NULL_VALUE(-1.0f, -1.0f, (std::string &)"");
+SkillStaticsAddition* SkillStaticsAddition::create(const float amount,const float percent, std::string& name)
+{
+    auto ret = new (std::nothrow) SkillStaticsAddition(amount, percent, name);
+    if(ret) return ret;
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+SkillStaticsAddition* SkillStaticsAddition::create(const float amount, std::string& name)
+{
+    auto ret = new (std::nothrow) SkillStaticsAddition(amount, name);
+    if(ret) return ret;
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+SkillStaticsAddition* SkillStaticsAddition::NULL_VALUE = new (std::nothrow) SkillStaticsAddition(-1.0f, -1.0f, (std::string &)"");
+SkillStaticsAddition* SkillStaticsAddition::ZERO = new (std::nothrow) SkillStaticsAddition(0.0f, 0.0f, (std::string &)"");
+
+///] Public
+
+bool SkillStaticsAddition::isZero() const
+{
+    if(g_fAmount <= 0)
+    {
+        return true;
+    }
+    return false;
+}
 
 ///] Operator
 
@@ -57,6 +85,8 @@ SkillStaticsAddition& SkillStaticsAddition::operator=(const SkillStaticsAddition
 }
 
 /////////////////////////////////////////////////////////////////////
+
+///] Constructor
 
 AdditionStats* AdditionStats::createWithData(const SkillStaticsAddition* data, ...)
 {
@@ -100,6 +130,25 @@ AdditionStats* AdditionStats::createWithVector(std::vector<const SkillStaticsAdd
     return nullptr;
 }
 
+AdditionStats* AdditionStats::NULL_VALUE = AdditionStats::createWithData(nullptr, nullptr);
+AdditionStats* AdditionStats::ZERO = AdditionStats::createWithData(STRUCT_SSA::ZERO, nullptr);
+
+///] Public
+
+bool AdditionStats::isZero()
+{
+    if(m_vList.empty()) return true;
+    int zero_num = 0;
+    for(auto &x : m_vList)
+    {
+        if(x->isZero())
+        {
+            zero_num++;
+        }
+    }
+    return zero_num == m_vList.size();
+}
+
 /////////////////////////////////////////////////////////////////////
 
 //// Constructor
@@ -109,7 +158,6 @@ m_pOwner(nullptr),
 m_oMechanicCallback(nullptr),
 m_bFinishSelect(false)
 {
-
 }
 
 //// Static
@@ -307,4 +355,81 @@ void SkillInGame::disable()
 void SkillInGame::enable()
 {
     this->m_pSkillCard->enable();
+}
+
+///
+
+void SkillInGame::additionStats(STRUCT_AS *physicDmg,
+                                STRUCT_AS *magicDmg,
+                                STRUCT_AS *pureDmg,
+                                STRUCT_AS *physicPier,
+                                STRUCT_AS *magicPier,
+                                STRUCT_AS *physicPierNum,
+                                STRUCT_AS *magicPierNum,
+                                STRUCT_AS *physicCritRate,
+                                STRUCT_AS *magicCritRate,
+                                STRUCT_AS *physicCritMulti,
+                                STRUCT_AS *magicCritMulti)
+{
+
+}
+
+void SkillInGame::additionPhysicDamage(STRUCT_AS *value)
+{
+    if(value->isZero()) return;
+    auto v = value->getStatsVector();
+    for(auto &x : v)
+    {
+
+    }
+}
+
+void SkillInGame::additionMagicDamage(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionPureDamage(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionPhysicPiercingPercent(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionMagicPiercingPercent(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionPhysicPiercingNumber(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionMagicPiercingNumber(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionPhysicCritRate(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionMagicCritRate(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionPhysicCritMultiple(STRUCT_AS *value)
+{
+
+}
+
+void SkillInGame::additionMagicCritMultiple(STRUCT_AS *value)
+{
+
 }

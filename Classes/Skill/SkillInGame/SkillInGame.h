@@ -11,7 +11,9 @@ class SkillManager;
 struct SkillStaticsAddition
 {
 public:
-    static const SkillStaticsAddition NULL_VALUE;
+    static SkillStaticsAddition* NULL_VALUE;
+    static SkillStaticsAddition* ZERO;
+
 public:
     /**
      * @param amount The amount
@@ -19,10 +21,16 @@ public:
      * @warning This Value must be a decimal number.
      */
     SkillStaticsAddition(const float amount,const float percent, std::string& name);
-
     SkillStaticsAddition(const float amount, std::string& name);
-
     SkillStaticsAddition(const SkillStaticsAddition& other);
+    SkillStaticsAddition() {};
+
+public:
+    static SkillStaticsAddition* create(const float amount,const float percent, std::string& name);
+    static SkillStaticsAddition* create(const float amount, std::string& name);
+
+public:
+    bool isZero() const;
 
 public:
     float g_fAmount = 0.0f;
@@ -54,11 +62,18 @@ public:
     static AdditionStats* createWithDataList(const SkillStaticsAddition* data, va_list args);
     static AdditionStats* createWithVector(std::vector<const SkillStaticsAddition*>& vector);
 
+    static AdditionStats* NULL_VALUE;
+    static AdditionStats* ZERO;
+public:
+    CREATE_GET_FUNC(getStatsVector, std::vector<const SkillStaticsAddition*>, m_vList);
+    bool isZero();
+
 protected:
     std::vector<const SkillStaticsAddition*> m_vList;
+
 };
 
-using SkillStaticsExtend = AdditionStats;
+using STRUCT_AS = AdditionStats;
 
 BEGIN_CREATE_REFCLASS(SkillInGame, Skill)
 
@@ -99,6 +114,35 @@ public:
 
     void disable();
     void enable();
+
+public:
+    void additionStats(STRUCT_AS *physicDmg = STRUCT_AS::ZERO,
+                       STRUCT_AS *magicDmg = STRUCT_AS::ZERO,
+                       STRUCT_AS *pureDmg = STRUCT_AS::ZERO,
+                       STRUCT_AS *physicPier = STRUCT_AS::ZERO,
+                       STRUCT_AS *magicPier = STRUCT_AS::ZERO,
+                       STRUCT_AS *physicPierNum = STRUCT_AS::ZERO,
+                       STRUCT_AS *magicPierNum = STRUCT_AS::ZERO,
+                       STRUCT_AS *physicCritRate = STRUCT_AS::ZERO,
+                       STRUCT_AS *magicCritRate = STRUCT_AS::ZERO,
+                       STRUCT_AS *physicCritMulti = STRUCT_AS::ZERO,
+                       STRUCT_AS *magicCritMulti = STRUCT_AS::ZERO);
+
+    void additionPhysicDamage(STRUCT_AS *value);
+    void additionMagicDamage(STRUCT_AS *value);
+    void additionPureDamage(STRUCT_AS *value);
+
+    void additionPhysicPiercingPercent(STRUCT_AS *value);
+    void additionMagicPiercingPercent(STRUCT_AS *value);
+
+    void additionPhysicPiercingNumber(STRUCT_AS *value);
+    void additionMagicPiercingNumber(STRUCT_AS *value);
+
+    void additionPhysicCritRate(STRUCT_AS *value);
+    void additionMagicCritRate(STRUCT_AS *value);
+
+    void additionPhysicCritMultiple(STRUCT_AS *value);
+    void additionMagicCritMultiple(STRUCT_AS *value);
 
 protected:
     SkillManager *m_pOwner;
