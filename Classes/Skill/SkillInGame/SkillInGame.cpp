@@ -7,6 +7,8 @@
 #include "Player/Player.h"
 
 #include "Skill/Mechanic/Mechanic.h"
+#include "Skill/Mechanic/MechanicManager.h"
+
 /////////////////////////////////////////////////////////////////////
 
 ///] Constructor
@@ -210,7 +212,14 @@ SkillInGame* SkillInGame::createTest()
     return nullptr;
 }
 
-// ALL MECHANIC
+SkillInGame* SkillInGame::createNoDice()
+{
+    auto ret = SkillInGame::createTest();
+    ret->m_bIsNeedDice = false;
+    return ret;
+}
+
+///] ALL MECHANIC
 
 void SkillInGame::MoveBySkill(SkillInGame* skill, float dt)
 {
@@ -228,13 +237,19 @@ void SkillInGame::Healing(SkillInGame* skill, float dt)
     //skill->m_pOwner->getOwner()->getStatics()->addHp(20);
     //skill->m_pOwner->getOwner()->endTurn();
     //skill->m_pOwner->getOwner()->getOwner()->finishAction();
-    auto pj = Projectile::createSingleTargetProjectile("projectile/arrow.png", skill->getOwner()->getOwner(), 50, HeadDir::BEHIND);
-    skill->addChild(pj);
-    skill->m_pOwner->getOwner()->endTurn();
-    skill->m_pOwner->getOwner()->getOwner()->finishAction();
+    //if(skill->m_pOwner->getOwner()->isCastingSkill())
+    //{
+    //    auto pj = ShootProjectile::create(skill, 5, "projectile/arrow.png", 50, 2.0f);
+    //    skill->addChild(pj);
+    //    if(pj->getIsFinish())
+    //    {
+    //        skill->m_pOwner->getOwner()->endTurn();
+    //        skill->m_pOwner->getOwner()->getOwner()->finishAction();
+    //    }
+    //}
 }
 
-//// Virtual
+///] Virtual
 
 void SkillInGame::log()
 {
@@ -265,6 +280,12 @@ void SkillInGame::update(float dt)
 
 }
 
+void SkillInGame::setMechanic(MechanicManager* mechanic)
+{
+    this->m_pMechanic = mechanic;
+    this->addChild(mechanic);
+}
+
 void SkillInGame::onTrigger()
 {
     /*
@@ -292,16 +313,18 @@ void SkillInGame::onTrigger()
     this->m_pOwner->setUseButton(false);
 
     /// Schedule the skill's mechanic
-    this->schedule(CC_SCHEDULE_SELECTOR(SkillInGame::scheduleMechanic));
+    //this->schedule(CC_SCHEDULE_SELECTOR(SkillInGame::scheduleMechanic));
+    if(m_pMechanic) m_pMechanic->onTrigger();
     //// Do Mechanic here
 }
 
 void SkillInGame::endTrigger()
 {
-    this->unschedule(CC_SCHEDULE_SELECTOR(SkillInGame::scheduleMechanic));
+    //this->unschedule(CC_SCHEDULE_SELECTOR(SkillInGame::scheduleMechanic));
     //// FORCE END TURN
     //this->m_pOwner->getOwner()->endTurn();
     /// Kill all selected target
+
 }
 
 void SkillInGame::scheduleMechanic(float dt)

@@ -314,6 +314,7 @@ void ChampionInGame::beAttacked(ChampionInGame* attacker)
 
 void ChampionInGame::beAttacked(SkillStatics *pStatics, ChampionInGame* attacker)
 {
+
 }
 
 void ChampionInGame::reduceHp(float amount)

@@ -54,9 +54,17 @@ static const float animation_dilation_each_frame(0.125f);
 static const float animation_move_time(0.25f);
 
 static const std::string champion_animation_dir("champion/ani/");
-
+static const char* attack_index_string_in_json("attack_index");
 
 static const float projectile_move_time(0.25f);
 
 static const std::string property_icon("ui/button/self_remove/icon.png");
 static const std::string property_front_icon("ui/button/self_remove/icon_front.png");
+
+static const std::string champion_attack_tail_path("_attack");
+static const std::string champion_idle_tail_path("_idle");
+static const std::string champion_defend_tail_path("_def");
+
+static const std::string file_format_png(".png");
+static const std::string file_format_plist(".plist");
+static const std::string file_format_json(".json");

@@ -23,7 +23,8 @@ m_pMarkIsTurnChampion_UP(nullptr), m_pMarkIsTurnChampion_DOWN(nullptr),
 m_nChampionIsTurnIndex(-1), m_nRound(0),
 m_pRunningScene(nullptr), m_pBattleLayer(nullptr),
 m_pClient(nullptr), m_pMap(nullptr), p_bLockEndGame(false),
-m_pClientUI(nullptr), p_nBitmask(0)
+m_pClientUI(nullptr), p_nBitmask(0),
+m_nMaxCoordIndex(0)
 {
 
 }
@@ -259,60 +260,65 @@ float GameMaster::attackScene(ChampionInGame* attacker, std::vector<ChampionInGa
 
 float GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender, bool isPreCalculate)
 {
+    ///v Get all path for attacker
     auto path = attacker->getIcon()->getResourceName();
-    auto name = path.substr(9, path.length() - 13);
-    auto path_name = name + "_attack";
-    auto half_path = champion_animation_dir + std::string(path_name);
-    auto ani_path = half_path + ".png";
-    auto ani_plist = half_path + ".plist";
+    auto name = ValidString::getChampionName(path);
+    auto path_name = ValidString::getChampionAttackPath(name);
+    auto half_path = ValidString::getHalfPathOfChampion(path_name);
+    auto ani_plist = ValidString::getPlistPath(half_path);
 
-    int num = numberFrames(ani_plist, path_name);
+    ///v Get total attack frames of attacker
+    int num = ValidString::numberFrames(ani_plist, path_name);
     auto total_delay = (num + 1) * animation_dilation_each_frame + animation_move_time;
 
+    ///v If this method use for pre calculator the total delay time, return here
     if(isPreCalculate) return total_delay;
 
+    ///v Get all path for defender
     auto def_path = defender->getIcon()->getResourceName();
-    auto def_name = (def_path.substr(9, def_path.length() -13) + "_def");
-    auto ani_def_path = "champion/ani/" + def_name += ".png";
+    auto def_name = ValidString::getChampionDefendPath(ValidString::getChampionName(def_path));
+    auto ani_def_path = ValidString::getPngPath(ValidString::getHalfPathOfChampion(def_name));
 
+    ///v Set up for layer color this will enhance the visual effect
     auto dim = LayerColor::create(Color4B::BLACK);
     m_pBattleLayer->addChild(dim, 9);
+    ///v Transparent the layer color
     dim->setOpacity(225);
 
+    ///v Set up a new sprite for the attacker, which will be displayed on layer color
     auto atk =  ZYSprite::create(path);
     atk->setFlippedX(true);
     m_pBattleLayer->addChild(atk, 11);
 
+    ///v Set up a new sprite for the defender, which will be displayed on layer color
     auto def = defender->getIcon()->clone();
     m_pBattleLayer->addChild(def, 10);
 
+    ///v Start set up attack animation for attacker
     auto cache = SpriteFrameCache::getInstance();
     cache->addSpriteFramesWithFile(ani_plist);
 
-    Vector<SpriteFrame*> frames;
-    for (int i = 0; i <= num; i++) {
-        std::string frameName = StringUtils::format((path_name + "_%d.png").c_str(), i);
-        auto frame = cache->getSpriteFrameByName(frameName);
-        frames.pushBack(frame);
-    }
+    Vector<SpriteFrame*> frames = ValidString::generateFrames(path_name, num);
 
     auto animation = Animation::createWithSpriteFrames(frames, animation_dilation_each_frame);
     auto animate = Animate::create(animation);
 
+    ///v Set up new position for the attacker and defender representation
     def->setPosition(Point(ZYDR_TGVS.width/3, ZYDR_TGVS.height/2));
     auto targetPos = Point( def->getContentPositionMiddleRight().x + atk->getContentSize().width/2,def->getPositionY());
     atk->setPosition(Point(ZYDR_TGVS.width/3*2, ZYDR_TGVS.height/2));
 
-    auto delay = DelayTime::create(total_delay);
+    ///v Set up all needed Action for attacker and defender
     auto rm = RemoveSelf::create(true);
-    auto mt = MoveTo::create(animation_move_time, targetPos);
+    auto mt = MoveTo::create(animation_move_time, targetPos); ///< An action help attacker move toward to the defender in a certain time
 
-    auto cb = CallFunc::create([&, ani_def_path, def]()
+    auto cb = CallFunc::create([&, ani_def_path, def]()                 ///< A Call back to change the defender sprite to a the being attacked sprite
                                {
                                     def->replaceTexture(ani_def_path);
                                });
 
-    auto index = getAttackIndexInAnimation(name);
+    auto index = ValidString::getAttackIndexOfAnimation(name);                   ///< Get the index in the sprite sheet animation of attacker, this will help to find exactly the timing that the defender got hit
+
     auto dim_sq = Sequence::create(DelayTime::create(animation_move_time + animation_dilation_each_frame), DelayTime::create((num) * animation_dilation_each_frame), rm,  nullptr);
     auto def_sq = Sequence::create(DelayTime::create(animation_move_time + animation_dilation_each_frame*index), cb, DelayTime::create((num - index + 1) * animation_dilation_each_frame), rm->clone(), nullptr);
     auto atk_sq = Sequence::create(mt, animate, rm->clone(), nullptr);
@@ -321,22 +327,8 @@ float GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender
     def->runAction(def_sq);
     dim->runAction(dim_sq);
 
+    ///v return the total delay time for those action above
     return total_delay;
-}
-
-const int GameMaster::getAttackIndexInAnimation(const std::string& name)
-{
-    auto path = champion_animation_dir + std::string(name) + ".json";
-    auto data = CCFU_GI->getStringFromFile(path);
-    Document doc;
-    doc.Parse(data.c_str());
-    if(doc.HasParseError())
-    {
-        CCLOG("ERROR");
-        return 1;
-    }
-    const rapidjson::Value& value = doc[name.c_str()];
-    return value["attack_index"].GetInt();
 }
 
 bool GameMaster::critStar(Point pos, float chance)

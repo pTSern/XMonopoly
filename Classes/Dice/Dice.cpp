@@ -98,6 +98,7 @@ void Dice::log()
 int Dice::rollDice()
 {
     auto dice = random(1, 6);
+    dice = 6;
     m_vDiceMemory.push_back(dice);
 
     m_centerRect.origin.x = diceSize.width * (dice - 1);

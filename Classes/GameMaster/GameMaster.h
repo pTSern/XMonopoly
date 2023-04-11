@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ZyUwU/ZyUwU.h"
-#include "Support/GameConstant.h"
+#include "Support/ValidString.h"
 #include "ui/UIButton.h"
 
 USING_NS_ALL;
@@ -36,7 +36,6 @@ public:
 
     float attackScene(ChampionInGame* attacker, ChampionInGame* defender, bool isPreCalculate = false);
     float attackScene(ChampionInGame* attacker, std::vector<ChampionInGame*>& defenders);
-    const int getAttackIndexInAnimation(const std::string& name);
 
     void critStar(Point pos);
     bool critStar(Point pos, float chance);

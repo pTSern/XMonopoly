@@ -7,6 +7,7 @@ USING_NS_ALL;
 
 class ChampionInGame;
 class SkillManager;
+class MechanicManager;
 
 struct SkillStaticsAddition
 {
@@ -88,6 +89,7 @@ BEGIN_CREATE_REFCLASS(SkillInGame, Skill)
 public:
     static SkillInGame* createWithSkill(Skill* skill);
     static SkillInGame* createTest();
+    static SkillInGame* createNoDice();
 
 public: // Other callback func
     static void MoveBySkill(SkillInGame* skill, float dt);
@@ -110,8 +112,10 @@ public:
     CREATE_GET_FUNC(isFinishSelect, bool, m_bFinishSelect);
     CREATE_GET_FUNC(isSelectable, bool, m_pCondition->isValid());
     CREATE_GET_FUNC(isReady, bool, m_pSkillStatics->isReady());
+    CREATE_GET_FUNC(isNeedDice, bool, m_bIsNeedDice);
     void onSelect();
     void unSelect();
+    void setMechanic(MechanicManager* mechanic);
 
     CREATE_SET_FUNC(setSkillMechanic, const SkillMechanicCallback&, m_oMechanicCallback);
     void conNotify();
@@ -152,6 +156,7 @@ protected:
     SkillManager *m_pOwner;
 
     bool m_bFinishSelect;
+    MechanicManager *m_pMechanic;
 
     SkillMechanicCallback m_oMechanicCallback;
 

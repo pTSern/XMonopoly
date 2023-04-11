@@ -19,6 +19,9 @@
 #include "GameMaster/GameMaster.h"
 #include "SceneTransition.h"
 
+#include "Skill/Mechanic/MechanicManager.h"
+#include "Skill/Mechanic/Mechanic.h"
+
 //// Static
 
 static SceneRegister<BattleScene> s_register("BATTLE");
@@ -78,10 +81,16 @@ bool BattleScene::init()
     auto champ2 = Champion::createWithProperties("champion/samurai.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
-    sig2->setSkillMechanic(SkillInGame::MoveBySkill);
+
+    //sig2->setSkillMechanic(SkillInGame::MoveBySkill);
     sig2->setName("move");
     auto sm2 = SkillManager::createWithSkillInGame(sig2, nullptr);
     auto cig2 = TesterBot::createWithProperties(champ2, ui2, dice2, sm2);
+
+    auto skill_mechanic = Moving::create();
+    auto mechanic_manager = MechanicManager::create(sig2, skill_mechanic);
+
+    CCLOG("XXXXXXXX 2");
     //auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
     auto coord2 = Coordinate(Dir::WS, 0);
     auto player2 = BotPlayer::create();
@@ -95,12 +104,22 @@ bool BattleScene::init()
     auto dice = Dice::createWithProperties("dice/128.png");
     auto champ = Champion::createWithProperties("champion/duelist.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui = ChampionUI::createDefault();
+
+    ///v Skill
     auto sig = SkillInGame::createTest();
-    sig->setSkillMechanic(SkillInGame::MoveBySkill);
-    auto heal = SkillInGame::createTest();
-    heal->setSkillMechanic(SkillInGame::Healing);
+    auto heal = SkillInGame::createNoDice();
+
     auto sm = SkillManager::createWithSkillInGame(sig, heal, nullptr);
     auto cig = ChampionInGame::createWithProperties(champ, ui, dice, sm);
+
+    auto skill_mechanic2 = Moving::create();
+    auto mechanic_manager2 = MechanicManager::create(sig, skill_mechanic2);
+    //sig->setSkillMechanic(SkillInGame::MoveBySkill);
+
+    auto skill_mechanic3 = ShootProjectile::create(3, "projectile/arrow.png", 12, 2.0f);
+    auto mechanic_manager3 = MechanicManager::create(heal, skill_mechanic3);
+
+    //heal->setSkillMechanic(SkillInGame::Healing);
     auto coord = Coordinate(Dir::WS, 0);
     //auto ig = IngameStatics::createTest();
     //cig->setStatics(ig);
