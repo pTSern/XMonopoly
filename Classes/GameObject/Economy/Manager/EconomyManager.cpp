@@ -6,7 +6,8 @@
 IngameEconomyManager::IngameEconomyManager() :
 m_economy(Economy::IngameCoin),
 m_pLabel(nullptr),
-m_pIcon(nullptr)
+m_pIcon(nullptr),
+m_bIsExecuteIndicator(false)
 {
 
 }
@@ -104,14 +105,40 @@ void IngameEconomyManager::executeIndicator(const float& money, const bool& isPa
         this->addChild(font);
         font->setPosition(m_pLabel->getPosition());
 
-        const auto size = m_pLabel->getContentSize();
+        if(m_bIsExecuteIndicator)
+        {
+            font->setVisible(false);
+            const auto delay = DelayTime::create(animation_indicator_duration/9);
+            const auto remove = RemoveSelf::create(true);
+            const auto recall = CallFunc::create(
+                    [&, money, isPay]()
+                    {
+                        this->executeIndicator(money, isPay);
+                    }
+            );
+            const auto seq = Sequence::create(delay, recall, remove, nullptr);
+            font->runAction(seq);
+            return;
+        }
+
+        //const auto size = m_pLabel->getContentSize();
+        const auto size = 20;
         auto move_dir = autoSelectMoveDirection();
-        const auto move_by = MoveBy::create(0.75f, Point(size.width * move_dir.hDirectionToFloat() * 1,
-                                                  size.height * move_dir.vDirectionToFloat() * 3));
-        const auto fadeout = FadeOut::create(1.5f);
+        const auto move_by = MoveBy::create(animation_indicator_duration/3, Point(size * move_dir.hDirectionToFloat() * 1,
+                                                                                  size * move_dir.vDirectionToFloat() * 3));
+        auto callback = CallFunc::create(
+                [&]()
+                {
+                    this->m_bIsExecuteIndicator = false;
+                }
+        );
+        const auto fadeout = FadeOut::create(animation_indicator_duration/3*2);
         const auto remove = RemoveSelf::create(true);
-        const auto seq = Sequence::create(move_by, fadeout, remove, nullptr);
+
+        const auto seq = Sequence::create(move_by, fadeout, callback, remove, nullptr);
         font->runAction(seq);
+
+        m_bIsExecuteIndicator = true;
     }
 }
 

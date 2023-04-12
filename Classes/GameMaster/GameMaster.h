@@ -51,6 +51,8 @@ public:
     float physicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
     float totalDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
 
+    void damageIndicator(float amount, Color3B color, Point pos);
+
     CREATE_SET_GET_FUNC(setMaxCoordIndex, getMaxCoordIndex, int, m_nMaxCoordIndex);
 
 protected:

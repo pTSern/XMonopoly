@@ -5,6 +5,7 @@
 #include "cocos2d.h"
 #include "ZYShaderHelper.h"
 #include "ZYSupport2D.h"
+#include "ZyUwU/base/ZYDirector.h"
 
 NS_ZY_BEGIN
 
@@ -37,7 +38,7 @@ public:
      * @return The automatic released Label object
      */
     static ZYLabel* createWithTTF(const TTFConfig& ttfConfig, const std::string& text,
-                                TextHAlignment hAlignment = TextHAlignment::LEFT, int maxLineWidth = 0);
+                                TextHAlignment hAlignment = TextHAlignment::CENTER, int maxLineWidth = ZYDR_TGVS.width/2);
 public:
     /**
      * Log all Label properties that allow to be display

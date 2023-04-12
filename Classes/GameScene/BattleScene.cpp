@@ -90,7 +90,6 @@ bool BattleScene::init()
     auto skill_mechanic = Moving::create();
     auto mechanic_manager = MechanicManager::create(sig2, skill_mechanic);
 
-    CCLOG("XXXXXXXX 2");
     //auto cig2 = ChampionInGame::createWithProperties(champ2, ui2, dice2, sm2);
     auto coord2 = Coordinate(Dir::WS, 0);
     auto player2 = BotPlayer::create();
@@ -131,7 +130,7 @@ bool BattleScene::init()
     player->setName("PLAYER 1");
     cig->setPosition(coord);
     cig->setName("CHAMP A");
-    cig->getStatics()->getStatics()->setSpeed(0);
+    cig->getStatics()->getStatics()->setSpeed(10);
 
     m_vPlayers.push_back(player2);
     m_vPlayers.push_back(player);

@@ -361,3 +361,14 @@ int GameMaster::numberFrames(const std::string& path, const std::string& key)
 
     return numFrames-1;
 }
+
+void GameMaster::damageIndicator(float amount, Color3B color, Point pos)
+{
+    auto ttf = TTFConfig(defaultTTFConfig);
+    ttf.fontSize = 20;
+
+    auto dmg = ZYSP_SRF(amount, 5);
+    auto label = ZYLabel::createWithTTF(ttf, dmg);
+
+    //auto moveBy = MoveBy::create()
+}

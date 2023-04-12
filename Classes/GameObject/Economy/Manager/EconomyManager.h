@@ -70,6 +70,8 @@ protected:
     ZYLabel *m_pLabel;
     ZYSprite *m_pIcon;
 
+    bool m_bIsExecuteIndicator;
+
 END_CREATE_REFCLASS
 
 using IgEcoMng = IngameEconomyManager;
