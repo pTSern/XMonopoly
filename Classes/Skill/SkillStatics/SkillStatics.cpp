@@ -19,7 +19,8 @@ m_cPhysicPie(0), m_cMagicPie(0),
 m_nCoolDown(0), m_nCurrentCoolDown(0),
 m_fMnCost(0), m_fHpCost(0), m_fSpCost(0),
 m_cPhysicCrit(0), m_cMagicCrit(0),
-m_sDescription()
+m_sDescription(),
+m_fPhysicPie(0), m_fMagicPie(0)
 {
 }
 

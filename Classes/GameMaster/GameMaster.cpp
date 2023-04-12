@@ -4,6 +4,7 @@
 #include "Player/UI/PlayerUI.h"
 #include "Map/Map.h"
 #include "Statics/Statics.h"
+#include "Skill/SkillManager/SkillManager.h"
 
 #include "external/json/document.h"
 #include "external/json/writer.h"
@@ -204,7 +205,8 @@ float GameMaster::magicDmgCalculator(Statics* defender, SkillStatics* attacker, 
     float totalMrInDc = mrToDc * (1 - attacker->getTheMagicPiercing().getPcAmount());
     // Run gacha if this crit
 
-    bool isCrit = critStar(pos, attacker->getMagicCritRate());
+    auto critDmg = (attacker->getMagicCritDmgMul() + 1 ) * attacker->getMagicDmg();
+    bool isCrit = critStar(critDmg, pos, attacker->getMagicCritRate(), false);
     // Run crit
 
     // Total magic damage
@@ -222,7 +224,8 @@ float GameMaster::physicDmgCalculator(Statics* defender, SkillStatics* attacker,
     float totalArInDc = arToDc * (1 - attacker->getThePhysicPiercing().getPcAmount());
     // Run gacha if this crit
 
-    bool isCrit = critStar(pos, attacker->getPhysicCritRate());
+    auto critDmg = (attacker->getPhysicCritDmgMul() + 1 ) * attacker->getPhysicDmg();
+    bool isCrit = critStar(critDmg, pos, attacker->getPhysicCritRate(), true);
     // Run crit
 
     // Total magic damage
@@ -232,9 +235,104 @@ float GameMaster::physicDmgCalculator(Statics* defender, SkillStatics* attacker,
     return causeDmg;
 }
 
+float GameMaster::magicDmgCalculator(ChampionInGame* defender, SkillStatics* attacker)
+{
+    auto pos = defender->getPosition();
+    return magicDmgCalculator(defender, attacker, pos);
+}
+
+float GameMaster::magicDmgCalculator(ChampionInGame* defender, SkillStatics* attacker, Point pos)
+{
+    auto s_def = defender->getStatics()->getStatics();
+    auto dmg = magicDmgCalculator(s_def, attacker, pos);
+
+    dealDamage(dmg, pos, defender);
+    return dmg;
+}
+
+float GameMaster::physicDmgCalculator(ChampionInGame* defender, SkillStatics* attacker)
+{
+    auto pos = defender->getPosition();
+
+    return physicDmgCalculator(defender, attacker, pos);
+}
+
+float GameMaster::physicDmgCalculator(ChampionInGame* defender, SkillStatics* attacker, Point pos)
+{
+    auto s_def = defender->getStatics()->getStatics();
+    auto dmg = physicDmgCalculator(s_def, attacker, pos);
+
+    dealDamage(dmg, pos, defender);
+    return dmg;
+}
+
+float GameMaster::pureDmgCalculator(ChampionInGame* defender, SkillStatics* attacker)
+{
+    auto pos = defender->getPosition();
+
+    return pureDmgCalculator(defender, attacker, pos);
+}
+
+float GameMaster::pureDmgCalculator(ChampionInGame* defender, SkillStatics* attacker, Point pos)
+{
+    auto s_def = defender->getStatics()->getStatics();
+    auto dmg = pureDmgCalculator(s_def, attacker, pos);
+
+    dealDamage(dmg, pos, defender);
+    return dmg;
+}
+
+float GameMaster::pureDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
+{
+    auto causeDmg = attacker->getPureDmg();
+    return causeDmg;
+}
+
 float GameMaster::totalDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
 {
-    return magicDmgCalculator(defender, attacker, pos) + physicDmgCalculator(defender, attacker, pos);
+    return magicDmgCalculator(defender, attacker, pos) + physicDmgCalculator(defender, attacker, pos) +
+            pureDmgCalculator(defender, attacker, pos);
+}
+
+Sequence* GameMaster::totalDmgCalculator(ChampionInGame* defender, SkillStatics* attacker)
+{
+    return totalDmgCalculator(defender, attacker, defender->getPosition());
+}
+
+Sequence* GameMaster::totalDmgCalculator(ChampionInGame* defender, SkillStatics* attacker, Point pos)
+{
+    auto delay = DelayTime::create(animation_indicator_duration/6);
+    auto physic = CallFunc::create(
+            [&, defender, attacker, pos]()
+            {
+                auto p = physicDmgCalculator(defender, attacker, pos);
+            }
+    );
+
+    auto magic = CallFunc::create(
+            [&, defender, attacker, pos]()
+            {
+                auto p = magicDmgCalculator(defender, attacker, pos);
+            }
+    );
+    auto pure = CallFunc::create(
+            [&, defender, attacker, pos]()
+            {
+                auto p = pureDmgCalculator(defender, attacker, pos);
+            }
+    );
+    return Sequence::create(physic, delay, magic, delay->clone(), pure, nullptr);
+}
+
+void GameMaster::dealDamage(float amount, ChampionInGame* defender)
+{
+    dealDamage(amount, defender->getIcon()->getContentPositionMiddleTop(), defender);
+}
+
+void GameMaster::dealDamage(float amount, Point pos, ChampionInGame* defender)
+{
+    defender->reduceHp(amount);
+    damageIndicator(amount, Color3B::WHITE, pos);
 }
 
 float GameMaster::attackScene(ChampionInGame* attacker, std::vector<ChampionInGame*>& defenders)
@@ -319,8 +417,13 @@ float GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender
 
     auto index = ValidString::getAttackIndexOfAnimation(name);                   ///< Get the index in the sprite sheet animation of attacker, this will help to find exactly the timing that the defender got hit
 
+    auto s_atk = attacker->getCurrentSkillDeck()->getSelectingSkill()->getSkillStatics();
+
+    auto total = totalDmgCalculator(defender, s_atk, def->getContentPositionTopLeft());
+    auto pre_delay = DelayTime::create(animation_move_time + animation_dilation_each_frame*index);
+
     auto dim_sq = Sequence::create(DelayTime::create(animation_move_time + animation_dilation_each_frame), DelayTime::create((num) * animation_dilation_each_frame), rm,  nullptr);
-    auto def_sq = Sequence::create(DelayTime::create(animation_move_time + animation_dilation_each_frame*index), cb, DelayTime::create((num - index + 1) * animation_dilation_each_frame), rm->clone(), nullptr);
+    auto def_sq = Sequence::create(pre_delay, cb, total, DelayTime::create((num - index + 1) * animation_dilation_each_frame - animation_dilation_each_frame/3 ), rm->clone(), nullptr);
     auto atk_sq = Sequence::create(mt, animate, rm->clone(), nullptr);
 
     atk->runAction(atk_sq);
@@ -331,19 +434,20 @@ float GameMaster::attackScene(ChampionInGame* attacker, ChampionInGame* defender
     return total_delay;
 }
 
-bool GameMaster::critStar(Point pos, float chance)
+bool GameMaster::critStar(float amount, Point pos, float chance, bool isPhysic)
 {
     if(ZYGC_GI->runGacha(chance))
     {
-        this->critStar(pos);
+        this->critStar(amount, pos, isPhysic);
         return true;
     }
     return false;
 }
 
-void GameMaster::critStar(Point pos)
+void GameMaster::critStar(float amount, Point pos, bool isPhysic)
 {
-
+    auto color = isPhysic ? Color3B::RED : Color3B::MAGENTA;
+    damageIndicator(amount, color, pos, true);
 }
 
 int GameMaster::numberFrames(const std::string& path, const std::string& key)
@@ -362,13 +466,25 @@ int GameMaster::numberFrames(const std::string& path, const std::string& key)
     return numFrames-1;
 }
 
-void GameMaster::damageIndicator(float amount, Color3B color, Point pos)
+void GameMaster::damageIndicator(float amount, Color3B color, Point pos, bool isCrit)
 {
+    if(amount <=0 ) return;
+
     auto ttf = TTFConfig(defaultTTFConfig);
-    ttf.fontSize = 20;
+    ttf.fontSize = 30;
+    ttf.bold = true;
+    ttf.outlineSize = 1;
 
     auto dmg = ZYSP_SRF(amount, 5);
     auto label = ZYLabel::createWithTTF(ttf, dmg);
+    label->setPosition(pos);
+    label->setColor(color);
+    m_pBattleLayer->addChild(label, 15);
 
-    //auto moveBy = MoveBy::create()
+    auto fade_out = FadeOut::create(animation_indicator_duration/3);
+    auto moveBy = MoveBy::create(animation_indicator_duration/3, Vec2(0, 30));
+    auto remove = RemoveSelf::create(true);
+    auto seq = Sequence::create(moveBy, fade_out, remove, nullptr);
+
+    label->runAction(seq);
 }

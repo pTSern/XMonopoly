@@ -34,14 +34,7 @@ p_nCurrentJump(0), p_nJumpTime(0)
 
 }
 
-////Public
-
-void ChampionInGame::setLandingArena(Arena *pArena)
-{
-    this->m_pLandingArena = pArena;
-}
-
-//Static
+///] Static
 
 ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClone, bool bIsDeleteCloner)
 {
@@ -162,6 +155,11 @@ void ChampionInGame::contactBy(PhysicsContact& contact, GameObject* target)
 }
 
 ///] Public
+
+void ChampionInGame::setLandingArena(Arena *pArena)
+{
+    this->m_pLandingArena = pArena;
+}
 
 bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
 {
@@ -616,4 +614,16 @@ void ChampionInGame::initAnimation()
     auto repeat = RepeatForever::create(animate);
 
     m_pAnimate->runAction(repeat);
+}
+
+SkillManager* ChampionInGame::getCurrentSkillDeck()
+{
+    return m_pPreDiceSkillDeck;
+    //switch (m_eTurnPhase)
+    //{
+    //    case ChampionTurnPhase::PRE_DICE:
+    //        return m_pPreDiceSkillDeck;
+    //    case ChampionTurnPhase::POS_DICE:
+    //        return m_pPostDiceSkillDeck;
+    //}
 }

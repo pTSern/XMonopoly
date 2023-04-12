@@ -41,7 +41,8 @@ public:
 
 public:
     CREATE_SET_GET_FUNC(setPhysicDmg, getPhysicDmg, float, m_fPhysicDmg);
-    CREATE_SET_GET_FUNC(setMagicDmg, getMagicDmg, float, m_fPhysicDmg);
+    CREATE_SET_GET_FUNC(setMagicDmg, getMagicDmg, float, m_fMagicDmg);
+    CREATE_SET_GET_FUNC(setPureDmg, getPureDmg, float, m_fPureDmg);
 
     CREATE_GET_FUNC(getThePhysicPiercing, PercentStatics, m_cPhysicPie);
     CREATE_GET_FUNC(getPhysicPiercing, float, m_cPhysicPie.getAmount());

@@ -75,6 +75,7 @@ public:
 private:
     ZYLabel(TextHAlignment hAlignment = TextHAlignment::LEFT,
             TextVAlignment vAlignment = TextVAlignment::TOP);
+    const std::string p_sClassName = "ZYLabel";
 };
 
 NS_ZY_END

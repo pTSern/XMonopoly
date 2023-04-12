@@ -37,8 +37,8 @@ public:
     float attackScene(ChampionInGame* attacker, ChampionInGame* defender, bool isPreCalculate = false);
     float attackScene(ChampionInGame* attacker, std::vector<ChampionInGame*>& defenders);
 
-    void critStar(Point pos);
-    bool critStar(Point pos, float chance);
+    void critStar(float mount, Point pos, bool isPhysic);
+    bool critStar(float amount, Point pos, float chance, bool isPhysic);
 
     int numberFrames(const std::string& path, const std::string& key);
 
@@ -48,10 +48,26 @@ public:
     //CREATE_GET_FUNC(getClientUI, PlayerUI*, m_pClientUI);
 
     float magicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
-    float physicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
-    float totalDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
+    float magicDmgCalculator(ChampionInGame* defender, SkillStatics* attacker);
+    float magicDmgCalculator(ChampionInGame* defender, SkillStatics* attacker, Point pos);
 
-    void damageIndicator(float amount, Color3B color, Point pos);
+    float physicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
+    float physicDmgCalculator(ChampionInGame* defender, SkillStatics* attacker);
+    float physicDmgCalculator(ChampionInGame* defender, SkillStatics* attacker, Point pos);
+
+    float pureDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
+    float pureDmgCalculator(ChampionInGame* defender, SkillStatics* attacker);
+    float pureDmgCalculator(ChampionInGame* defender, SkillStatics* attacker, Point pos);
+
+    float totalDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos);
+    Sequence* totalDmgCalculator(ChampionInGame* defender, SkillStatics* attacker);
+
+    Sequence* totalDmgCalculator(ChampionInGame* defender, SkillStatics* attacker, Point pos);
+
+    void dealDamage(float amount, ChampionInGame* defender);
+    void dealDamage(float amount, Point pos, ChampionInGame* defender);
+
+    void damageIndicator(float amount, Color3B color, Point pos, bool isCrit = false);
 
     CREATE_SET_GET_FUNC(setMaxCoordIndex, getMaxCoordIndex, int, m_nMaxCoordIndex);
 

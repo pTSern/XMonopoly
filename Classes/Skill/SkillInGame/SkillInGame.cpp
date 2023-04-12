@@ -195,6 +195,7 @@ SkillInGame* SkillInGame::createTest()
         ret->autorelease();
 
         ret->m_pSkillStatics = SkillStatics::create();
+        ret->m_pSkillStatics->setPhysicDmg(35);
         ret->m_pSkillStatics->setManaCost(0);
         ret->m_pSkillCard = SkillCard::createDefault();
         ret->m_pSkillCard->setDescriptionLabel("The champion moves to a new Arena with a number equal to the Dice number");
@@ -277,7 +278,6 @@ void SkillInGame::config()
 
 void SkillInGame::update(float dt)
 {
-
 }
 
 void SkillInGame::setMechanic(MechanicManager* mechanic)

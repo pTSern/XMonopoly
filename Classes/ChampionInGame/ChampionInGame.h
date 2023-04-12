@@ -93,6 +93,8 @@ public:
     CREATE_GET_FUNC(getIcon, ZYSprite*, m_pIcon);
     CREATE_GET_FUNC(isFlip, bool, m_cCoordinate.g_bIsFlip);
 
+    SkillManager* getCurrentSkillDeck();
+
     bool isValidTurn();
 
 public:

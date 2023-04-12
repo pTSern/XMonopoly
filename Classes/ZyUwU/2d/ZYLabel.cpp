@@ -58,7 +58,7 @@ ZYLabel* ZYLabel::createWithTTF(const TTFConfig& ttfConfig, const std::string& t
 
 void ZYLabel::log()
 {
-
+    ZY_EZ_LOG;
 }
 
 std::string ZYLabel::toString(int nTab)

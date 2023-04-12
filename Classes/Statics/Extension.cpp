@@ -4,9 +4,9 @@
 
 ///] Public
 
-PercentStatics::PercentStatics(float fAmount)
+PercentStatics::PercentStatics(float fAmount):
+m_fAmount(fAmount)
 {
-    this->m_fAmount = fAmount;
 }
 
 std::string PercentStatics::toString(int nTab)
@@ -49,10 +49,9 @@ std::string RegenStatics::toString(int nTab)
 
 //// CRIT STATICS
 
-CritStatics::CritStatics(float fDmgMultiple, float fRate)
+CritStatics::CritStatics(float fDmgMultiple, float fRate) :
+m_fDmgMultiple(fDmgMultiple), m_cRate(fRate)
 {
-    this->m_fDmgMultiple = fDmgMultiple;
-    this->m_cRate = PercentStatics(fRate);
 }
 
 std::string CritStatics::toString(int nTab)
