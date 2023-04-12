@@ -115,6 +115,7 @@ public:
     CREATE_GET_FUNC(isNeedDice, bool, m_bIsNeedDice);
     void onSelect();
     void unSelect();
+    void cooldown();
     void setMechanic(MechanicManager* mechanic);
 
     CREATE_SET_FUNC(setSkillMechanic, const SkillMechanicCallback&, m_oMechanicCallback);

@@ -8,6 +8,7 @@
 #include "Skill/SkillManager/SkillManager.h"
 #include "GameMaster/GameMaster.h"
 #include "Map/Map.h"
+#include "Audio/SoundManager.h"
 
 ///] Constructor
 
@@ -154,6 +155,7 @@ void Projectile::hitTarget(ChampionInGame* target)
     s->setVisible(false);
     s->runAction(seq);
     hitTargetAnimation(target);
+
     // Do animation
 
     // Do be attacked
