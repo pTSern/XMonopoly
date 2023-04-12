@@ -204,6 +204,36 @@ private:                                                                        
 
 #define END_CREATE_INSTANCE_REFCLASS };
 
+#define BEGIN_CREATE_INSTANCE_CLASS(__NAME__)												\
+class __NAME__                                                    							\
+{                                                                                        	\
+public:                                                                                  	\
+	static __NAME__* getInstance()                                              	 	 	\
+    {                                                                                    	\
+		if(!sp_pInstance)                                                                	\
+		{                                                                                	\
+			sp_pInstance = new (std::nothrow) __NAME__();                                	\
+        	CCASSERT(sp_pInstance, "FATAL: Not enough memory");                          	\
+			sp_pInstance->init();                                                     	 	\
+		}                                                                                	\
+		return sp_pInstance;                                                             	\
+	}                                                                                       \
+    static void selfDestroyInstance()                                                    	\
+	{                                                                                       \
+    	CC_SAFE_DELETE(__NAME__::sp_pInstance);                                       \
+	}																						\
+	bool init();                                                                 	\
+    std::string toString(int nTab = 2);                                          	\
+    void log();                                                                  	\
+	__NAME__();                                                                          	\
+private:                                                                                 	\
+	static __NAME__* sp_pInstance;                                                       	\
+	const std::string p_sClassName = #__NAME__;         \
+
+#define END_CREATE_INSTANCE_CLASS };
+
+
+
 #define BEGIN_CREATE_CLASS(__NAME__)  					\
 class __NAME__                        					\
 {                                                   	\

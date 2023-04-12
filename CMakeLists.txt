@@ -125,6 +125,7 @@ list(APPEND GAME_SOURCE
         Classes/Skill/SkillInGame/SkillInGame.cpp
         Classes/Skill/SkillManager/SkillManager.cpp
         Classes/Skill/Mechanic/Mechanic.cpp
+        Classes/Skill/Mechanic/MechanicManager.cpp
 
         Classes/GameEffect/Buff/Buff.cpp
         Classes/GameEffect/Debuff/Debuff.cpp
@@ -227,6 +228,7 @@ list(APPEND GAME_HEADER
         Classes/Skill/SkillInGame/SkillInGame.h
         Classes/Skill/SkillManager/SkillManager.h
         Classes/Skill/Mechanic/Mechanic.h
+        Classes/Skill/Mechanic/MechanicManager.h
 
         Classes/GameEffect/Buff/Buff.h
         Classes/GameEffect/Debuff/Debuff.h

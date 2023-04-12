@@ -71,6 +71,7 @@ Statics* Statics::clone()
     {
         pElement->setAttackDmg(this->getAttackDmg());
         pElement->setMagicDmg(this->getMagicDmg());
+
         pElement->setLife(this->getLife());
         pElement->setArmor(this->getArmor());
         pElement->setMagicResistance(this->getMagicResistance());
@@ -81,6 +82,8 @@ Statics* Statics::clone()
         pElement->setMaxHp(this->getTheHp());
         pElement->setMaxMana(this->getTheMana());
         pElement->setMaxSkillPoint(this->getTheSkillPoint());
+
+        pElement->setSpeed(this->getSpeed());
 
         return pElement;
     }
@@ -181,7 +184,8 @@ m_pStatics(nullptr),
 m_fCurrentHp(1),
 m_fCurrentSp(1),
 m_fCurrentMana(1),
-p_bStopHealing(false)
+p_bStopHealing(false),
+m_nCurrentLife(1)
 {
 
 }
@@ -194,7 +198,7 @@ IngameStatics* IngameStatics::createWithStatics(Statics* pStatics, bool bIsClone
     if(ret && ret->init() && pStatics)
     {
         //ret->autorelease();
-        ret->setStatics(pStatics, bIsClone, bIsClean);
+        ret->setStatics(pStatics->clone());
         ret->fillStatics(100);
         return ret;
     }
@@ -242,6 +246,7 @@ bool IngameStatics::reduceLife(int num)
 {
     if(m_nCurrentLife <= 1) return false;
     this->m_nCurrentLife-=num;
+    CCLOG("CURRENT LIFE: %d", m_nCurrentLife);
     return true;
 }
 

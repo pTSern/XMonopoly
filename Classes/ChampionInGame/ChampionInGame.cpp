@@ -50,7 +50,7 @@ ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClo
                 ret->m_pIcon = cloner->getIcon();
                 ret->m_pStatics = cloner->getStatics();
                 ret->m_pChampionStatics = cloner->getChampionStatics();
-                //ret->m_pIngameStatics = IngameStatics::create(ret->m_pStatics, true, false);
+                //ret->m_pIngameStatics = IngameStatics::createWithStatics(ret->m_pStatics, true, false);
                 if(bIsDeleteCloner) CC_SAFE_DELETE(pChamp);
                 return ret;
             }
@@ -61,7 +61,7 @@ ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClo
 
         ret->m_pIcon = pChamp->getIcon();
         ret->m_pStatics = pChamp->getStatics();
-        //ret->m_pIngameStatics = IngameStatics::create(ret->m_pStatics, true, false);
+        //ret->m_pIngameStatics = IngameStatics::createWithStatics(ret->m_pStatics, true, false);
         ret->m_pChampionStatics = pChamp->getChampionStatics();
         return ret;
     }
@@ -71,9 +71,12 @@ ChampionInGame* ChampionInGame::createWithChampion(Champion *pChamp, bool bIsClo
 
 ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp , ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
 {
-    auto ret = createWithChampion(pChamp, false);
-    if(ret && ret->initWithProperties(pUI, pDice, vSkillDeck))
+    //auto ret = createWithChampion(pChamp, false);
+    auto ret = new (std::nothrow) ChampionInGame();
+
+    if(ret && ret->initWithProperties(pChamp, pUI, pDice, vSkillDeck))
     {
+        ret->autorelease();
         ret->disable();
         return ret;
     }
@@ -82,6 +85,14 @@ ChampionInGame* ChampionInGame::createWithProperties(Champion *pChamp , Champion
 }
 
 ///] Virtual
+
+bool ChampionInGame::initWithProperties(Champion* champ, ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck)
+{
+    this->m_pIcon = champ->getIcon()->clone();
+    this->m_pStatics = champ->getStatics()->clone();
+    this->m_pChampionStatics = champ->getChampionStatics()->clone();
+    return initWithProperties(pUI, pDice, vSkillDeck);
+}
 
 void ChampionInGame::config()
 {
@@ -197,10 +208,9 @@ bool ChampionInGame::initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManag
     m_pSelfButton->getEventDispatcher()->addEventListenerWithSceneGraphPriority(ls, m_pSelfButton);
     m_pSelfButton->addTouchEventListener(CC_CALLBACK_2(ChampionInGame::run, this));
 
-    /**
-     *
-     */
-    this->m_pIngameStatics = IngameStatics::createTest();
+    this->m_pIngameStatics = IngameStatics::create();
+    this->m_pIngameStatics->setStatics(m_pStatics->clone());
+    this->m_pIngameStatics->fillStatics(100);
 
     m_pPhysicBody = PhysicsBody::createBox(m_pIcon->getContentSize());
     m_pPhysicBody->setDynamic(false);

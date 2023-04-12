@@ -10,6 +10,7 @@
 #include "external/json/writer.h"
 #include "external/json/stringbuffer.h"
 
+#include "GameScene/MainMenu.h"
 using namespace rapidjson;
 
 //#include "Skill/SkillStatics/SkillStatics.h"
@@ -48,30 +49,27 @@ void GameMaster::revoke()
     p_bLockEndGame = false;
     p_nBitmask = 0;
 
-    CC_SAFE_RELEASE_NULL(m_pMap);
-    this->scheduleUpdate();
+    //CC_SAFE_RELEASE_NULL(m_pMap);
+    //this->scheduleUpdate();
+    //this->cleanup();
 }
 
 //// Public
 
 bool GameMaster::init()
 {
-    m_pMarkIsTurnChampion_UP = ZYSprite::create("champion/up.png");
-    m_pMarkIsTurnChampion_DOWN = ZYSprite::create("champion/down.png");
-
-    this->addChild(m_pMarkIsTurnChampion_UP);
-    this->addChild(m_pMarkIsTurnChampion_DOWN);
-    this->scheduleUpdate();
+    //this->scheduleUpdate();
     return true;
 }
-void GameMaster::generateMap(const std::string& tileMap)
-{
-    m_pMap = MapManager::create();
-    m_pMap->loadTileMap(tileMap);
-    m_pMap->setPosition(Point(ZYDR_TGVS.width/2, (ZYDR_TGVS.height + m_pMap->getContentSize().height/2)/2));
-    addChild(m_pMap);
-    m_pMap->generateArenas();
-}
+
+//void GameMaster::generateMap(const std::string& tileMap)
+//{
+//    m_pMap = MapManager::create();
+//    m_pMap->loadTileMap(tileMap);
+//    m_pMap->setPosition(Point(ZYDR_TGVS.width/2, (ZYDR_TGVS.height + m_pMap->getContentSize().height/2)/2));
+//    addChild(m_pMap);
+//    m_pMap->generateArenas();
+//}
 
 int GameMaster::getBitMask()
 {
@@ -100,6 +98,12 @@ void GameMaster::setRunningScene(Scene* var, Layer* layer,ui::Widget::ccWidgetTo
     this->m_pRunningScene = var;
     this->m_pEndGameCallback = callback;
     this->m_pBattleLayer = layer;
+
+    m_pMarkIsTurnChampion_UP = ZYSprite::create("champion/up.png");
+    m_pMarkIsTurnChampion_DOWN = ZYSprite::create("champion/down.png");
+
+    m_pRunningScene->addChild(m_pMarkIsTurnChampion_UP);
+    m_pRunningScene->addChild(m_pMarkIsTurnChampion_DOWN);
 }
 
 std::string GameMaster::toString(int nTab)
@@ -160,8 +164,13 @@ void GameMaster::addChampList(std::vector<ChampionInGame*> list)
 
 void GameMaster::endGame(bool bIsClient)
 {
-    if(!p_bLockEndGame)
+    if(!p_bLockEndGame && m_pRunningScene->getNumberOfRunningActions() <= 0 )
     {
+        //m_pRunningScene->stopAllActions();
+        //m_pRunningScene->getPhysicsWorld()->removeAllBodies();
+        //m_pRunningScene->removeAllChildrenWithCleanup(true);
+        //CCDR_GI->replaceScene(MainMenuScene::createScene());
+        CCDR_GI->pause();
         auto ttf = defaultTTFConfig;
         ttf.fontSize = 50;
         ttf.bold = true;
@@ -178,13 +187,19 @@ void GameMaster::endGame(bool bIsClient)
         auto button = ui::Button::create(sr_button_default, sr_button_clicked);
         button->setTitleText("CONTINUE");
         CCUB_SSTFSP(button, 0.8);
-        button->addTouchEventListener(m_pEndGameCallback);
+        button->addTouchEventListener(
+                [&](Ref* sender, ui::Widget::TouchEventType type)
+                {
+                    this->m_pEndGameCallback(sender, type);
+                }
+                );
         button->setPosition(Point(ZYDR_TGVS.width/2, ZYDR_TGVS.height/4));
         m_pBattleLayer->addChild(button);
         button->setGlobalZOrder(7);
         p_bLockEndGame = true;
     }
 }
+
 void GameMaster::floatingNotify(const std::string& message, const TTFConfig& ttf, const Color3B& color, const Point& position, const float& duration, bool isLock)
 {
     ZYSP_GI->floatingNotify(m_pBattleLayer, message, ttf, color, position, 5, duration, isLock);
@@ -351,8 +366,12 @@ float GameMaster::attackScene(ChampionInGame* attacker, std::vector<ChampionInGa
             attackScene(attacker, x);
         }), DelayTime::create(delay), nullptr));
     }
+    vec.pushBack(RemoveSelf::create(true));
     auto seq = Sequence::create(vec);
-    runAction(seq);
+    auto ret = m_pMarkIsTurnChampion_UP->clone();
+    m_pRunningScene->addChild(ret);
+    ret->setVisible(false);
+    ret->runAction(seq);
     return total_delay;
 }
 

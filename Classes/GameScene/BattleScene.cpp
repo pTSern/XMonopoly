@@ -130,7 +130,7 @@ bool BattleScene::init()
     player->setName("PLAYER 1");
     cig->setPosition(coord);
     cig->setName("CHAMP A");
-    cig->getStatics()->getStatics()->setSpeed(10);
+    cig->getStatics()->getStatics()->setSpeed(0);
 
     m_vPlayers.push_back(player2);
     m_vPlayers.push_back(player);
@@ -140,7 +140,6 @@ bool BattleScene::init()
         this->addChild(z, 1);
     }
 
-    this->addChild(GM_GI, 1);
     GM_GI->addChampList(player->getChampChildren());
     GM_GI->addChampList(player2->getChampChildren());
     GM_GI->calculateNewTurn();
@@ -171,6 +170,7 @@ bool BattleScene::init()
 
 void BattleScene::update(float dt)
 {
+    GM_GI->update(dt);
 }
 
 void BattleScene::goToGameOver(Ref* sender)
@@ -183,6 +183,7 @@ void BattleScene::goToMenu(Ref* sender)
 {
     auto scene = MainMenuScene::createScene();
     CCDR_GI->replaceScene(scene);
+    if(CCDR_GI->isPaused()) CCDR_GI->resume();
     //TransitionSceneFactory::getInstance()->transitionScene("MAIN_MENU");
 }
 

@@ -149,6 +149,7 @@ public:
     virtual void call();
     virtual void end();
 
+    void cleanupLoop(float dt);
 protected:
     virtual ~ShootProjectile();
 
@@ -159,6 +160,8 @@ protected:
     std::string m_sProjectileTexture;
     int m_nDistance, m_nProjectileNum;
     int m_nTargetNum;
+
+    int m_nCleanNum = 0;
 };
 
 class Toggle : public SkillMechanic

@@ -97,7 +97,8 @@ Projectile* Projectile::createSingleTargetProjectile(const std::string& texture,
 Projectile::~Projectile()
 {
     ZY_EZ_DE_LOG;
-    CC_SAFE_DELETE(m_pProjectile);
+    CC_SAFE_RELEASE_NULL(m_pProjectile);
+    m_pOwner = nullptr;
     unscheduleUpdate();
 }
 
@@ -145,6 +146,13 @@ void Projectile::contactTo(PhysicsContact& contact, GameObject* target)
 void Projectile::hitTarget(ChampionInGame* target)
 {
     m_nHitTarget++;
+    auto total = GM_GI->totalDmgCalculator(target, m_pOwner->getOwner()->getOwner()->getSkillStatics());
+    auto seq = Sequence::create(total, RemoveSelf::create(true), nullptr);
+    auto s = m_pProjectile->clone();
+    s->setPosition(m_pProjectile->getPosition());
+    this->addChild(s);
+    s->setVisible(false);
+    s->runAction(seq);
     hitTargetAnimation(target);
     // Do animation
 
@@ -407,8 +415,12 @@ void ShootProjectile::call()
             }
             );
     chain.pushBack(call_schedule);
+    chain.pushBack(RemoveSelf::create(true));
     auto sq = Sequence::create(chain);
-    runAction(sq);
+    auto ret = ZYSprite::create(m_sProjectileTexture);
+    ret->setVisible(false);
+    addChild(ret);
+    ret->runAction(sq);
 }
 
 void ShootProjectile::end()
@@ -419,6 +431,10 @@ void ShootProjectile::end()
     m_vMarkedList.clear();
     m_pOwner->getOwner()->getOwner()->getOwner()->endTurn();
     m_pOwner->getOwner()->getOwner()->getOwner()->getOwner()->finishAction();
+}
+
+void ShootProjectile::cleanupLoop(float dt)
+{
 }
 
 ////////////////////////////////////////////////////////////////////////////

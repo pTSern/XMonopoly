@@ -108,7 +108,8 @@ public:
     static IngameStatics* createTest();
 
 public:
-    CREATE_CLONE_SET_FUNC(setStatics, Statics, m_pStatics);
+    //CREATE_CLONE_SET_FUNC(setStatics, Statics, m_pStatics);
+    CREATE_SET_FUNC(setStatics, Statics*, m_pStatics);
 
     void setCurrentHp(float fHp) {this->m_fCurrentHp = fHp;}
     void setCurrentMana(float fMana) {this->m_fCurrentMana = fMana;}

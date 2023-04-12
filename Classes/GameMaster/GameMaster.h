@@ -15,8 +15,8 @@ class MapManager;
 class PlayerUI;
 class Statics;
 class SkillStatics;
-BEGIN_CREATE_INSTANCE_REFCLASS(GameMaster, Node)
 
+BEGIN_CREATE_INSTANCE_CLASS(GameMaster)
 public:
     //virtual ~GameMaster();
 
@@ -71,6 +71,8 @@ public:
 
     CREATE_SET_GET_FUNC(setMaxCoordIndex, getMaxCoordIndex, int, m_nMaxCoordIndex);
 
+    void endGameLoop(float dt);
+
 protected:
     ZYSprite* m_pMarkIsTurnChampion_UP, * m_pMarkIsTurnChampion_DOWN;
     ChampionInGame* m_pIsTurnChampion;
@@ -90,4 +92,4 @@ private:
     bool p_bLockEndGame;
     int p_nBitmask;
 
-END_CREATE_INSTANCE_REFCLASS;
+END_CREATE_INSTANCE_CLASS;

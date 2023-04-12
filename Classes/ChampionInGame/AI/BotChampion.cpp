@@ -18,13 +18,9 @@ TesterBot* TesterBot::createWithProperties(Champion *pChamp, ChampionUI *pUI, Di
     auto ret = new (std::nothrow) TesterBot();
     if(ret && pChamp)
     {
-        ret->autorelease();
-        ret->m_pIcon = pChamp->getIcon();
-        ret->m_pStatics = pChamp->getStatics();
-        //ret->m_pIngameStatics = IngameStatics::create(ret->m_pStatics, true, false);
-        ret->m_pChampionStatics = pChamp->getChampionStatics();
-        if (ret->initWithProperties(pUI, pDice, vSkillDeck))
+        if (ret->initWithProperties(pChamp, pUI, pDice, vSkillDeck))
         {
+            ret->autorelease();
             ret->disable();
             return ret;
         }

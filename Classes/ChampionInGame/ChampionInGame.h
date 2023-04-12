@@ -99,6 +99,7 @@ public:
 
 public:
     bool initWithProperties(ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck);
+    bool initWithProperties(Champion* champ, ChampionUI *pUI, Dice* pDice, SkillManager* vSkillDeck);
 
     void autoFlip();
 

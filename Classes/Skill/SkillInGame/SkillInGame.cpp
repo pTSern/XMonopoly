@@ -217,6 +217,8 @@ SkillInGame* SkillInGame::createNoDice()
 {
     auto ret = SkillInGame::createTest();
     ret->m_bIsNeedDice = false;
+    ret->m_pSkillStatics->setPhysicDmg(50);
+
     return ret;
 }
 
