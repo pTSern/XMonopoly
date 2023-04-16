@@ -143,10 +143,10 @@ public:
         m_cMagicCrit.reduceMultiple(amount);
     }
 
-    void autoCoolDown();
 protected:
     SkillStatics();
     virtual bool init();
+    void autoCoolDown();
 
 protected:
     float m_fPhysicDmg, m_fMagicDmg;

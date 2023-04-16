@@ -4,8 +4,6 @@
 #include "Support/GameConstant.h"
 #include "SceneTransition.h"
 
-#include "Audio/SoundManager.h"
-
 static SceneRegister<MainMenuScene> s_register("MAIN_MENU");
 
 Scene* MainMenuScene::createScene()
@@ -25,9 +23,6 @@ bool MainMenuScene::init()
     {
         return false;
     }
-
-    SM_GI->playMainMenuSound();
-
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 

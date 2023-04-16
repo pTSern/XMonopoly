@@ -87,24 +87,6 @@ void SkillCard::update(float dt)
         this->selectable();
     }
     autoFix();
-    autoString();
-}
-
-void SkillCard::autoString()
-{
-    if(p_pOwner)
-    {
-        auto ss = p_pOwner->getSkillStatics();
-        auto cd = ss->getCoolDown() - ss->getCurrentCooldown();
-        auto mana = ss->getManaCost();
-        auto sp = ss->getSpCost();
-        if(cd > 0) p_pCoolDownLabel->setString(std::to_string(cd));
-        else p_pCoolDownLabel->setString("");
-        if(mana > 0) p_pManaCostLabel->setString(ZYSP_SRF(mana, 2));
-        else p_pManaCostLabel->setString("");
-        if(sp > 0) p_pManaCostLabel->setString(ZYSP_SRF(sp, 2));
-        else p_pManaCostLabel->setString("");
-    }
 }
 
 void SkillCard::autoFix()
@@ -152,13 +134,13 @@ bool SkillCard::initWithProperties(std::string sIconSprite, std::string sShapeSp
     TTFConfig ttfConfig(globalFont, 18, GlyphCollection::DYNAMIC,nullptr,true);
 
     p_pSkillPointCostLabel = (ZYLabel::createWithTTF(ttfConfig, sSKillPointCostLabel));
+    p_pCoolDownLabel = (ZYLabel::createWithTTF(ttfConfig, sCoolDownLabel));
 
     ttfConfig.fontSize = p_pNameSprite->getContentSize().height - 2;
     p_pNameLabel = (ZYLabel::createWithTTF(ttfConfig, sNameLabel));
 
-    ttfConfig.fontSize = 22;
+    ttfConfig.fontSize = 20;
     p_pManaCostLabel = (ZYLabel::createWithTTF(ttfConfig, sManaCostLabel));
-    p_pCoolDownLabel = (ZYLabel::createWithTTF(ttfConfig, sCoolDownLabel));
 
     ttfConfig.fontSize = 18;
     p_pDescriptionLabel = (ZYLabel::createWithTTF(ttfConfig, sDescriptionLabel));

@@ -6,7 +6,7 @@
 #include "Skill/SkillManager/SkillManager.h"
 #include "Player/Player.h"
 #include "GameMaster/GameMaster.h"
-#include "Audio/SoundManager.h"
+
 
 ///Constructor
 
@@ -373,10 +373,6 @@ void ChampionInGame::startTurn()
     ///) Enable this champion
     //this->enable();
 
-    ///v Cooldown all skill
-    if(m_pPreDiceSkillDeck) m_pPreDiceSkillDeck->cooldown();
-    if(m_pPostDiceSkillDeck) m_pPostDiceSkillDeck->cooldown();
-
     ///) Regen stats
     this->m_pIngameStatics->regen();
 
@@ -518,14 +514,9 @@ void ChampionInGame::jumpTo(Point pos)
     ///v Start create actions
     auto jump = JumpTo::create(distance/400, target, this->m_pIcon->getContentSize().height/2, 1);
     auto callback = CallFunc::create(CC_CALLBACK_0(ChampionInGame::endJump, this));
-    auto playSound = CallFunc::create(
-            [&]()
-            {
-                SM_GI->playSoundEffect("audio/move/move.mp3");
-            }
-            );
-    auto seq = Sequence::create(jump, playSound, callback, nullptr);
+    auto seq = Sequence::create(jump, callback, nullptr);
     ///^ End create actions
+
     this->m_pIcon->runAction(seq);
     //this->m_pSelfButton->runAction(seq->clone());
 }

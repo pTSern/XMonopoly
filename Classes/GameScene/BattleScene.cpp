@@ -22,8 +22,6 @@
 #include "Skill/Mechanic/MechanicManager.h"
 #include "Skill/Mechanic/Mechanic.h"
 
-#include "Audio/SoundManager.h"
-
 //// Static
 
 static SceneRegister<BattleScene> s_register("BATTLE");
@@ -48,7 +46,6 @@ bool BattleScene::init()
     if(!Layer::init()) return false;
 
     GM_GI->revoke();
-    SM_GI->playMainMenuSound();
 
     auto ttf = defaultTTFConfig;
     ttf.fontSize = 60;
@@ -80,9 +77,8 @@ bool BattleScene::init()
     /// Add schedule update
     this->scheduleUpdate();
 
-    auto statics = Statics::createWithProperties(25, 10, 30, 1, 3, 30, 0, 0, RegenStatics(100, 10), RegenStatics(30, 5), RegenStatics(1, 1));
     auto dice2 = Dice::createWithProperties("dice/128-red.png");
-    auto champ2 = Champion::createWithProperties("champion/samurai.png", statics, ChampionStatics::create());
+    auto champ2 = Champion::createWithProperties("champion/samurai.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
 
@@ -102,10 +98,10 @@ bool BattleScene::init()
     //player2->disable();
     cig2->setPosition(coord2);
     cig2->setName("CHAMP B");
+    cig2->getStatics()->getStatics()->setSpeed(1);
 
     auto dice = Dice::createWithProperties("dice/128.png");
-    auto statics2 = Statics::createWithProperties(20, 20, 20, 1, 1, 30, 0, 0, RegenStatics(150, 10), RegenStatics(50, 5), RegenStatics(1, 1));
-    auto champ = Champion::createWithProperties("champion/duelist.png", statics2, ChampionStatics::create());
+    auto champ = Champion::createWithProperties("champion/duelist.png", Statics::createWithProperties(), ChampionStatics::create());
     auto ui = ChampionUI::createDefault();
 
     ///v Skill
@@ -134,9 +130,8 @@ bool BattleScene::init()
     player->setName("PLAYER 1");
     cig->setPosition(coord);
     cig->setName("CHAMP A");
+    cig->getStatics()->getStatics()->setSpeed(0);
 
-    cig->getStatics()->log();
-    cig2->getStatics()->log();
     m_vPlayers.push_back(player2);
     m_vPlayers.push_back(player);
 

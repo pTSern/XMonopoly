@@ -198,7 +198,7 @@ SkillInGame* SkillInGame::createTest()
         ret->m_pSkillStatics->setPhysicDmg(35);
         ret->m_pSkillStatics->setManaCost(0);
         ret->m_pSkillCard = SkillCard::createDefault();
-        ret->m_pSkillCard->setDescriptionLabel("The champion moves to a new Arena with a number equal to the Dice number. Deal '25' dmg to on land.");
+        ret->m_pSkillCard->setDescriptionLabel("The champion moves to a new Arena with a number equal to the Dice number");
         ret->m_pSkillCard->setManaCostLabel("0");
         ret->m_pSkillCard->setNameLabel("MOVE");
         ret->m_pSkillCard->setSkillPointCostLabel("0");
@@ -218,9 +218,6 @@ SkillInGame* SkillInGame::createNoDice()
     auto ret = SkillInGame::createTest();
     ret->m_bIsNeedDice = false;
     ret->m_pSkillStatics->setPhysicDmg(50);
-    ret->m_pSkillStatics->setManaCost(20);
-    ret->m_pSkillStatics->setCoolDown(5);
-    ret->m_pSkillCard->setDescriptionLabel("Shoot 3 arrows fly through 12 arena. Deal '5' dmg to the target then disappare.");
 
     return ret;
 }
@@ -373,11 +370,6 @@ void SkillInGame::unSelect()
 {
     this->m_pSkillCard->onUnselect();
     //// Kill the selected target here
-}
-
-void SkillInGame::cooldown()
-{
-    m_pSkillStatics->autoCoolDown();
 }
 
 void SkillInGame::conNotify()

@@ -213,15 +213,6 @@ void SkillManager::setUseButton(bool var)
     this->m_pUse->setVisible(var);
 }
 
-void SkillManager::cooldown()
-{
-    if(m_vSkillDecks.empty()) return;
-    for(auto &x : m_vSkillDecks)
-    {
-        x->cooldown();
-    }
-}
-
 void SkillManager::enable()
 {
     for(auto &x : m_vSkillDecks)
