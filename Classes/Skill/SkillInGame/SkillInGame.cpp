@@ -219,7 +219,7 @@ SkillInGame* SkillInGame::createNoDice()
     ret->m_bIsNeedDice = false;
     ret->m_pSkillStatics->setPhysicDmg(50);
     ret->m_pSkillStatics->setManaCost(20);
-    ret->m_pSkillStatics->setCoolDown(5);
+    ret->m_pSkillStatics->setCoolDown(0);
     ret->m_pSkillCard->setDescriptionLabel("Shoot 3 arrows fly through 12 arena. Deal '5' dmg to the target then disappare.");
 
     return ret;

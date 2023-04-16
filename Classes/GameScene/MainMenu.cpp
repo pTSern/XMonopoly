@@ -34,6 +34,8 @@ bool MainMenuScene::init()
     auto pvp = MenuItemImage::create(sr_button_default, sr_button_clicked, CC_CALLBACK_1(MainMenuScene::goToPvP, this));
     pvp->setPosition(ZYDR_TGVS/2);
 
+    //auto option = MenuItemImage::create(sr_button_default, sr_button_clicked);
+
     auto menu = Menu::create(pvp, nullptr);
     menu->setPosition(Point::ZERO);
     this->addChild(menu);
@@ -45,6 +47,7 @@ bool MainMenuScene::init()
     label->setColor(Color3B::BLACK);
     label->setPosition(ZYDR_TGVS/2);
     this->addChild(label, 2);
+
 
     auto backgroundSprite = ZYSprite::create("background/main_menu.png");
     backgroundSprite->setPosition(ZYDR_TGVS/2);
@@ -58,4 +61,9 @@ void MainMenuScene::goToPvP(Ref* pSender)
     auto scene = BattleScene::createScene();
     Director::getInstance()->replaceScene(TransitionFade::create(0.0, scene));
     //TransitionSceneFactory::getInstance()->transitionScene("BATTLE");
+}
+
+void MainMenuScene::option(Ref* sender)
+{
+
 }

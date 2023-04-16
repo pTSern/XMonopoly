@@ -139,9 +139,10 @@ void ChampionHUD::initAllElement()
     m_pLifeIcon = ZYSprite::create(icon_life_dir);
 
     this->addChild(m_pAtkIcon, 1);
-    this->addChild(m_pArmor, 1);
-    this->addChild(m_pLife, 1);
-    this->addChild(m_pSpeed, 1);
+
+    this->addChild(m_pArmorIcon, 1);
+    this->addChild(m_pLifeIcon, 1);
+    this->addChild(m_pSpeedIcon, 1);
 
     auto ls = EventListenerTouchOneByOne::create();
     ls->onTouchBegan = CC_CALLBACK_2(ChampionHUD::onTouchBegin, this);

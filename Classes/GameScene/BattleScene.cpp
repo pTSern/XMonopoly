@@ -31,7 +31,7 @@ static SceneRegister<BattleScene> s_register("BATTLE");
 Scene* BattleScene::createScene()
 {
     auto scene = Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     //auto scene = Scene::create();
 
     auto layer = BattleScene::create();
@@ -85,6 +85,8 @@ bool BattleScene::init()
     auto champ2 = Champion::createWithProperties("champion/samurai.png", statics, ChampionStatics::create());
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
+    sig2->getSkillStatics()->setPhysicDmg(35);
+    sig2->getSkillCard()->setDescriptionLabel("Moving forward with the number equal to the dice num. Deal 35 dmg to every target on landed arena.");
 
     //sig2->setSkillMechanic(SkillInGame::MoveBySkill);
     sig2->setName("move");
@@ -110,17 +112,35 @@ bool BattleScene::init()
 
     ///v Skill
     auto sig = SkillInGame::createTest();
+    sig->getSkillStatics()->setPhysicDmg(20);
+    sig->getSkillCard()->setDescriptionLabel("Moving forward with the number equal to the dice num. Deal 20 dmg to every target on landed arena.");
     auto heal = SkillInGame::createNoDice();
+    heal->getSkillCard()->setNameLabel("HEAL");
+    heal->getSkillStatics()->setCoolDown(12);
+    heal->getSkillStatics()->setManaCost(50);
+    heal->getSkillCard()->setDescriptionLabel("Self healing 100 HP.");
+    heal->setName("heal");
 
-    auto sm = SkillManager::createWithSkillInGame(sig, heal, nullptr);
+    auto arrow = SkillInGame::createNoDice();
+    arrow->getSkillStatics()->setCoolDown(7);
+    arrow->getSkillStatics()->setPhysicDmg(10);
+    arrow->getSkillStatics()->setManaCost(20);
+    arrow->getSkillCard()->setDescriptionLabel("Shoot 3 arrows forward with the distance is 12. Disappear after hitting target");
+    arrow->getSkillCard()->setNameLabel("ARROW");
+    auto arrow_m = ShootProjectile::create(4, "projectile/arrow.png", 12, 0.5);
+    auto mechanic_manager34= MechanicManager::create(arrow, arrow_m);
+
+    auto sm = SkillManager::createWithSkillInGame(sig, heal, arrow, nullptr);
     auto cig = ChampionInGame::createWithProperties(champ, ui, dice, sm);
 
     auto skill_mechanic2 = Moving::create();
     auto mechanic_manager2 = MechanicManager::create(sig, skill_mechanic2);
-    //sig->setSkillMechanic(SkillInGame::MoveBySkill);
 
-    auto skill_mechanic3 = ShootProjectile::create(3, "projectile/arrow.png", 12, 2.0f);
+    auto skill_mechanic3 = FooCallback::create();
+    skill_mechanic3->setOnTriggerCallback(FooCallback::HealingOnTrigger);
+    skill_mechanic3->setEndTriggerCallback(FooCallback::ForceEndTurn);
     auto mechanic_manager3 = MechanicManager::create(heal, skill_mechanic3);
+
 
     //heal->setSkillMechanic(SkillInGame::Healing);
     auto coord = Coordinate(Dir::WS, 0);
