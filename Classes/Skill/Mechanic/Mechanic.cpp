@@ -8,6 +8,7 @@
 #include "Skill/SkillManager/SkillManager.h"
 #include "GameMaster/GameMaster.h"
 #include "Map/Map.h"
+#include "Audio/SoundManager.h"
 
 ///] Constructor
 
@@ -154,6 +155,7 @@ void Projectile::hitTarget(ChampionInGame* target)
     s->setVisible(false);
     s->runAction(seq);
     hitTargetAnimation(target);
+
     // Do animation
 
     // Do be attacked
@@ -479,4 +481,72 @@ Moving* Moving::create()
     }
     CC_SAFE_DELETE(ret);
     return nullptr;
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+///] Virtual
+
+void FooCallback::call()
+{
+    SkillMechanic::call();
+    if(m_oOnTrigger)
+    {
+        this->m_oOnTrigger(this);
+    }
+}
+
+void FooCallback::update(float dt)
+{
+    if(m_oLoop)
+    {
+        m_oLoop(this);
+    }
+}
+
+void FooCallback::end()
+{
+    SkillMechanic::end();
+
+    if(m_oEndTrigger)
+    {
+        this->m_oEndTrigger(this);
+    }
+}
+
+bool FooCallback::initWithProperties(MechanicManager* owner)
+{
+    setOwner(owner);
+    return true;
+}
+
+///] Static
+
+FooCallback* FooCallback::create()
+{
+    auto ret = new (std::nothrow) FooCallback();
+
+    if(ret)
+    {
+        //ret->autorelease();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+///] Heal
+
+void FooCallback::HealingOnTrigger(SkillMechanic* mechanic)
+{
+    auto owner = mechanic->getOwner()->getOwner()->getOwner()->getOwner();
+    owner->getStatics()->addHp(100);
+    mechanic->end();
+}
+
+void FooCallback::ForceEndTurn(SkillMechanic* mechanic)
+{
+    auto owner = mechanic->getOwner()->getOwner()->getOwner()->getOwner();
+    owner->endTurn();
+    owner->getOwner()->finishAction();
 }

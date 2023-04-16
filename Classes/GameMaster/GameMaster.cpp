@@ -11,6 +11,8 @@
 #include "external/json/stringbuffer.h"
 
 #include "GameScene/MainMenu.h"
+#include "Audio/SoundManager.h"
+
 using namespace rapidjson;
 
 //#include "Skill/SkillStatics/SkillStatics.h"
@@ -190,6 +192,7 @@ void GameMaster::endGame(bool bIsClient)
         button->addTouchEventListener(
                 [&](Ref* sender, ui::Widget::TouchEventType type)
                 {
+                    SM_GI->stop();
                     this->m_pEndGameCallback(sender, type);
                 }
                 );
@@ -215,7 +218,7 @@ void GameMaster::floatingNotify(const std::string& message)
 float GameMaster::magicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
 {
     float mr = defender->getMagicResistance() - attacker->getMagicPieInNum();
-    float mrToDc = Fraction::fastPercent(MRFB - (MRFF * mr)/(MRFB + MRFF * abs(mr)));
+    float mrToDc = MRFB - (MRFF * mr)/(MRFB + MRFF * abs(mr));
     // Total magic resistance in decimal (0.xxx)
     float totalMrInDc = mrToDc * (1 - attacker->getTheMagicPiercing().getPcAmount());
     // Run gacha if this crit
@@ -234,7 +237,7 @@ float GameMaster::magicDmgCalculator(Statics* defender, SkillStatics* attacker, 
 float GameMaster::physicDmgCalculator(Statics* defender, SkillStatics* attacker, Point pos)
 {
     float ar = defender->getArmor() - attacker->getPhysicPieInNum();
-    float arToDc = Fraction::fastPercent(PRFB - (PRFF * ar)/(PRFB + PRFF * abs(ar)));
+    float arToDc = PRFB - (PRFF * ar)/(PRFB + PRFF * abs(ar));
     // Total armor resistance in decimal (0.xxx)
     float totalArInDc = arToDc * (1 - attacker->getThePhysicPiercing().getPcAmount());
     // Run gacha if this crit

@@ -38,6 +38,7 @@ public: // Public function that use to use
       * @param var TRUE: turn on the button, FALSE otherwise
       */
     void setUseButton(bool var);
+    void cooldown();
 
     void addSkill(SkillInGame *pSkill);
     void autoSort();

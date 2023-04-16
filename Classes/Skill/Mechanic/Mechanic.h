@@ -187,3 +187,33 @@ public:
     virtual void call() override;
 
 };
+
+class FooCallback : public SkillMechanic
+{
+public:
+    typedef std::function<void(SkillMechanic*)> FooMechanicCallback;
+
+public:
+    static FooCallback* create();
+
+public:
+    virtual bool initWithProperties(MechanicManager* owner);
+    virtual void callback(float dt) override {}
+    virtual void autoGetTarget() override {};
+    virtual void update(float dt) override;
+    virtual void call() override;
+    virtual void end() override;
+
+public:
+    static void HealingOnTrigger(SkillMechanic* mechanic);
+    static void ForceEndTurn(SkillMechanic* mechanic);
+
+public:
+    CREATE_SET_FUNC(setOnTriggerCallback, const FooMechanicCallback&, m_oOnTrigger);
+    CREATE_SET_FUNC(setEndTriggerCallback, const FooMechanicCallback&, m_oEndTrigger);
+    CREATE_SET_FUNC(setLoopCallback, const FooMechanicCallback&, m_oLoop);
+
+protected:
+    FooMechanicCallback m_oOnTrigger, m_oEndTrigger, m_oLoop;
+
+};

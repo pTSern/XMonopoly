@@ -22,6 +22,8 @@
 #include "Skill/Mechanic/MechanicManager.h"
 #include "Skill/Mechanic/Mechanic.h"
 
+#include "Audio/SoundManager.h"
+
 //// Static
 
 static SceneRegister<BattleScene> s_register("BATTLE");
@@ -29,7 +31,7 @@ static SceneRegister<BattleScene> s_register("BATTLE");
 Scene* BattleScene::createScene()
 {
     auto scene = Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     //auto scene = Scene::create();
 
     auto layer = BattleScene::create();
@@ -46,6 +48,7 @@ bool BattleScene::init()
     if(!Layer::init()) return false;
 
     GM_GI->revoke();
+    SM_GI->playMainMenuSound();
 
     auto ttf = defaultTTFConfig;
     ttf.fontSize = 60;
@@ -77,10 +80,13 @@ bool BattleScene::init()
     /// Add schedule update
     this->scheduleUpdate();
 
+    auto statics = Statics::createWithProperties(25, 10, 30, 1, 3, 30, 0, 0, RegenStatics(100, 10), RegenStatics(30, 5), RegenStatics(1, 1));
     auto dice2 = Dice::createWithProperties("dice/128-red.png");
-    auto champ2 = Champion::createWithProperties("champion/samurai.png", Statics::createWithProperties(), ChampionStatics::create());
+    auto champ2 = Champion::createWithProperties("champion/samurai.png", statics, ChampionStatics::create());
     auto ui2 = ChampionUI::createDefault();
     auto sig2 = SkillInGame::createTest();
+    sig2->getSkillStatics()->setPhysicDmg(35);
+    sig2->getSkillCard()->setDescriptionLabel("Moving forward with the number equal to the dice num. Deal 35 dmg to every target on landed arena.");
 
     //sig2->setSkillMechanic(SkillInGame::MoveBySkill);
     sig2->setName("move");
@@ -98,25 +104,44 @@ bool BattleScene::init()
     //player2->disable();
     cig2->setPosition(coord2);
     cig2->setName("CHAMP B");
-    cig2->getStatics()->getStatics()->setSpeed(1);
 
     auto dice = Dice::createWithProperties("dice/128.png");
-    auto champ = Champion::createWithProperties("champion/duelist.png", Statics::createWithProperties(), ChampionStatics::create());
+    auto statics2 = Statics::createWithProperties(20, 20, 20, 1, 1, 30, 0, 0, RegenStatics(150, 10), RegenStatics(50, 5), RegenStatics(1, 1));
+    auto champ = Champion::createWithProperties("champion/duelist.png", statics2, ChampionStatics::create());
     auto ui = ChampionUI::createDefault();
 
     ///v Skill
     auto sig = SkillInGame::createTest();
+    sig->getSkillStatics()->setPhysicDmg(20);
+    sig->getSkillCard()->setDescriptionLabel("Moving forward with the number equal to the dice num. Deal 20 dmg to every target on landed arena.");
     auto heal = SkillInGame::createNoDice();
+    heal->getSkillCard()->setNameLabel("HEAL");
+    heal->getSkillStatics()->setCoolDown(12);
+    heal->getSkillStatics()->setManaCost(50);
+    heal->getSkillCard()->setDescriptionLabel("Self healing 100 HP.");
+    heal->setName("heal");
 
-    auto sm = SkillManager::createWithSkillInGame(sig, heal, nullptr);
+    auto arrow = SkillInGame::createNoDice();
+    arrow->getSkillStatics()->setCoolDown(7);
+    arrow->getSkillStatics()->setPhysicDmg(10);
+    arrow->getSkillStatics()->setManaCost(20);
+    arrow->getSkillCard()->setDescriptionLabel("Shoot 3 arrows forward with the distance is 12. Disappear after hitting target");
+    arrow->getSkillCard()->setNameLabel("ARROW");
+
+    auto sm = SkillManager::createWithSkillInGame(sig, heal, arrow, nullptr);
     auto cig = ChampionInGame::createWithProperties(champ, ui, dice, sm);
+
+    auto arrow_m = ShootProjectile::create(3, "projectile/arrow.png", 12, 2.5);
+    auto mechanic_manager34= MechanicManager::create(arrow, arrow_m);
 
     auto skill_mechanic2 = Moving::create();
     auto mechanic_manager2 = MechanicManager::create(sig, skill_mechanic2);
-    //sig->setSkillMechanic(SkillInGame::MoveBySkill);
 
-    auto skill_mechanic3 = ShootProjectile::create(3, "projectile/arrow.png", 12, 2.0f);
+    auto skill_mechanic3 = FooCallback::create();
+    skill_mechanic3->setOnTriggerCallback(FooCallback::HealingOnTrigger);
+    skill_mechanic3->setEndTriggerCallback(FooCallback::ForceEndTurn);
     auto mechanic_manager3 = MechanicManager::create(heal, skill_mechanic3);
+
 
     //heal->setSkillMechanic(SkillInGame::Healing);
     auto coord = Coordinate(Dir::WS, 0);
@@ -130,8 +155,9 @@ bool BattleScene::init()
     player->setName("PLAYER 1");
     cig->setPosition(coord);
     cig->setName("CHAMP A");
-    cig->getStatics()->getStatics()->setSpeed(0);
 
+    cig->getStatics()->log();
+    cig2->getStatics()->log();
     m_vPlayers.push_back(player2);
     m_vPlayers.push_back(player);
 

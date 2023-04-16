@@ -1,10 +1,12 @@
 #include "Dice.h"
 
+#include "Audio/SoundManager.h"
 // Constructor
 
 Dice::Dice() :
 m_pDice(nullptr),
-m_nDiceNum(0)
+m_nDiceNum(0),
+m_pButton(nullptr)
 {
 }
 
@@ -98,13 +100,15 @@ void Dice::log()
 int Dice::rollDice()
 {
     auto dice = random(1, 6);
-    dice = 6;
     m_vDiceMemory.push_back(dice);
 
     m_centerRect.origin.x = diceSize.width * (dice - 1);
     m_pDice->setTextureRect(m_centerRect);
     //CCLOG("DICE NUM: %d", dice);
 
+    auto rand = cocos2d::random(1, 3);
+    auto path = StringUtils::format("audio/dice/roll_%d.mp3", rand);
+    SM_GI->playSoundEffect(path);
 
     //// Disable Roll button
     this->m_pButton->setVisible(false);
